@@ -41,7 +41,7 @@ const PRECACHE_ASSETS = [
     'g-floor.html',
     '1st-floor.html',
     'b-floor.html',
-    'assets/HappyMallIntro.MP4',
+    'assets/HappyMallIntro.mp4',
     '2nd-floor.html',
     '3rd-floor.html',
     'floor.css',
@@ -163,7 +163,7 @@ self.addEventListener('fetch', event => {
     if (url.origin !== self.location.origin) return;
 
     // Handle Video Files specifically for Safari iOS (requires 206 Partial Content)
-    if (url.pathname.endsWith('.mp4') || url.pathname.endsWith('.MP4') || url.pathname.endsWith('.webm')) {
+    if (url.pathname.endsWith('.mp4') || url.pathname.endsWith('.mp4') || url.pathname.endsWith('.webm')) {
         event.respondWith(serveVideoFromCache(event.request));
         return;
     }

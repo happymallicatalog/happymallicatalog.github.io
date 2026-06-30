@@ -335,10 +335,7 @@
                     hasMapLink = true;
                     dirBtn.setAttribute('target', '_blank');
                     dirBtn.setAttribute('rel', 'noopener noreferrer');
-                    dirBtn.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        window.open(dirBtn.href, '_blank');
-                    });
+                    
                 } else {
                     dirBtn.style.display = 'none';
                 }
@@ -401,7 +398,7 @@
                             </svg>
                             <div class="info-content">
                                 <h4>الموقع الإلكتروني</h4>
-                                <p><a href="${cleanWebsite}" target="_blank" rel="noopener noreferrer" onclick="window.open(this.href, '_blank'); return false;">${cleanWebsite.replace(/^https?:\/\//, '')}</a></p>
+                                <p><a href="${cleanWebsite}" target="_blank" rel="noopener noreferrer">${cleanWebsite.replace(/^https?:\/\//, '')}</a></p>
                             </div>
                         </div>
                     `;
@@ -418,7 +415,7 @@
                             </svg>
                             <div class="info-content">
                                 <h4>البريد الإلكتروني</h4>
-                                <p><a href="mailto:${cleanEmail}" target="_blank" rel="noopener noreferrer" onclick="window.open(this.href, '_blank'); return false;">${cleanEmail}</a></p>
+                                <p><a href="mailto:${cleanEmail}" target="_blank" rel="noopener noreferrer">${cleanEmail}</a></p>
                             </div>
                         </div>
                     `;
@@ -429,7 +426,7 @@
                 if (isConfigured(cleanPhones)) {
                     const phoneList = cleanPhones.split(',').map(p => p.trim()).filter(p => p);
                     if (phoneList.length > 0) {
-                        const phoneLinks = phoneList.map(p => `<a href="tel:${p}" target="_blank" rel="noopener noreferrer" onclick="window.open(this.href, '_blank'); return false;" style="display:block; margin-bottom:4px; text-decoration:none;">${p}</a>`).join('');
+                        const phoneLinks = phoneList.map(p => `<a href="tel:${p}" target="_blank" rel="noopener noreferrer" style="display:block; margin-bottom:4px; text-decoration:none;">${p}</a>`).join('');
                         list.innerHTML += `
                             <div class="info-item">
                                 <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -449,7 +446,7 @@
                 if (isConfigured(cleanWhatsapps)) {
                     const waList = cleanWhatsapps.split(',').map(w => w.trim()).filter(w => w);
                     if (waList.length > 0) {
-                        const waLinks = waList.map(w => `<a href="https://wa.me/${w.replace(/[^0-9]/g, '')}" target="_blank" rel="noopener noreferrer" onclick="window.open(this.href, '_blank'); return false;" style="display:block; margin-bottom:4px; text-decoration:none;">${w}</a>`).join('');
+                        const waLinks = waList.map(w => `<a href="https://wa.me/${w.replace(/[^0-9]/g, '')}" target="_blank" rel="noopener noreferrer" style="display:block; margin-bottom:4px; text-decoration:none;">${w}</a>`).join('');
                         list.innerHTML += `
                             <div class="info-item">
                                 <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -489,21 +486,14 @@
                             a.innerHTML = s.svg;
                         }
                         a.setAttribute('aria-label', s.label);
-                        a.addEventListener('click', (e) => { e.preventDefault(); window.open(url, '_blank'); });
+                        
                         socials.appendChild(a);
                     }
                 });
                 if (socials.children.length === 0) socials.style.display = 'none';
             }
 
-            // Global external link interceptor for PWA
-            document.addEventListener('click', (e) => {
-                const a = e.target.closest('a[target="_blank"]');
-                if (a && a.href) {
-                    e.preventDefault();
-                    window.open(a.href, '_blank');
-                }
-            });
+            
         }
 
         if (document.readyState === 'loading') {
