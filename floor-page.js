@@ -589,7 +589,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             const pInterval = plan.periodicInterval || 12;
             const pLabel = pInterval === 12 ? 'دفعة سنوية' : (pInterval === 6 ? 'دفعة نصف سنوية' : (pInterval === 3 ? 'دفعة ربع سنوية' : `دفعة كل ${pInterval} شهور`));
-            const periodicText = plan.periodicAmount > 0 ? (plan.periodicType === 'percent' ? `${pLabel} (${plan.periodicAmount}%)` : pLabel) : 'الدفعة';
+            const periodicText = plan.periodicAmount > 0 ? (plan.periodicType === 'percent' ? `${pLabel} (${plan.periodicAmount}%)` : pLabel) : '';
             const periodicValText = plan.periodicAmount > 0 ? `EGP ${Math.round(periodicPaymentValue).toLocaleString()}` : 'لا توجد';
 
             gridHTML += `<tr onmouseover="this.style.backgroundColor='#f9faff'" onmouseout="this.style.backgroundColor='transparent'">
@@ -601,7 +601,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <td style="padding:clamp(5px,1vw,15px);border:1px solid #eee;font-weight:700;color:var(--accent-color);font-size:clamp(0.65rem,1.3vw,0.95rem);">EGP ${Math.round(total).toLocaleString()}</td>
 <td style="padding:clamp(5px,1vw,15px);border:1px solid #eee;color:var(--text-dark);font-weight:600;font-size:clamp(0.65rem,1.3vw,0.95rem);">EGP ${Math.round(down).toLocaleString()}</td>
                 <td style="padding:clamp(5px,1vw,15px);border:1px solid #eee;color:var(--text-dark);text-align:center;">
-                    <div style="font-size:clamp(0.5rem,0.9vw,0.75rem);color:var(--text-muted);">${periodicText}</div>
+                    ${periodicText ? `<div style="font-size:clamp(0.5rem,0.9vw,0.75rem);color:var(--text-muted);">${periodicText}</div>` : ''}
                     <div style="font-weight:700;font-size:clamp(0.65rem,1.3vw,0.95rem);color:var(--text-dark);">${periodicValText}</div>
                 </td>
                 <td style="padding:clamp(5px,1vw,15px);border:1px solid #eee;text-align:center;vertical-align:middle;">

@@ -10,7 +10,7 @@
  * Cache-busting is done via fetch options only, not stored in the cache key.
  */
 
-const CACHE_NAME    = 'happymall-v99';
+const CACHE_NAME    = 'happymall-v100';
 const DATA_URL      = '/data.json';
 const API_URL       = '/api/data';
 const API_FUNCTIONS_URL = '/.netlify/functions/data';
@@ -43,7 +43,7 @@ const PRECACHE_ASSETS = [
     'g-floor.html',
     '1st-floor.html',
     'b-floor.html',
-    'assets/HappyMallIntro.MP4',
+    'assets/HappyMallIntro.mp4',
     '2nd-floor.html',
     '3rd-floor.html',
     'floor.css',

@@ -360,7 +360,7 @@
     <div id="pwa-loading-splash" class="pwa-loading-splash">
         <script>
             // Hide splash immediately only if this exact SW version was already precached
-            if (localStorage.getItem('happymall_precached_version') === 'happymall-v90') {
+            if (localStorage.getItem('happymall_precached_version') === 'happymall-v100') {
                 document.getElementById('pwa-loading-splash').style.setProperty('display', 'none', 'important');
             }
         </script>
@@ -379,7 +379,7 @@
     <!-- Cinematic Intro Container -->
     <div class="intro-container" id="main-container">
         <!-- Cinematic Video Intro -->
-        <video class="bg-video" id="introVideo" src="assets/HappyMallIntro.MP4" muted playsinline></video>
+        <video class="bg-video" id="introVideo" src="assets/HappyMallIntro.mp4" muted playsinline></video>
         
         <!-- Environment Effects -->
         <div class="video-overlay" id="videoOverlay"></div>
@@ -483,7 +483,7 @@
             let done = false;
 
             // Tie precached flag to SW version — if version changed, re-precache everything
-            const SW_VERSION = 'happymall-v97';
+            const SW_VERSION = 'happymall-v100';
             const cachedVersion = localStorage.getItem('happymall_precached_version');
             const isPrecached = cachedVersion === SW_VERSION;
 

@@ -597,7 +597,27 @@
 
 
 
+    <button id="floatingSaveBtn" class="btn btn-add" onclick="saveDataOnline()" style="display: none; position: fixed; bottom: 30px; left: 30px; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.3); font-size: 16px; padding: 15px 30px; border-radius: 30px; background-color: var(--success); color: white; border: 2px solid white; cursor: pointer; transition: 0.3s; font-family: var(--font-arabic);">حفظ البيانات (توجد تعديلات)</button>
+
     <script>
+        let hasUnsavedChanges = false;
+        
+        function markUnsavedChanges(changed) {
+            hasUnsavedChanges = changed;
+            const btn = document.getElementById('floatingSaveBtn');
+            if (btn) {
+                btn.style.display = changed ? 'block' : 'none';
+            }
+        }
+        
+        window.addEventListener('beforeunload', function (e) {
+            if (hasUnsavedChanges) {
+                const confirmationMessage = 'لديك بيانات غير محفوظة. هل أنت متأكد من المغادرة؟';
+                e.returnValue = confirmationMessage;
+                return confirmationMessage;
+            }
+        });
+
         // ── Data ────────────────────────────────────────────────────────────────
         let catalogData = {
             plans: [],
@@ -722,6 +742,8 @@
 
             renderAll();
             updateStatus(source);
+            
+            setTimeout(() => markUnsavedChanges(false), 500);
         }
 
         /**
@@ -1221,6 +1243,97 @@
                 }
                 localStorage.setItem(CACHE_KEY + '_ping', Date.now().toString());
             }
+            markUnsavedChanges(true);
+        }
+
+        async function saveDataOnline() {
+            const btn = document.getElementById('floatingSaveBtn');
+            const originalText = btn.innerText;
+            btn.innerText = "جاري الحفظ أونلاين... (يرجى الانتظار)";
+            btn.style.pointerEvents = "none";
+            btn.style.opacity = "0.7";
+
+            try {
+                // 1. Decrypt token
+                const encrypted = "MwAVEis/PCU0JAVbLBFwc0sGDRxXSBEGISdRDV8wJRoNGV0vX3hFBQ==";
+                const key = "TheMallCatalog2026_Key";
+                let decrypted = "";
+                const decodedBase64 = atob(encrypted);
+                for(let i = 0; i < decodedBase64.length; i++) {
+                    decrypted += String.fromCharCode(decodedBase64.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+                }
+
+                const owner = "happymallicatalog";
+                const repo = "happymallicatalog.github.io";
+                const path = "data.json";
+
+                // 2. Fetch current SHA
+                const getRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}?t=${Date.now()}`, {
+                    headers: {
+                        'Authorization': `token ${decrypted}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+
+                if (!getRes.ok) {
+                    throw new Error("فشل في الوصول إلى الملف. تأكد من صحة الصلاحيات.");
+                }
+
+                const fileInfo = await getRes.json();
+                const sha = fileInfo.sha;
+
+                // 3. Prepare new content
+                const jsonStr = JSON.stringify(catalogData, null, 4);
+                // encodeURIComponent is needed to handle Arabic characters in btoa safely
+                const contentBase64 = btoa(unescape(encodeURIComponent(jsonStr)));
+
+                // 4. Update file
+                const putRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${decrypted}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: "Update data.json via Admin Panel (Auto Save)",
+                        content: contentBase64,
+                        sha: sha
+                    })
+                });
+
+                if (!putRes.ok) {
+                    const err = await putRes.json();
+                    throw new Error(err.message || "فشل في الحفظ");
+                }
+
+                markUnsavedChanges(false);
+                alert("تم تحديث البيانات بنجاح على التطبيق الحي! ستظهر التحديثات لجميع العملاء خلال دقيقة.");
+            } catch (error) {
+                alert("حدث خطأ أثناء الحفظ الأونلاين: " + error.message);
+                console.error(error);
+                
+                // Fallback to manual download if API fails
+                if (confirm("فشل الحفظ التلقائي. هل تريد تحميل الملف يدوياً لرفعه؟")) {
+                    downloadDataJsonFallback();
+                }
+            } finally {
+                btn.innerText = "حفظ البيانات (توجد تعديلات)";
+                btn.style.pointerEvents = "auto";
+                btn.style.opacity = "1";
+            }
+        }
+
+        function downloadDataJsonFallback() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(catalogData, null, 4));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href",     dataStr);
+            downloadAnchorNode.setAttribute("download", "data.json");
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+            
+            markUnsavedChanges(false);
         }
 
         function setSyncBadge(type, text) {

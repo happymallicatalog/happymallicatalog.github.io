@@ -478,11 +478,11 @@
             var ua = navigator.userAgent;
             var isIOS     = /iphone|ipad|ipod/i.test(ua)
                          || (navigator.maxTouchPoints > 1 && /macintosh/i.test(ua));
-            var isAndroid = /android/i.test(ua);
+            var isFirefox = !isIOS && /firefox|FxiOS/i.test(ua);
+            var isAndroid = /android/i.test(ua) && !isFirefox;
             var isEdge    = !isIOS && !isAndroid && /edg\//i.test(ua);
-            var isChrome  = !isIOS && !isAndroid && !isEdge && /chrome/i.test(ua) && !/opr/i.test(ua);
-            var isFirefox = !isIOS && !isAndroid && /firefox/i.test(ua);
-            var isSafari  = !isIOS && !isAndroid && /safari/i.test(ua) && !/chrome/i.test(ua) && !/edg/i.test(ua);
+            var isChrome  = !isIOS && !isAndroid && !isEdge && !isFirefox && /chrome/i.test(ua) && !/opr/i.test(ua);
+            var isSafari  = !isIOS && !isAndroid && !isFirefox && /safari/i.test(ua) && !/chrome/i.test(ua) && !/edg/i.test(ua);
             
             return { isIOS: isIOS, isAndroid: isAndroid, isChrome: isChrome,
                      isEdge: isEdge, isSafari: isSafari, isFirefox: isFirefox };
@@ -651,8 +651,8 @@
         // ── 6. After install events ──
         window.addEventListener('appinstalled', function() {
             localStorage.setItem('happymall_pwa_installed', 'true');
-            // Redirect immediately to cover.html to start the experience
-            window.location.replace('/cover.html');
+            // Update UI instead of redirecting so user opens the standalone app
+            renderUI();
         });
 
         // Listen for dynamic transition into PWA window (Android/Desktop)
