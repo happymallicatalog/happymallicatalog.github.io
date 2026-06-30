@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=IBM+Plex+Sans+Arabic:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="global.css">
     <link rel="stylesheet" href="nav.css">
-    <link rel="stylesheet" href="floor.css">
+    <link rel="stylesheet" href="floor.css?v=98">
 </head>
 <body data-floor-prefix="S-">
     <!-- Payment Plan Modal -->
@@ -74,7 +74,6 @@
                                     <circle cx="12" cy="10" r="3"></circle>
                                 </svg>
                                 <span>الرجاء اختيار وحدة من المتاح باللون الأخضر</span>
-                                <small>Please select a unit from floor plan</small>
                             </div>
                         </div>
                         <div class="detail-content hidden">
@@ -93,6 +92,17 @@
                             </div>
                         </div>
                         <div class="detail-actions-row">
+                            <div class="status-indicators">
+                                <div class="status-indicator" data-status="متاح">
+                                    <span class="status-indicator-dot"></span>متاح
+                                </div>
+                                <div class="status-indicator" data-status="محجوز">
+                                    <span class="status-indicator-dot"></span>محجوز
+                                </div>
+                                <div class="status-indicator" data-status="مباع">
+                                    <span class="status-indicator-dot"></span>مباع
+                                </div>
+                            </div>
                             <button class="catalog-action-btn" id="show-price-trigger">
                                 <span>السعر</span>
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

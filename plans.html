@@ -431,9 +431,9 @@
             // Default settings matching assets/units logic
             catalogData = {
                 plans: [
-                    { id: 'p1', name: 'الخطة الأولى', years: 5, down: 10, yearly: 0 },
-                    { id: 'p2', name: 'الخطة الثانية', years: 6, down: 15, yearly: 6 },
-                    { id: 'p3', name: 'الخطة الثالثة', years: 7, down: 20, yearly: 8 }
+                    { id: 'p1', name: 'الخطة الأولى', years: 5, down: 10, downType: 'percent', periodicAmount: 0, periodicType: 'percent', periodicInterval: 12 },
+                    { id: 'p2', name: 'الخطة الثانية', years: 6, down: 15, downType: 'percent', periodicAmount: 6, periodicType: 'percent', periodicInterval: 12 },
+                    { id: 'p3', name: 'الخطة الثالثة', years: 7, down: 20, downType: 'percent', periodicAmount: 8, periodicType: 'percent', periodicInterval: 12 }
                 ],
                 categories: ["مطعم", "محل", "مكتب", "ملابس", "ادوات منزلية", "ادوات كهربائية", "موبايلات"],
                 positions: ["ارضي / خارجي", "ارضي / داخلي", "اول علوي / خارجي", "اول علوي / داخلي"],
@@ -469,7 +469,7 @@
                 card.innerHTML = `
                     <div class="plan-header">
                         <h2>${plan.name}</h2>
-                        <span class="downpayment-main">${plan.years} سنوات - ${plan.down}% مقدم</span>
+                        <span class="downpayment-main">${plan.years} سنوات - ${plan.downType === 'fixed' ? 'مقدم ' + plan.down.toLocaleString() + ' ج.م' : plan.down + '% مقدم'}</span>
                     </div>
                     <div class="plan-body">
                         <ul class="plan-stats">
@@ -481,6 +481,10 @@
                                 <span class="stat-label">قيمة المقدم</span>
                                 <span class="stat-value" id="val-down-${plan.id}">-</span>
                             </li>
+                            <li class="stat-item" id="item-periodic-${plan.id}" style="display: none;">
+                                <span class="stat-label" id="label-periodic-${plan.id}">-</span>
+                                <span class="stat-value" id="val-periodic-${plan.id}">-</span>
+                            </li>
 
                         </ul>
                     </div>
@@ -488,7 +492,7 @@
                         <span class="total-label">إجمالي السعر</span>
                         <div class="total-price-value" id="val-total-${plan.id}">-</div>
                         <div class="monthly-box" id="pill-monthly-${plan.id}">
-                            <span class="monthly-label">القسط الربع سنوي</span>
+                            <span class="monthly-label" id="label-monthly-${plan.id}">القسط الشهري</span>
                             <div class="monthly-value" id="val-monthly-${plan.id}">-</div>
                         </div>
                     </div>
@@ -530,15 +534,48 @@
 
             const pricePerMeter = (catalogData.prices[unit.position] && catalogData.prices[unit.position][plan.id]) ? catalogData.prices[unit.position][plan.id] : 0;
             const totalPrice = pricePerMeter * unit.area;
-            const downpaymentValue = totalPrice * (plan.down / 100);
+            const downpaymentValue = (plan.downType === 'fixed') ? plan.down : (totalPrice * (plan.down / 100));
             
-            const remainingAmount = totalPrice - downpaymentValue;
-            const monthlyInstallment = remainingAmount / (plan.years * 4);
+            let periodicPaymentValue = 0;
+            if (plan.periodicAmount > 0) {
+                if (plan.periodicType === 'fixed') {
+                    periodicPaymentValue = plan.periodicAmount;
+                } else {
+                    periodicPaymentValue = totalPrice * (plan.periodicAmount / 100);
+                }
+            }
+            
+            const totalPeriodicPayments = (plan.years * 12) / (plan.periodicInterval || 12);
+            const totalPeriodicDeduction = periodicPaymentValue * totalPeriodicPayments;
+            
+            const remainingAmount = totalPrice - downpaymentValue - totalPeriodicDeduction;
+            const months = plan.months || 1;
+            const totalInstallments = (plan.years * 12) / months;
+            const installmentValue = remainingAmount / totalInstallments;
+            
+            const labelText = months === 1 ? 'القسط الشهري' : (months === 3 ? 'القسط الربع سنوي' : (months === 6 ? 'القسط النصف سنوي' : (months === 12 ? 'القسط السنوي' : `قسط كل ${months} شهور`)));
+            const labelEl = document.getElementById(`label-monthly-${planId}`);
+            if (labelEl) labelEl.textContent = labelText;
+
+            const periodicItem = document.getElementById(`item-periodic-${planId}`);
+            if (periodicItem) {
+                if (plan.periodicAmount > 0) {
+                    const pInterval = plan.periodicInterval || 12;
+                    const pLabel = pInterval === 12 ? 'دفعة سنوية' : (pInterval === 6 ? 'دفعة نصف سنوية' : (pInterval === 3 ? 'دفعة ربع سنوية' : `دفعة كل ${pInterval} شهور`));
+                    const pText = plan.periodicType === 'percent' ? `${pLabel} (${plan.periodicAmount}%)` : pLabel;
+                    document.getElementById(`label-periodic-${planId}`).textContent = pText;
+                    document.getElementById(`val-periodic-${planId}`).textContent = Math.round(periodicPaymentValue).toLocaleString() + ' EGP';
+                } else {
+                    document.getElementById(`label-periodic-${planId}`).textContent = 'الدفعة';
+                    document.getElementById(`val-periodic-${planId}`).textContent = 'لا توجد';
+                }
+                periodicItem.style.display = 'flex';
+            }
 
             totalEl.textContent = totalPrice.toLocaleString() + ' EGP';
             downEl.textContent = downpaymentValue.toLocaleString() + ' EGP';
             priceMeterEl.textContent = pricePerMeter.toLocaleString() + ' EGP';
-            monthlyVal.textContent = Math.round(monthlyInstallment).toLocaleString() + ' EGP';
+            monthlyVal.textContent = Math.round(installmentValue).toLocaleString() + ' EGP';
             monthlyBox.style.display = 'block';
         }
 

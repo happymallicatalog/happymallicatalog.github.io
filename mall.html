@@ -77,11 +77,11 @@
             position: absolute;
             bottom: calc(clamp(20px, 5vh, 40px) + clamp(40px, 7vmin, 55px) + 50px);
             left: 5vw;
-            width: clamp(280px, 30vw, 420px);
+            width: clamp(280px, 30vw, 420px); /* 1/3 of page width roughly */
             z-index: 20;
             display: flex;
             flex-direction: column;
-            gap: 1.5vh;
+            gap: 2vh;
             pointer-events: none;
         }
 
@@ -89,35 +89,45 @@
             pointer-events: auto;
         }
 
-        .mall-title {
+        .mall-title-text {
             font-family: var(--font-arabic, 'IBM Plex Sans Arabic');
-            font-size: clamp(2rem, 4vmin, 3.5rem);
+            font-size: clamp(1.5rem, 3vmin, 2.5rem);
             color: var(--accent-color, #dfa843);
             font-weight: 400;
             letter-spacing: 0 !important;
             margin: 0;
             text-align: left;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
         }
 
         .mall-info-text {
             font-family: var(--font-arabic);
-            font-size: clamp(1rem, 1.8vmin, 1.2rem);
+            font-size: clamp(1rem, 2vmin, 1.25rem);
             font-weight: 300;
             line-height: 1.8;
             color: #ffffff;
             text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
             text-align: right;
             margin: 0;
-            max-height: 35vh;
+            white-space: pre-wrap;
+            max-height: 25vh;
             overflow-y: auto;
-            pointer-events: auto;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
             padding-left: 10px;
+            touch-action: pan-y !important;
+            pointer-events: auto !important;
         }
-        
+
+        /* Scrollbar for Description */
         .mall-info-text::-webkit-scrollbar {
-            display: none;
+            width: 4px;
+        }
+        .mall-info-text::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.05);
+            border-radius: 4px;
+        }
+        .mall-info-text::-webkit-scrollbar-thumb {
+            background: var(--accent-color, #dfa843);
+            border-radius: 4px;
         }
 
         /* Staggered Content Animations */
@@ -247,9 +257,9 @@
 
         <!-- Left Content Panel (Replacing the old card) -->
         <div class="left-content-panel">
-            <h2 class="mall-title animate-item"><!-- config:mallNameAr -->هابى مول<!-- /config:mallNameAr --></h2>
-            <div class="mall-info-text animate-item scrollable-element">
-                <!-- config:mallDescAr -->أول مول تجاري اداري ترفيهي في مدينة السادات ويقع المشروع مباشرة علي طريق ابو بكر الرئيسي
+            <h2 class="mall-title-text animate-item"><!-- config:mallNameEn -->Happy Mall<!-- /config:mallNameEn --> <!-- config:mallNameAr -->هابى مول<!-- /config:mallNameAr --></h2>
+            
+            <div class="mall-info-text animate-item"><!-- config:mallDescAr -->أول مول تجاري اداري ترفيهي في مدينة السادات ويقع المشروع مباشرة علي طريق ابو بكر الرئيسي
 
 بلازا: تعتبر البلازا الخاصة بالمشروع اطلالة رائعة للمحلات والمكاتب كما تحتوي علي تصميم لاندسكيب رائع وتحتوي علي اماكن يوجد بها كراسي للمساج
 
@@ -355,6 +365,37 @@
             heroBg.classList.remove('zooming');
             void heroBg.offsetWidth; // Force reflow
             heroBg.classList.add('zooming');
+        }
+
+        // Enable drag-to-scroll for mall description
+        const desc = document.querySelector('.mall-info-text');
+        if (desc) {
+            let isDown = false;
+            let startY;
+            let scrollTop;
+
+            desc.addEventListener('mousedown', (e) => {
+                isDown = true;
+                desc.style.cursor = 'grabbing';
+                startY = e.pageY - desc.offsetTop;
+                scrollTop = desc.scrollTop;
+            });
+            desc.addEventListener('mouseleave', () => {
+                isDown = false;
+                desc.style.cursor = 'grab';
+            });
+            desc.addEventListener('mouseup', () => {
+                isDown = false;
+                desc.style.cursor = 'grab';
+            });
+            desc.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const y = e.pageY - desc.offsetTop;
+                const walk = (y - startY) * 2; // Scroll-fast
+                desc.scrollTop = scrollTop - walk;
+            });
+            desc.style.cursor = 'grab';
         }
 
         // Start initial zoom

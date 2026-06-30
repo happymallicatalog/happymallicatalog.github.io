@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let allCategories  = new Set();
     let selectedUnitId = null;
     let currentFilter  = null;
+    let currentStatusFilter = null;
     let svgEl          = null;
 
     // ── BOOT ─────────────────────────────────────────────────────────────────
@@ -40,6 +41,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderChips();
         if (svgEl) setupSVG();
         setupModal();
+        setupStatusIndicators();
         updateStatus();
         window.addEventListener('online',  updateStatus);
         window.addEventListener('offline', updateStatus);
@@ -152,7 +154,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             // Apply dynamic layout overrides based on database settings
             if (catalogData.settings) {
-                let dynamicCss = '.status-indicators { display: none !important; }\n';
+                let dynamicCss = '';
+                if (catalogData.settings.showStatus === false) {
+                    dynamicCss += '.status-indicators { display: none !important; }\n';
+                }
                 if (catalogData.settings.showCategories === false) {
                     dynamicCss += '.categories-slider-section { display: none !important; }\n';
                 }
@@ -168,8 +173,30 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
                 styleEl.textContent = dynamicCss;
             }
+            
+            updatePlaceholderText();
 
         } catch (e) { console.error('[floor-page.js] Data error', e); }
+    }
+
+    function updatePlaceholderText() {
+        if (!detailsPanel) return;
+        const phSpan = detailsPanel.querySelector('.detail-placeholder span');
+        const phSmall = detailsPanel.querySelector('.detail-placeholder small');
+        if (!phSpan) return;
+
+        const floorUnits = Object.values(catalogData.units || {})
+            .filter(u => u.code && u.code.startsWith(FLOOR_PREFIX));
+        
+        const hasAvailable = floorUnits.some(u => u.status !== 'مباع' && u.status !== 'محجوز');
+
+        if (hasAvailable) {
+            phSpan.textContent = 'الرجاء اختيار وحدة من المتاح لتظهر معلوماتها';
+            if (phSmall) phSmall.style.display = 'block';
+        } else {
+            phSpan.textContent = 'لاتوجد وحدات متاحة في هذا الدور';
+            if (phSmall) phSmall.style.display = 'none';
+        }
     }
 
 
@@ -206,11 +233,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         style.textContent = `
             [id^="${FLOOR_PREFIX}"] { transition:opacity 0.25s ease; pointer-events:none; }
             .has-active-filters [id^="${FLOOR_PREFIX}"]:not(.filter-highlight) { opacity:0.15; }
-            [id^="${FLOOR_PREFIX}"].active { opacity:1 !important; filter:url(#green-tint); }
-            [id^="${FLOOR_PREFIX}"].generic-unit { filter:url(#green-tint) !important; opacity: 0.3 !important; }
-            [id^="${FLOOR_PREFIX}"].generic-unit.js-hover { opacity: 0.5 !important; }
-            [id^="${FLOOR_PREFIX}"].generic-unit.active, 
-            [id^="${FLOOR_PREFIX}"].generic-unit.filter-highlight { opacity: 0.85 !important; }
+            [id^="${FLOOR_PREFIX}"].active { opacity:0.85 !important; }
+            
+            [id^="${FLOOR_PREFIX}"].status-available { filter:url(#green-tint) !important; opacity: 0.3 !important; }
+            [id^="${FLOOR_PREFIX}"].status-reserved { filter:url(#gray-tint) !important; opacity: 0.3 !important; }
+            [id^="${FLOOR_PREFIX}"].status-sold { filter:url(#red-tint) !important; opacity: 0.3 !important; }
+            
+            [id^="${FLOOR_PREFIX}"].status-available.js-hover,
+            [id^="${FLOOR_PREFIX}"].status-reserved.js-hover,
+            [id^="${FLOOR_PREFIX}"].status-sold.js-hover { opacity: 0.5 !important; }
+            
+            [id^="${FLOOR_PREFIX}"].status-available.active, [id^="${FLOOR_PREFIX}"].status-available.filter-highlight,
+            [id^="${FLOOR_PREFIX}"].status-reserved.active, [id^="${FLOOR_PREFIX}"].status-reserved.filter-highlight,
+            [id^="${FLOOR_PREFIX}"].status-sold.active, [id^="${FLOOR_PREFIX}"].status-sold.filter-highlight { opacity: 0.85 !important; }
+            
             [id^="${FLOOR_PREFIX}"].filter-highlight { opacity:1 !important; }
         `;
         svgEl.prepend(style);
@@ -221,8 +257,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         svgEl.querySelectorAll(`[id^="${FLOOR_PREFIX}"]`).forEach(el => {
             const unit = catalogData.units[el.id];
             if (unit) {
-                el.classList.remove('status-available','status-reserved','status-sold');
-                el.classList.add('generic-unit');
+                el.classList.remove('status-available','status-reserved','status-sold', 'generic-unit');
+                if (unit.status === 'مباع') el.classList.add('status-sold');
+                else if (unit.status === 'محجوز') el.classList.add('status-reserved');
+                else el.classList.add('status-available');
             }
             orderedUnits.push(el);
 
@@ -358,10 +396,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     function onCatClick(cat) {
         currentFilter = (currentFilter === cat.trim()) ? null : cat.trim();
+        currentStatusFilter = null;
         selectedUnitId = null; hideDetails();
         if (svgEl) svgEl.querySelectorAll(`[id^="${FLOOR_PREFIX}"]`).forEach(el => el.classList.remove('active'));
         document.querySelectorAll('#units-table tbody tr').forEach(r => r.classList.remove('selected'));
         document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('unit-active'));
+        document.querySelectorAll('.status-indicator').forEach(ind => ind.classList.remove('unit-active'));
+        applyFilters();
+    }
+    
+    function onStatusClick(statusEl) {
+        const status = statusEl.dataset.status.trim();
+        currentStatusFilter = (currentStatusFilter === status) ? null : status;
+        currentFilter = null;
+        selectedUnitId = null; hideDetails();
+        if (svgEl) svgEl.querySelectorAll(`[id^="${FLOOR_PREFIX}"]`).forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('#units-table tbody tr').forEach(r => r.classList.remove('selected'));
+        document.querySelectorAll('.status-indicator').forEach(ind => ind.classList.remove('unit-active'));
         applyFilters();
     }
 
@@ -381,27 +432,49 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (detailCategories) {
             detailCategories.innerHTML = '';
             const categories = cats(unit);
+            
             if (categories.length > 0) {
-                categories.forEach(c => {
-                    const span = document.createElement('span');
-                    span.className = 'catalog-tag category-tag';
-                    span.textContent = c;
-                    detailCategories.appendChild(span);
-                });
+                const actDiv = document.createElement('div');
+                actDiv.style.color = '#000';
+                actDiv.style.fontWeight = '400';
+                actDiv.style.fontSize = 'clamp(14px, 2vmin, 18px)';
+                actDiv.textContent = categories.join('، ');
+                detailCategories.appendChild(actDiv);
+            }
+            
+            if (unit.status) {
+                const statusDiv = document.createElement('div');
+                statusDiv.style.fontWeight = '400';
+                statusDiv.style.fontSize = 'clamp(14px, 2vmin, 18px)';
+                statusDiv.style.marginTop = categories.length > 0 ? '10px' : '0';
+                statusDiv.textContent = unit.status;
+                
+                if (unit.status === 'متاح') {
+                    statusDiv.style.color = '#28a745';
+                } else if (unit.status === 'محجوز') {
+                    statusDiv.style.color = '#6c757d';
+                } else if (unit.status === 'مباع') {
+                    statusDiv.style.color = '#dc3545';
+                }
+                detailCategories.appendChild(statusDiv);
             }
         }
         
         if (detailPosition) {
             detailPosition.innerHTML = '';
             if (unit.position && unit.position.trim() !== '') {
-                const span = document.createElement('span');
-                span.className = 'catalog-tag position-tag';
-                span.textContent = unit.position;
-                detailPosition.appendChild(span);
+                const posDiv = document.createElement('div');
+                posDiv.style.color = '#000';
+                posDiv.style.fontWeight = '400';
+                posDiv.style.fontSize = 'clamp(14px, 2vmin, 18px)';
+                posDiv.textContent = unit.position;
+                detailPosition.appendChild(posDiv);
             }
         }
         
-
+        document.querySelectorAll('.status-indicator').forEach(ind => {
+            ind.classList.toggle('unit-active', (ind.dataset.status || '').trim() === (unit.status || '').trim());
+        });
     }
     function hideDetails() {
         const ph = detailsPanel.querySelector('.detail-placeholder');
@@ -429,28 +502,41 @@ document.addEventListener('DOMContentLoaded', async () => {
             chip.classList.toggle('active', !!(currentFilter && (chip.dataset.category||'').trim() === currentFilter));
             if (!selectedUnitId) chip.classList.remove('unit-active');
         });
-        if (!currentFilter) return;
+        document.querySelectorAll('.status-indicator').forEach(ind => {
+            ind.classList.toggle('active', !!(currentStatusFilter && (ind.dataset.status||'').trim() === currentStatusFilter));
+        });
+        if (!currentFilter && !currentStatusFilter) return;
         if (svgEl) svgEl.classList.add('has-active-filters');
         if (svgEl) svgEl.querySelectorAll(`[id^="${FLOOR_PREFIX}"]`).forEach(el => {
             const u = catalogData.units[el.id]; if (!u) return;
-            const mc = cats(u).some(c => c.trim() === currentFilter);
+            const mc = currentFilter ? cats(u).some(c => c.trim() === currentFilter) : (u.status === currentStatusFilter);
             if (mc) el.classList.add('filter-highlight');
         });
         document.querySelectorAll('#units-table tbody tr').forEach(row => {
             const unitId = row.id.replace('row-','').trim();
             const u = catalogData.units[unitId]; if (!u) return;
-            const mc = cats(u).some(c => c.trim() === currentFilter);
+            const mc = currentFilter ? cats(u).some(c => c.trim() === currentFilter) : (u.status === currentStatusFilter);
             if (mc) row.classList.add('filter-row-highlight');
         });
     }
 
     function resetAll(resetDetails = true) {
-        selectedUnitId = null; currentFilter = null;
+        selectedUnitId = null; currentFilter = null; currentStatusFilter = null;
         if (svgEl) svgEl.querySelectorAll(`[id^="${FLOOR_PREFIX}"]`).forEach(el => el.classList.remove('active','cat-highlight','status-highlight','filter-highlight'));
         document.querySelectorAll('#units-table tbody tr').forEach(r => r.classList.remove('selected','category-row','status-row-highlight','filter-row-highlight'));
         document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active','unit-active'));
+        document.querySelectorAll('.status-indicator').forEach(ind => ind.classList.remove('active', 'unit-active'));
         applyFilters();
         if (resetDetails) hideDetails();
+    }
+
+    function setupStatusIndicators() {
+        document.querySelectorAll('.status-indicator').forEach(ind => {
+            ind.addEventListener('click', (e) => {
+                e.stopPropagation();
+                onStatusClick(ind);
+            });
+        });
     }
 
     // ── MODAL ─────────────────────────────────────────────────────────────────
@@ -465,29 +551,59 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!selectedUnitId) return;
         const unit = catalogData.units[selectedUnitId]; if (!unit) return;
         modalUnitId.textContent = unit.code + ' (' + unit.area + ' م²)';
+        let headerLabelText = 'القسط';
+        if (catalogData.plans && catalogData.plans.length > 0) {
+            const firstPlanMonths = catalogData.plans[0].months || 1;
+            headerLabelText = firstPlanMonths === 1 ? 'القسط الشهري' : (firstPlanMonths === 3 ? 'القسط الربع سنوي' : (firstPlanMonths === 6 ? 'القسط النصف سنوي' : (firstPlanMonths === 12 ? 'القسط السنوي' : `قسط كل ${firstPlanMonths} شهور`)));
+        }
+
         let gridHTML = `<div class="plans-table-wrapper" style="width:100%;margin-top:clamp(10px,2vw,20px);border-radius:8px;box-shadow:0 4px 15px rgba(0,0,0,0.05);background:white;">
             <table style="width:100%;border-collapse:collapse;text-align:center;background:white;">
                 <thead><tr>
                     <th style="padding:clamp(5px,1vw,15px);border:1px solid #eee;background:#f8f9fa;color:var(--text-muted);font-weight:600;font-size:clamp(0.6rem,1.2vw,0.95rem);">الخطة</th>
                     <th style="padding:clamp(5px,1vw,15px);border:1px solid #eee;background:#f8f9fa;color:var(--text-muted);font-weight:600;font-size:clamp(0.6rem,1.2vw,0.95rem);">سعر المتر</th>
-                    <th style="padding:clamp(5px,1vw,15px);border:1px solid #eee;background:#f8f9fa;color:var(--text-muted);font-weight:600;font-size:clamp(0.6rem,1.2vw,0.95rem);">إجمالي السعر</th>
+<th style="padding:clamp(5px,1vw,15px);border:1px solid #eee;background:#f8f9fa;color:var(--text-muted);font-weight:600;font-size:clamp(0.6rem,1.2vw,0.95rem);">إجمالي السعر</th>
 <th style="padding:clamp(5px,1vw,15px);border:1px solid #eee;background:#f8f9fa;color:var(--text-muted);font-weight:600;font-size:clamp(0.6rem,1.2vw,0.95rem);">قيمة المقدم</th>
-                    
-                    <th style="padding:clamp(5px,1vw,15px);border:1px solid #eee;background:#f8f9fa;color:var(--text-muted);font-weight:600;font-size:clamp(0.6rem,1.2vw,0.95rem);">القسط الربع سنوي</th>
+                    <th style="padding:clamp(5px,1vw,15px);border:1px solid #eee;background:#f8f9fa;color:var(--text-muted);font-weight:600;font-size:clamp(0.6rem,1.2vw,0.95rem);">الدفعة</th>
+                    <th style="padding:clamp(5px,1vw,15px);border:1px solid #eee;background:#f8f9fa;color:var(--text-muted);font-weight:600;font-size:clamp(0.6rem,1.2vw,0.95rem);">${headerLabelText}</th>
                 </tr></thead><tbody>`;
         (catalogData.plans || []).forEach(plan => {
             const ppm = (catalogData.prices[unit.position]?.[plan.id]) || 0;
-            const total = ppm * unit.area, down = total * (plan.down/100), rem = total - down;
-            const mo = rem / (plan.years * 4);
+            const total = ppm * unit.area;
+            const down = (plan.downType === 'fixed') ? plan.down : total * (plan.down/100);
+            
+            let periodicPaymentValue = 0;
+            if (plan.periodicAmount > 0) {
+                if (plan.periodicType === 'fixed') {
+                    periodicPaymentValue = plan.periodicAmount;
+                } else {
+                    periodicPaymentValue = total * (plan.periodicAmount / 100);
+                }
+            }
+            const totalPeriodicPayments = (plan.years * 12) / (plan.periodicInterval || 12);
+            const totalPeriodicDeduction = periodicPaymentValue * totalPeriodicPayments;
+            
+            const rem = total - down - totalPeriodicDeduction;
+            const months = plan.months || 1;
+            const mo = rem / ((plan.years * 12) / months);
+            
+            const pInterval = plan.periodicInterval || 12;
+            const pLabel = pInterval === 12 ? 'دفعة سنوية' : (pInterval === 6 ? 'دفعة نصف سنوية' : (pInterval === 3 ? 'دفعة ربع سنوية' : `دفعة كل ${pInterval} شهور`));
+            const periodicText = plan.periodicAmount > 0 ? (plan.periodicType === 'percent' ? `${pLabel} (${plan.periodicAmount}%)` : pLabel) : 'الدفعة';
+            const periodicValText = plan.periodicAmount > 0 ? `EGP ${Math.round(periodicPaymentValue).toLocaleString()}` : 'لا توجد';
+
             gridHTML += `<tr onmouseover="this.style.backgroundColor='#f9faff'" onmouseout="this.style.backgroundColor='transparent'">
                 <td style="padding:clamp(5px,1vw,15px);border:1px solid #eee;text-align:right;">
                     <div style="font-weight:700;color:var(--text-dark);font-size:clamp(0.7rem,1.4vw,1rem);">${plan.name}</div>
-                    <div style="display:inline-block;padding:2px 6px;background:color-mix(in srgb,var(--accent-color) 10%,transparent);color:var(--accent-color);border-radius:20px;font-size:clamp(0.55rem,1vw,0.8rem);font-weight:600;">${plan.years} سنوات - ${plan.down}% مقدم</div>
+                    <div style="display:inline-block;padding:2px 6px;background:color-mix(in srgb,var(--accent-color) 10%,transparent);color:var(--accent-color);border-radius:20px;font-size:clamp(0.55rem,1vw,0.8rem);font-weight:600;">${plan.years} سنوات - ${plan.downType === 'fixed' ? 'مقدم ' + plan.down.toLocaleString() + ' ج.م' : plan.down + '% مقدم'}</div>
                 </td>
                 <td style="padding:clamp(5px,1vw,15px);border:1px solid #eee;color:var(--text-dark);font-weight:600;font-size:clamp(0.65rem,1.3vw,0.95rem);">EGP ${ppm.toLocaleString()}</td>
                 <td style="padding:clamp(5px,1vw,15px);border:1px solid #eee;font-weight:700;color:var(--accent-color);font-size:clamp(0.65rem,1.3vw,0.95rem);">EGP ${Math.round(total).toLocaleString()}</td>
 <td style="padding:clamp(5px,1vw,15px);border:1px solid #eee;color:var(--text-dark);font-weight:600;font-size:clamp(0.65rem,1.3vw,0.95rem);">EGP ${Math.round(down).toLocaleString()}</td>
-                
+                <td style="padding:clamp(5px,1vw,15px);border:1px solid #eee;color:var(--text-dark);text-align:center;">
+                    <div style="font-size:clamp(0.5rem,0.9vw,0.75rem);color:var(--text-muted);">${periodicText}</div>
+                    <div style="font-weight:700;font-size:clamp(0.65rem,1.3vw,0.95rem);color:var(--text-dark);">${periodicValText}</div>
+                </td>
                 <td style="padding:clamp(5px,1vw,15px);border:1px solid #eee;text-align:center;vertical-align:middle;">
                     <div style="display:inline-flex;flex-direction:column;align-items:center;background:var(--dark-bg);padding:clamp(4px,1vw,8px) clamp(8px,1.5vw,16px);border-radius:8px;">
                         <span style="color:white;font-weight:700;font-size:clamp(0.65rem,1.3vw,1rem);">EGP ${Math.round(mo).toLocaleString()}</span>

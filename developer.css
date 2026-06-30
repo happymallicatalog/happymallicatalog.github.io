@@ -91,13 +91,13 @@ html, body {
     color: var(--accent-color, #dfa843);
     font-weight: 400;
     letter-spacing: 0 !important;
-    margin-bottom: 1.5vh;
+    margin-bottom: 3vh;
     margin-top: 0;
 }
 
 .dev-description {
     font-family: var(--font-arabic, 'IBM Plex Sans Arabic');
-    font-size: clamp(1rem, 1.8vmin, 1.2rem);
+    font-size: clamp(1.1rem, 2vmin, 1.3rem);
     line-height: 1.8;
     color: #f0f0f0;
     max-width: 90%;
@@ -108,17 +108,24 @@ html, body {
     text-shadow: 0 2px 5px rgba(0,0,0,0.5);
     text-align: right; /* Align text to right for Arabic */
     white-space: pre-wrap;
-    max-height: 35vh;
+    max-height: 25vh;
     overflow-y: auto;
     padding-left: 10px;
-    pointer-events: auto;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+    touch-action: pan-y !important;
+    pointer-events: auto !important;
 }
 
 /* Scrollbar for Description */
 .dev-description::-webkit-scrollbar {
-    display: none;
+    width: 4px;
+}
+.dev-description::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.05);
+    border-radius: 4px;
+}
+.dev-description::-webkit-scrollbar-thumb {
+    background: var(--accent-color, #dfa843);
+    border-radius: 4px;
 }
 
 /* Stats Row */

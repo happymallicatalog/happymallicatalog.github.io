@@ -100,8 +100,8 @@
         }
 
         .end-logo {
-            width: clamp(160px, 35vmin, 350px);
-            max-width: 48%;
+            width: clamp(150px, 36vmin, 380px); /* Responsive sizing based on viewport height */
+            max-width: 48%; /* Ensure both logos fit side-by-side without overflowing */
             height: auto;
             object-fit: contain;
             filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
@@ -156,12 +156,13 @@
 
         .mall-tagline {
             font-family: var(--font-arabic, 'IBM Plex Sans Arabic');
-            font-size: clamp(1.0rem, 2.5vmin, 1.5rem);
-            letter-spacing: 0 !important;
-            color: var(--accent-color);
-            opacity: 0.9;
-            margin-top: 15px;
+            font-size: clamp(1.0rem, 2.5vmin, 1.4rem);
             font-weight: 300;
+            color: var(--accent-color);
+            opacity: 1;
+            margin-top: 15px;
+            letter-spacing: normal;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.6);
         }
 
         .end-footer {
@@ -218,7 +219,7 @@
 
         </div>
         <div class="end-footer">
-            <a href="https://marwasleem.netlify.app" target="_blank" rel="noopener noreferrer" class="white-text" style="text-decoration: none;">iCΛTALOG</a>
+            <a href="https://ms-marwasleem.github.io" target="_blank" rel="noopener noreferrer" onclick="window.open(this.href, '_blank'); return false;" style="text-decoration:none; color:inherit;"><span class="white-text">iCΛTALOG</span></a>
         </div>
     </div>
 

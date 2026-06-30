@@ -657,7 +657,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 <th style="padding: clamp(5px, 1vw, 15px); border: 1px solid #eee; background: #f8f9fa; color: var(--text-muted); font-weight: 600; font-size: clamp(0.6rem, 1.2vw, 0.95rem);">قيمة المقدم</th>
                             <th style="padding: clamp(5px, 1vw, 15px); border: 1px solid #eee; background: #f8f9fa; color: var(--text-muted); font-weight: 600; font-size: clamp(0.6rem, 1.2vw, 0.95rem);">دفعة سنوية</th>
                             
-                            <th style="padding: clamp(5px, 1vw, 15px); border: 1px solid #eee; background: #f8f9fa; color: var(--text-muted); font-weight: 600; font-size: clamp(0.6rem, 1.2vw, 0.95rem);">القسط الربع سنوي</th>
+                            <th style="padding: clamp(5px, 1vw, 15px); border: 1px solid #eee; background: #f8f9fa; color: var(--text-muted); font-weight: 600; font-size: clamp(0.6rem, 1.2vw, 0.95rem);">القسط الشهري</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -669,7 +669,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const down  = total * (plan.down / 100);
             const rem   = total - down;
             const yr    = total * (plan.yearly / 100);
-            const mo    = (rem - yr * plan.years) / (plan.years * 4);
+            const mo    = (rem - yr * plan.years) / (plan.years * 12);
 
             gridHTML += `
                         <tr style="transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f9faff'" onmouseout="this.style.backgroundColor='transparent'">
@@ -684,6 +684,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             
                             <td style="padding: clamp(5px, 1vw, 15px); border: 1px solid #eee; text-align: center; vertical-align: middle;">
                                 <div style="display: inline-flex; flex-direction: column; align-items: center; justify-content: center; background: var(--dark-bg); padding: clamp(4px, 1vw, 8px) clamp(8px, 1.5vw, 16px); border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                    <span style="font-size: clamp(0.5rem, 0.9vw, 0.75rem); color: rgba(255,255,255,0.7); margin-bottom: 2px; white-space: nowrap;">القسط الشهري</span>
                                     <span style="color: white; font-weight: 700; font-size: clamp(0.65rem, 1.3vw, 1rem); white-space: nowrap;">EGP ${Math.round(mo).toLocaleString()}</span>
                                 </div>
                             </td>

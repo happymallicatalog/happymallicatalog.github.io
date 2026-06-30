@@ -114,7 +114,7 @@
             color: var(--page-text);
             opacity: 0.8;
             margin: 0;
-            font-weight: 400;
+            font-weight: 500;
         }
 
         .info-list {
@@ -143,7 +143,7 @@
             font-size: clamp(0.9rem, 1.8vmin, 1.2rem);
             color: var(--accent-color);
             text-transform: uppercase;
-            font-weight: 400;
+            font-weight: 700;
             letter-spacing: 0;
             margin-bottom: 5px;
         }
@@ -151,8 +151,8 @@
         .info-content p, .info-content a, .info-content div a {
             font-family: var(--font-arabic, 'Outfit');
             font-size: clamp(0.95rem, 1.8vmin, 1.1rem);
-            color: var(--page-text) !important;
-            font-weight: 400;
+            color: var(--page-text) !important; /* Dynamically adapts: dark text in Light Mode, white in Dark Mode */
+            font-weight: 600; /* Bolder text for high contrast and readability */
             line-height: 1.6;
             opacity: 1;
             text-decoration: none;
@@ -211,7 +211,7 @@
             align-items: center;
             gap: 10px;
             font-family: var(--font-arabic, 'Outfit');
-            font-weight: 400;
+            font-weight: 600;
             font-size: clamp(0.85rem, 1.5vmin, 1rem);
             text-decoration: none;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -244,7 +244,7 @@
             border-radius: 50px;
             text-decoration: none;
             font-family: var(--font-arabic, 'Outfit');
-            font-weight: 400;
+            font-weight: 600;
             font-size: clamp(0.9rem, 1.6vmin, 1rem);
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             transition: all 0.3s ease;
@@ -335,7 +335,6 @@
                     hasMapLink = true;
                     dirBtn.setAttribute('target', '_blank');
                     dirBtn.setAttribute('rel', 'noopener noreferrer');
-                    
                 } else {
                     dirBtn.style.display = 'none';
                 }
@@ -486,14 +485,11 @@
                             a.innerHTML = s.svg;
                         }
                         a.setAttribute('aria-label', s.label);
-                        
                         socials.appendChild(a);
                     }
                 });
                 if (socials.children.length === 0) socials.style.display = 'none';
             }
-
-            
         }
 
         if (document.readyState === 'loading') {

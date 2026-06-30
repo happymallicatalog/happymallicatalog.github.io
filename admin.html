@@ -169,7 +169,7 @@
         th { background: #f8f9fa; font-weight: 600; color: var(--primary-color); white-space: nowrap; }
         
         .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: 0.2s; }
-        .btn-add { background: var(--success); color: white; }
+        .btn-add { background: var(--success); color: white; padding: 5px 10px; font-size: 12px; }
         .btn-delete { background: var(--danger); color: white; padding: 5px 10px; font-size: 12px; }
         .btn-save { background: var(--primary-color); color: white; width: 100%; margin-top: 20px; padding: 15px; font-size: 18px; }
 
@@ -190,6 +190,7 @@
             border: 1px solid #ddd;
             border-radius: 4px;
             width: 100%;
+            box-sizing: border-box;
             font-size: 14px;
             font-family: var(--font-arabic);
         }
@@ -203,7 +204,8 @@
             -moz-appearance: textfield;
         }
         .plan-input-small {
-            width: 70px !important;
+            width: 100% !important;
+            box-sizing: border-box;
             text-align: center;
         }
         .percent-input-wrapper {
@@ -371,6 +373,33 @@
             max-width: 100%;
         }
     }
+    
+    /* Status Select Premium Look */
+    .status-select {
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+        border: 1.5px solid transparent;
+        cursor: pointer;
+        outline: none;
+        font-family: inherit;
+    }
+    .status-select.status-available {
+        background-color: rgba(40, 167, 69, 0.1);
+        color: #28a745;
+        border-color: #28a745;
+    }
+    .status-select.status-reserved {
+        background-color: rgba(136, 136, 136, 0.1);
+        color: #888888;
+        border-color: #888888;
+    }
+    .status-select.status-sold {
+        background-color: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+        border-color: #dc3545;
+    }
     </style>
     <script src="database.js"></script>
     <script type="text/javascript" src="assets/js/emailjs.min.js"></script>
@@ -408,14 +437,14 @@
         <div class="login-box">
             <img src="assets/images/MallLogo.webp" width="120" alt="Logo">
             <h3>الدخول إلى لوحة التحكم</h3>
-            <input type="text" id="githubRepo" placeholder="اسم الحساب/اسم المشروع (مثال: myname/repo)" onkeydown="if(event.key === 'Enter') login()">
+            <input type="text" id="username" placeholder="اسم المستخدم" onkeydown="if(event.key === 'Enter') login()">
             <div class="password-wrapper">
-                <input type="password" id="githubToken" placeholder="رمز GitHub السري (Token)" onkeydown="if(event.key === 'Enter') login()">
-                <span class="toggle-password" onclick="togglePassword('githubToken')">
-                    <svg viewBox="0 0 24 24" id="eye-githubToken"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <input type="password" id="password" placeholder="كلمة المرور" onkeydown="if(event.key === 'Enter') login()">
+                <span class="toggle-password" onclick="togglePassword('password')">
+                    <svg viewBox="0 0 24 24" id="eye-password"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                 </span>
             </div>
-            <button onclick="login()">حفظ الدخول وبدء التعديل</button>
+            <button onclick="login()">دخول لوحة التحكم</button>
         </div>
     </div>
 
@@ -448,20 +477,44 @@
             <table id="planTable">
                 <thead>
                     <tr>
-                        <th>اسم الخطة</th>
-                        <th>السنوات</th>
-                        <th>المقدم (%)</th>
-                        <th>إجراء</th>
+                        <th style="width: 16%;">اسم الخطة</th>
+                        <th style="width: 8%;">السنوات</th>
+                        <th style="width: 8%;">القسط (أشهر)</th>
+                        <th style="width: 25%;">المقدم</th>
+                        <th style="width: 25%;">الدفعة</th>
+                        <th style="width: 8%;">الدفعة (أشهر)</th>
+                        <th style="width: 10%;">إجراء</th>
                     </tr>
                 </thead>
                 <tbody id="planList"></tbody>
+                <tfoot id="planAddRow">
+                    <tr style="background: #f8f9fa;">
+                        <td><input type="text" id="planName" placeholder="اسم الخطة" style="width: 100%; min-width: 100px; box-sizing: border-box; padding: 6px;"></td>
+                        <td><input type="text" inputmode="decimal" id="planYears" placeholder="السنوات" style="width: 100%; box-sizing: border-box; text-align: center; padding: 6px;"></td>
+                        <td><input type="text" inputmode="decimal" id="planMonths" placeholder="الأشهر" style="width: 100%; box-sizing: border-box; text-align: center; padding: 6px;"></td>
+                        <td>
+                            <div style="display: flex; gap: 4px;">
+                                <input type="text" inputmode="decimal" id="planDown" placeholder="المقدم" style="flex: 1; box-sizing: border-box; text-align: center; padding: 6px; min-width: 0;">
+                                <select id="planDownType" style="width: 50px; padding: 6px 2px; font-family: var(--font-arabic); box-sizing: border-box;">
+                                    <option value="percent">%</option>
+                                    <option value="fixed">ج.م</option>
+                                </select>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="display: flex; gap: 4px;">
+                                <input type="text" inputmode="decimal" id="planPeriodicAmount" placeholder="الدفعة" style="flex: 1; box-sizing: border-box; text-align: center; padding: 6px; min-width: 0;">
+                                <select id="planPeriodicType" style="width: 50px; padding: 6px 2px; font-family: var(--font-arabic); box-sizing: border-box;">
+                                    <option value="percent">%</option>
+                                    <option value="fixed">ج.م</option>
+                                </select>
+                            </div>
+                        </td>
+                        <td><input type="text" inputmode="decimal" id="planPeriodicInterval" placeholder="الأشهر" style="width: 100%; box-sizing: border-box; text-align: center; padding: 6px;"></td>
+                        <td><button class="btn btn-add" onclick="addPaymentPlan()">إضافة</button></td>
+                    </tr>
+                </tfoot>
             </table>
-            <div style="margin-top: 15px; display: flex; gap: 10px;">
-                <input type="text" id="planName" placeholder="اسم الخطة (مثلاً: خطة أ)">
-                <input type="text" inputmode="decimal" id="planYears" placeholder="السنوات">
-                <input type="text" inputmode="decimal" id="planDown" placeholder="المقدم %">
-                <button class="btn btn-add" onclick="addPaymentPlan()">إضافة</button>
-            </div>
         </div>
 
         <!-- Price per Meter Section -->
@@ -478,9 +531,10 @@
             <table id="unitManagementTable" style="table-layout: fixed;">
                 <thead>
                     <tr>
-                        <th style="width: 15%;">كود الوحدة</th>
-                        <th style="width: 15%;">المساحة (م٢)</th>
-                        <th style="width: 25%;">الموقع</th>
+                        <th style="width: 10%;">كود الوحدة</th>
+                        <th style="width: 10%;">المساحة (م٢)</th>
+                        <th style="width: 20%;">الموقع</th>
+                        <th style="width: 15%;">الحالة</th>
                         <th style="width: 45%; min-width: 300px;">الأنشطة</th>
                     </tr>
                 </thead>
@@ -506,21 +560,29 @@
                 <h2>Admin Profile Settings</h2>
                 
                 <div class="profile-row">
-                    <label>حساب/مستودع GitHub</label>
-                    <input type="text" id="profileRepo" placeholder="username/repository">
+                    <label>البريد الإلكتروني</label>
+                    <input type="text" id="adminEmail" placeholder="أدخل البريد الجديد">
+                    <button class="btn btn-add" onclick="startChange('email')">تحديث البريد</button>
                 </div>
                 
-                <div class="profile-row">
-                    <label>رمز الأمان (Token)</label>
-                    <div class="password-wrapper" style="flex-grow: 1; max-width: 300px;">
-                        <input type="password" id="profileToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
-                        <span class="toggle-password" onclick="togglePassword('profileToken')">
-                            <svg viewBox="0 0 24 24" id="eye-profileToken"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                        </span>
+                <div id="emailOtpBox" class="otp-box">
+                    <p style="margin-bottom: 10px;">أدخل الرمز المكون من 4 أرقام المرسل إلى بريدك <b>الحالي</b>:</p>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="emailOtpInput" placeholder="0000" maxlength="4" style="width: 100px; text-align: center;">
+                        <button class="btn btn-add" onclick="verifyChange('email')">تأكيد التغيير</button>
                     </div>
                 </div>
 
-                <button class="btn btn-save" onclick="saveGithubSettings()">حفظ إعدادات الربط</button>
+                <div class="profile-row">
+                    <label>كلمة المرور الجديدة</label>
+                    <div class="password-wrapper" style="flex-grow: 1; max-width: 300px;">
+                        <input type="password" id="adminPassword" placeholder="أدخل كلمة المرور الجديدة">
+                        <span class="toggle-password" onclick="togglePassword('adminPassword')">
+                            <svg viewBox="0 0 24 24" id="eye-adminPassword"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </span>
+                    </div>
+                    <button class="btn btn-add" onclick="startChange('password')">تحديث كلمة المرور</button>
+                </div>
 
                 <div id="passwordOtpBox" class="otp-box">
                     <p style="margin-bottom: 10px;">أدخل الرمز المكون من 4 أرقام لتأكيد كلمة المرور الجديدة:</p>
@@ -554,33 +616,22 @@
         const CACHE_KEY = ThaMallDB.LOCAL_KEY; // keep backward compat
 
         function login() {
-            const repo = document.getElementById('githubRepo').value.trim();
-            const token = document.getElementById('githubToken').value.trim();
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
             
-            if (repo && token) {
-                localStorage.setItem('admin_profile', JSON.stringify({ repo, token }));
+            // Get current profile data
+            const profile = JSON.parse(localStorage.getItem('admin_profile') || '{"username":"admin","password":"admin","email":"iCatalog.dev@gmail.com"}');
+
+            if (user === profile.username && pass === profile.password) {
                 localStorage.setItem('admin_logged_in', 'true');
                 showDashboard();
             } else {
-                alert('يرجى إدخال اسم المستودع والـ Token');
-            }
-        }
-
-        function saveGithubSettings() {
-            const repo = document.getElementById('profileRepo').value.trim();
-            const token = document.getElementById('profileToken').value.trim();
-            
-            if (repo && token) {
-                localStorage.setItem('admin_profile', JSON.stringify({ repo, token }));
-                alert('تم حفظ إعدادات GitHub بنجاح!');
-            } else {
-                alert('يرجى إدخال البيانات كاملة');
+                alert('بيانات الدخول غير صحيحة');
             }
         }
 
         function logout() {
             localStorage.removeItem('admin_logged_in');
-            localStorage.removeItem('admin_profile');
             location.reload();
         }
 
@@ -634,9 +685,8 @@
 
         async function initDashboard() {
             // Load Profile
-            const profile = JSON.parse(localStorage.getItem('admin_profile') || '{}');
-            if (profile.repo) document.getElementById('profileRepo').value = profile.repo;
-            if (profile.token) document.getElementById('profileToken').value = profile.token;
+            const profile = JSON.parse(localStorage.getItem('admin_profile') || '{"username":"admin","password":"admin","email":"iCatalog.dev@gmail.com"}');
+            document.getElementById('adminEmail').value = profile.email;
 
             setStatusLoading();
 
@@ -760,7 +810,26 @@
                 row.innerHTML = `
                     <td><input type="text" value="${plan.name}" onchange="updatePlan('${plan.id}', 'name', this.value, this)"></td>
                     <td><input class="plan-input-small" type="text" inputmode="decimal" value="${plan.years}" onchange="updatePlan('${plan.id}', 'years', this.value, this)"></td>
-                    <td><div class="percent-input-wrapper"><input type="text" inputmode="decimal" value="${plan.down}" onchange="updatePlan('${plan.id}', 'down', this.value, this)"> %</div></td>
+                    <td><input class="plan-input-small" type="text" inputmode="decimal" value="${plan.months || 1}" onchange="updatePlan('${plan.id}', 'months', this.value, this)"></td>
+                    <td>
+                        <div style="display: flex; gap: 4px;">
+                            <input class="plan-input-small" style="flex: 1; min-width: 0;" type="text" inputmode="decimal" value="${plan.down}" onchange="updatePlan('${plan.id}', 'down', this.value, this)">
+                            <select onchange="updatePlan('${plan.id}', 'downType', this.value, this)" style="width: 50px; padding: 4px 2px; font-family: var(--font-arabic);">
+                                <option value="percent" ${plan.downType === 'percent' || !plan.downType ? 'selected' : ''}>%</option>
+                                <option value="fixed" ${plan.downType === 'fixed' ? 'selected' : ''}>ج.م</option>
+                            </select>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display: flex; gap: 4px;">
+                            <input class="plan-input-small" style="flex: 1; min-width: 0;" type="text" inputmode="decimal" value="${plan.periodicAmount || 0}" onchange="updatePlan('${plan.id}', 'periodicAmount', this.value, this)">
+                            <select onchange="updatePlan('${plan.id}', 'periodicType', this.value, this)" style="width: 50px; padding: 4px 2px; font-family: var(--font-arabic);">
+                                <option value="percent" ${plan.periodicType === 'percent' || !plan.periodicType ? 'selected' : ''}>%</option>
+                                <option value="fixed" ${plan.periodicType === 'fixed' ? 'selected' : ''}>ج.م</option>
+                            </select>
+                        </div>
+                    </td>
+                    <td><input class="plan-input-small" type="text" inputmode="decimal" value="${plan.periodicInterval || 12}" onchange="updatePlan('${plan.id}', 'periodicInterval', this.value, this)"></td>
                     <td><button class="btn btn-delete" onclick="deletePlan('${plan.id}')">حذف</button></td>
                 `;
             });
@@ -834,6 +903,7 @@
             });
 
             Object.values(catalogData.units).sort(ThaMallDB.sortUnits).forEach(unit => {
+                const selStatus = ['متاح', 'مباع', 'محجوز'].map(s => `<option value="${s}" ${unit.status === s ? 'selected' : ''}>${s}</option>`).join('');
                 html += `
                     <tr>
                         <td style="font-weight: bold; color: var(--primary-color); font-size: 14px;">${unit.code}</td>
@@ -842,6 +912,11 @@
                             <select onchange="updateUnit('${unit.code}', 'position', this.value)" style="width: 100%; padding: 4px; border-radius: 4px; border: 1px solid #ddd; font-family: var(--font-arabic);">
                                 <option value="" ${!unit.position ? 'selected' : ''}>- غير محدد -</option>
                                 ${sortedPositions.map(p => `<option value="${p}" ${unit.position === p ? 'selected' : ''}>${p}</option>`).join('')}
+                            </select>
+                        </td>
+                        <td>
+                            <select onchange="updateUnit('${unit.code}', 'status', this.value); this.className='status-select status-' + (this.value==='متاح'?'available':this.value==='محجوز'?'reserved':'sold')" class="status-select status-${unit.status==='متاح'?'available':unit.status==='محجوز'?'reserved':'sold'}">
+                                ${selStatus}
                             </select>
                         </td>
                         <td>
@@ -888,7 +963,12 @@
         function addPaymentPlan() {
             const name = document.getElementById('planName').value;
             const years = document.getElementById('planYears').value;
+            const months = document.getElementById('planMonths').value;
             const down = document.getElementById('planDown').value;
+            const downType = document.getElementById('planDownType').value;
+            const periodicAmount = document.getElementById('planPeriodicAmount').value;
+            const periodicType = document.getElementById('planPeriodicType').value;
+            const periodicInterval = document.getElementById('planPeriodicInterval').value;
             
             if(name.trim() === "") {
                 alert('يرجى إدخال اسم الخطة');
@@ -904,13 +984,23 @@
                 id, 
                 name, 
                 years: parseInt(cleanNum(years)) || 0, 
-                down: parseInt(cleanNum(down)) || 0 
+                months: parseInt(cleanNum(months)) || 1,
+                down: parseInt(cleanNum(down)) || 0,
+                downType: downType || 'percent',
+                periodicAmount: parseInt(cleanNum(periodicAmount)) || 0,
+                periodicType: periodicType || 'percent',
+                periodicInterval: parseInt(cleanNum(periodicInterval)) || 12
             });
             
             // Reset fields
             document.getElementById('planName').value = '';
             document.getElementById('planYears').value = '';
+            document.getElementById('planMonths').value = '';
             document.getElementById('planDown').value = '';
+            document.getElementById('planDownType').value = 'percent';
+            document.getElementById('planPeriodicAmount').value = '';
+            document.getElementById('planPeriodicType').value = 'percent';
+            document.getElementById('planPeriodicInterval').value = '';
             
             renderAll();
             saveAllData();
@@ -919,9 +1009,13 @@
         function updatePlan(id, field, value, el) {
             const plan = catalogData.plans.find(p => p.id === id);
             if(plan) {
-                const cleaned = cleanNum(value);
-                plan[field] = field === 'name' ? value : (parseInt(cleaned) || 0);
-                if (el && field !== 'name') el.value = plan[field];
+                if (field === 'name' || field === 'periodicType' || field === 'downType') {
+                    plan[field] = value;
+                } else {
+                    const cleaned = cleanNum(value);
+                    plan[field] = parseInt(cleaned) || 0;
+                    if (el) el.value = plan[field];
+                }
                 saveAllData();
             }
         }

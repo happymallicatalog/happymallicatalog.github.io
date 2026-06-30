@@ -22,7 +22,7 @@
     --nav-glass-border: #ffffff;
     --nav-icon-color: #fb9a16;            /* Active icon & burger-line color */
     --nav-icon-color-inactive: #42799a; /* Inactive icon color */
-    --nav-icon-color-hover: #fb9a16;                  /* Hover icon color */
+    --nav-icon-color-hover: #ffffff;                  /* Hover icon color */
     --nav-btn-radius: 50%;                            /* 4px = square | 50% = circle */
     --nav-panel-bg: transparent;
     --nav-panel-border: none;
@@ -183,8 +183,7 @@
 }
 
 .nav-item:hover img {
-    filter: sepia(1) saturate(5) hue-rotate(10deg) brightness(0.8) contrast(1.2);
-    opacity: 1;
+    filter: brightness(0) invert(1) opacity(1);
 }
 
 .nav-item svg, 

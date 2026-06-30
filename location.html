@@ -114,20 +114,28 @@
         }
 
         .location-title {
-            font-family: var(--font-arabic, 'IBM Plex Sans Arabic');
+            font-family: var(--font-arabic);
             font-size: clamp(1.2rem, 2.5vmin, 1.8rem);
-            color: var(--accent-color, #dfa843);
-            font-weight: 400;
-            letter-spacing: 0 !important;
-            margin: 0;
-            margin-bottom: 3vh;
+            font-weight: 300;
+            line-height: 1.2;
+            margin: 0 0 1.5vh 0;
+            color: var(--accent-color);
             text-align: left;
             animation-delay: 0.4s;
         }
 
+        .location-title span {
+            display: block;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 300;
+        }
+
         .location-subtitle {
             font-family: var(--font-arabic);
-            font-size: clamp(1rem, 1.8vmin, 1.2rem);
+            font-size: clamp(0.95rem, 1.8vmin, 1.1rem);
             line-height: 1.7;
             opacity: 0.9;
             text-align: left;
@@ -342,11 +350,6 @@
                 const href = dirBtn.getAttribute('href');
                 if (!href || href === 'mapsLink' || href.trim() === '') {
                     dirBtn.style.display = 'none';
-                } else {
-                    dirBtn.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        window.open(dirBtn.href, '_blank');
-                    });
                 }
             }
 

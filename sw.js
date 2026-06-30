@@ -10,8 +10,10 @@
  * Cache-busting is done via fetch options only, not stored in the cache key.
  */
 
-const CACHE_NAME    = 'happymall-v97';
+const CACHE_NAME    = 'happymall-v99';
 const DATA_URL      = '/data.json';
+const API_URL       = '/api/data';
+const API_FUNCTIONS_URL = '/.netlify/functions/data';
 
 // All catalog assets to pre-cache immediately on install
 // Heavy files (SVGs and Video) are interleaved with lighter files 
@@ -41,7 +43,7 @@ const PRECACHE_ASSETS = [
     'g-floor.html',
     '1st-floor.html',
     'b-floor.html',
-    'assets/HappyMallIntro.mp4',
+    'assets/HappyMallIntro.MP4',
     '2nd-floor.html',
     '3rd-floor.html',
     'floor.css',
@@ -54,7 +56,7 @@ const PRECACHE_ASSETS = [
     'icons/icon-192.png',
     'icons/icon-512.png',
     'assets/images/MallLogo.webp',
-    'assets/images/1.webp',
+    'assets/images/MallCoverImage.webp',
     'assets/images/DeveloperLogo.webp',
     'assets/images/DeveloperPageImage.webp',
     'assets/images/Developer-Icon-blue.webp',
@@ -163,55 +165,67 @@ self.addEventListener('fetch', event => {
     if (url.origin !== self.location.origin) return;
 
     // Handle Video Files specifically for Safari iOS (requires 206 Partial Content)
-    if (url.pathname.endsWith('.mp4') || url.pathname.endsWith('.mp4') || url.pathname.endsWith('.webm')) {
+    if (url.pathname.endsWith('.mp4') || url.pathname.endsWith('.MP4') || url.pathname.endsWith('.webm')) {
         event.respondWith(serveVideoFromCache(event.request));
         return;
     }
 
-    // Media assets (Images, Videos, SVGs, Fonts) — Cache First (Load instantly, fallback to network)
-    const isMedia = url.pathname.match(/\.(webp|jpg|jpeg|png|gif|svg|mp4|webm|woff|woff2|ttf|otf)$/i);
-    if (isMedia) {
-        event.respondWith(cacheFirst(event.request));
+    // Only Data and APIs use Stale-While-Revalidate (instant load + background refresh)
+    const isData = url.pathname.endsWith('.json') || url.pathname.includes('/api/') || url.pathname.includes('/.netlify/');
+    if (isData) {
+        event.respondWith(staleWhileRevalidate(event.request));
         return;
     }
 
-    // Code & Content (HTML, CSS, JS, JSON, API) — Network First
-    // This forces the app to ALWAYS fetch the latest updates from the server when online,
-    // solving the issue of users seeing old cached pages.
-    event.respondWith(networkFirst(event.request));
+    // Everything else (HTML, CSS, JS, Images, Videos, Fonts) — Cache First (Load instantly, fallback to network)
+    // This solves the slow page switching issue and provides a true PWA experience.
+    event.respondWith(cacheFirst(event.request));
 });
 
 // ── STRATEGIES ────────────────────────────────────────────────────────────────
 
 /**
- * Network First: try network, update cache on success, fall back to cache.
- * Used for data.json and API endpoints.
+ * Stale-While-Revalidate: Serve from cache immediately for speed, then update cache in background.
+ * Used for data.json and API endpoints to ensure instant loading without sacrificing fresh data.
  */
-async function networkFirst(request) {
+async function staleWhileRevalidate(request) {
     const cache = await caches.open(CACHE_NAME);
     const cleanKey = stripCacheBuster(request.url);
 
-    // Try network with cache bypass
-    try {
-        const bustUrl = new URL(request.url);
-        bustUrl.searchParams.set('_t', Date.now());
-        const networkRes = await fetch(new Request(bustUrl.toString(), {
-            cache: 'no-store',
-            credentials: 'same-origin'
-        }));
+    // 1. Fetch fresh data from network in background
+    const networkPromise = (async () => {
+        try {
+            const bustUrl = new URL(request.url);
+            bustUrl.searchParams.set('_t', Date.now());
+            const networkRes = await fetch(new Request(bustUrl.toString(), {
+                cache: 'no-store',
+                credentials: 'same-origin'
+            }));
 
-        if (networkRes.ok) {
-            // Store under clean URL (no timestamp)
-            cache.put(cleanKey, networkRes.clone());
+            if (networkRes.ok) {
+                await cache.put(cleanKey, networkRes.clone());
+                // Notify the app that data was updated in the background
+                const clients = await self.clients.matchAll();
+                clients.forEach(client => client.postMessage({ type: 'CACHE_UPDATED' }));
+            }
+            return networkRes;
+        } catch (e) {
+            console.warn('[SW] Background sync failed:', e);
+            throw e;
         }
-        return networkRes;
+    })();
+
+    // 2. Try to return from cache IMMEDIATELY
+    const cached = await findInCache(cache, cleanKey);
+    if (cached) {
+        // We have cache! Return it instantly, let network Promise finish in background.
+        return cached;
+    }
+
+    // 3. If NO cache exists, we must wait for the network (first load scenario)
+    try {
+        return await networkPromise;
     } catch {
-        // Network failed — serve from cache
-        const cached = await findInCache(cache, cleanKey);
-        if (cached) {
-            console.log('[SW] Offline fallback (networkFirst):', cleanKey);
-            return cached;
-        }
         return new Response('{"error":"offline"}', {
             status: 503,
             headers: { 'Content-Type': 'application/json' }

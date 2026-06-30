@@ -30,7 +30,7 @@
                 <div class="dev-info-section">
                                         <h2 class="dev-name"><!-- config:developerNameEn -->Betak بيتك<!-- /config:developerNameEn --></h2>
                     
-                    <p class="dev-description scrollable-element"><!-- config:developerDescAr -->- تأسست الشركة منذ عام ٢٠١٦
+                    <p class="dev-description"><!-- config:developerDescAr -->- تأسست الشركة منذ عام ٢٠١٦
 - شركة بيتك من كبري الشركات الرائدة في مجال التطوير العقاري
 - تمتلك الشركة اكثر من ٣٠ مشروع سكني في مدينة السادات ومدينة ٦ اكتوبر
 - تمتلك الشركة “كمبود جرين جولف” علي مساحة ٦٠ الف متر مربع بمدينة السادات بجوار الجامعة الجديدة بالمشاركة مع شركة بنيان
@@ -85,6 +85,38 @@
                         }
                     });
                 }
+            }
+            
+            // Enable drag-to-scroll for developer description
+            const desc = document.querySelector('.dev-description');
+            if (desc) {
+                let isDown = false;
+                let startY;
+                let scrollTop;
+
+                desc.addEventListener('mousedown', (e) => {
+                    isDown = true;
+                    desc.style.cursor = 'grabbing';
+                    startY = e.pageY - desc.offsetTop;
+                    scrollTop = desc.scrollTop;
+                });
+                desc.addEventListener('mouseleave', () => {
+                    isDown = false;
+                    desc.style.cursor = 'grab';
+                });
+                desc.addEventListener('mouseup', () => {
+                    isDown = false;
+                    desc.style.cursor = 'grab';
+                });
+                desc.addEventListener('mousemove', (e) => {
+                    if (!isDown) return;
+                    e.preventDefault();
+                    const y = e.pageY - desc.offsetTop;
+                    const walk = (y - startY) * 2; // Scroll-fast
+                    desc.scrollTop = scrollTop - walk;
+                });
+                // Initial cursor
+                desc.style.cursor = 'grab';
             }
         });
     </script>
