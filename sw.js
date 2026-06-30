@@ -54,7 +54,7 @@ const PRECACHE_ASSETS = [
     'icons/icon-192.png',
     'icons/icon-512.png',
     'assets/images/MallLogo.webp',
-    'assets/images/MallCoverImage.webp',
+    'assets/images/1.webp',
     'assets/images/DeveloperLogo.webp',
     'assets/images/DeveloperPageImage.webp',
     'assets/images/Developer-Icon-blue.webp',
