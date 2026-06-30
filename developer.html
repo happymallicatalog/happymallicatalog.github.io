@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title data-config-title="titleDeveloper">Developer | HappyMall iCatalog</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=IBM+Plex+Sans+Arabic:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Global & Component Styles -->
+    <link rel="stylesheet" href="global.css">
+    <link rel="stylesheet" href="nav.css">
+    <link rel="stylesheet" href="developer.css">
+</head>
+<body class="theme-dark">
+    <div class="page-container developer-page">
+        <!-- Full Screen Image Background -->
+        <div class="full-image-bg"></div>
+        
+        <!-- Content Area - Positioned on the Left visually -->
+        <div class="content-area">
+            <!-- Background with gradient mask -->
+            <div class="content-bg"></div>
+
+            <div class="content-inner">
+                <div class="dev-info-section">
+                                        <h2 class="dev-name"><!-- config:developerNameEn -->Betak بيتك<!-- /config:developerNameEn --></h2>
+                    
+                    <p class="dev-description scrollable-element"><!-- config:developerDescAr -->- تأسست الشركة منذ عام ٢٠١٦
+- شركة بيتك من كبري الشركات الرائدة في مجال التطوير العقاري
+- تمتلك الشركة اكثر من ٣٠ مشروع سكني في مدينة السادات ومدينة ٦ اكتوبر
+- تمتلك الشركة “كمبود جرين جولف” علي مساحة ٦٠ الف متر مربع بمدينة السادات بجوار الجامعة الجديدة بالمشاركة مع شركة بنيان
+- تمتلك الشركة مشروع “جولدن اوتو” أول وأكبر مركز متكامل لخدمة وصيانة السيارات
+- تمتلك الشركة ايضا ٣ مشروعات تجارية بمدينة السادات علي شارع أبو بكر الرئيسي
+- تحرص الشركة دائما علي اختيار أفضل المواقع وأكثرها تميزا لعملائها
+- تمتلك الشركة بصمة مميزة في مدينة السادات في المشروعات السكنية والتجارية الترفيهية والخدمية
+- تحرص الشركة دائما علي تقديم أفضل التصميمات والعصرية وتحرص دائما علي دقة وجودة التنفيذ في جميع المشروعات
+- تحرض الشركة علي تقديم الخدمات المتكاملة لعملائها حتي بعد تسليم المشروعات<!-- /config:developerDescAr -->
+                    </p>
+                </div>
+                
+                <div class="stats-row" id="devFeaturesGrid">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="global.js"></script>
+    <script src="nav.js"></script>
+    <script>
+        // config:developerFeatures
+        const developerFeatures = [
+            { icon: "2016", text: "منذ عام" },
+            { icon: "30+", text: "مشروع سكني" },
+            { icon: "+2", text: "السادات - ٦ اكتوبر" }
+        ];
+        // /config:developerFeatures
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const grid = document.getElementById('devFeaturesGrid');
+            if (grid && typeof developerFeatures !== 'undefined') {
+                grid.innerHTML = '';
+                if (developerFeatures.length === 0) {
+                    grid.style.display = 'none';
+                } else {
+                    developerFeatures.forEach((f, index) => {
+                        const item = document.createElement('div');
+                        item.className = 'stat-item';
+                        item.innerHTML = `
+                            <div class="stat-value">${f.icon}</div>
+                            <div class="stat-label">${f.text}</div>
+                        `;
+                        grid.appendChild(item);
+                        
+                        // Add vertical divider except after the last item
+                        if (index < developerFeatures.length - 1) {
+                            const divider = document.createElement('div');
+                            divider.className = 'stat-divider';
+                            grid.appendChild(divider);
+                        }
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>

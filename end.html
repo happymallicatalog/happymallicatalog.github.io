@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title data-config-title="titleEnd">Thank You | HappyMall iCatalog</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=IBM+Plex+Sans+Arabic:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Global & Component Styles -->
+    <link rel="stylesheet" href="global.css">
+    <link rel="stylesheet" href="nav.css">
+    <style>
+        :root {
+            --gold-gradient: linear-gradient(135deg, #dfa843 0%, #fef1b2 50%, #dfa843 100%);
+            --glass-bg: var(--page-glass);
+            --glass-border: rgba(223, 168, 67, 0.3);
+        }
+
+
+
+        html, body {
+            overflow: hidden !important;
+            height: 100vh !important;
+            height: 100svh !important;
+            touch-action: none !important;
+        }
+
+        /* config:endCoverImagePath */
+        .page-container {
+            background-image: url('assets/images/1.webp');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        /* /config:endCoverImagePath */
+
+        /* Luxury Overlay */
+        .page-container::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(rgba(3,8,33,0.4), rgba(3,8,33,0.7)), var(--page-glass); /* Bluer and darker tint */
+            backdrop-filter: blur(45px); /* Stronger glassmorphism */
+            -webkit-backdrop-filter: blur(45px);
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .info-panel {
+            position: relative;
+            z-index: 10;
+            width: 90%;
+            max-width: clamp(320px, 60vw, 750px); /* Increased width to prevent logo cuts */
+            height: auto;
+            min-height: auto;
+            background: transparent;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 0px;
+            align-items: center;
+            padding: clamp(20px, 4vh, 40px) clamp(20px, 4vw, 40px);
+            color: var(--page-text);
+            border: none;
+            box-shadow: none;
+            text-align: center;
+            border-radius: var(--se-card-radius);
+            text-shadow: var(--se-text-shadow);
+            overflow: visible; /* Prevent any clipping of logos */
+        }
+
+        /* Corner Accents */
+        .corner-accent {
+            display: none;
+        }
+
+        .logo-section {
+            width: 100%;
+            margin-bottom: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .logos-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: clamp(15px, 3vw, 40px);
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .end-logo {
+            width: clamp(160px, 35vmin, 350px);
+            max-width: 48%;
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+        }
+
+        .end-divider-mini {
+            width: 1px;
+            height: 45px;
+            background: var(--accent-color);
+            opacity: 0.5;
+        }
+
+        .main-message-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            margin-top: 0px;
+        }
+
+        .thanks-text {
+            font-family: var(--font-arabic);
+            font-size: clamp(1.6rem, 4vmin, 3rem);
+            font-weight: 300;
+            line-height: 1.2;
+            margin-bottom: 1vh;
+            color: var(--page-text);
+            opacity: 0.9;
+        }
+
+        .divider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+            margin: 5px 0;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--accent-color), transparent);
+        }
+
+        .divider-diamond {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-color);
+            transform: rotate(45deg);
+            box-shadow: 0 0 8px var(--accent-color);
+        }
+
+        .mall-tagline {
+            font-family: var(--font-arabic, 'IBM Plex Sans Arabic');
+            font-size: clamp(1.0rem, 2.5vmin, 1.5rem);
+            letter-spacing: 0 !important;
+            color: var(--accent-color);
+            opacity: 0.9;
+            margin-top: 15px;
+            font-weight: 300;
+        }
+
+        .end-footer {
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: clamp(0.7rem, 1.4vmin, 1rem);
+            color: rgba(255, 255, 255, 0.6);
+            text-align: center;
+            opacity: 0.9;
+            z-index: 10;
+            font-weight: 300;
+        }
+
+        .white-text {
+            color: #ffffff;
+            font-weight: 300;
+        }
+
+        .end-footer a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 300;
+        }
+
+
+    </style>
+</head>
+<body class="theme-dark">
+    <div class="page-container">
+        <div class="info-panel">
+            <div class="corner-accent top-right"></div>
+            <div class="corner-accent bottom-left"></div>
+
+            <div class="logo-section">
+                <div class="logos-row">
+                    <img data-config-src="mallLogoPath" src="assets/images/Mall_horizontal_Logo.webp" alt="Mall Logo" class="end-logo">
+                    <div class="end-divider-mini"></div>
+                    <img data-config-src="developerLogoPath" src="assets/images/Developer_horizontal_logo.webp" alt="Developer Logo" class="end-logo">
+                </div>
+            </div>
+            
+            <div class="main-message-section">
+                
+                <div class="divider-container">
+                    <div class="divider-line"></div>
+                    <div class="divider-diamond"></div>
+                    <div class="divider-line"></div>
+                </div>
+                
+                <p class="mall-tagline"><!-- config:mallTaglineEn -->لأنك تستحق الأفضل<!-- /config:mallTaglineEn --></p>
+            </div>
+
+        </div>
+        <div class="end-footer">
+            <a href="https://marwasleem.netlify.app" target="_blank" rel="noopener noreferrer" onclick="window.open(this.href, '_blank'); return false;" class="white-text" style="text-decoration: none;">iCΛTALOG</a>
+        </div>
+    </div>
+
+    <script src="global.js"></script>
+    <script src="nav.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Static configuration loaded, config.js removed.
+        });
+    </script>
+</body>
+</html>

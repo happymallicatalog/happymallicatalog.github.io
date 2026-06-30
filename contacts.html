@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title data-config-title="titleContacts">Contact Us | HappyMall iCatalog</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=IBM+Plex+Sans+Arabic:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="global.css">
+    <link rel="stylesheet" href="nav.css">
+    <style>
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden !important;
+            touch-action: none !important;
+            background-color: var(--page-bg);
+        }
+
+        .page-container {
+            width: 100vw;
+            height: 100vh;
+            height: 100svh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            overflow: hidden !important;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url('assets/images/Mall_images/3.jpg') center/cover no-repeat;
+        }
+
+        .contact-card {
+            width: 100%;
+            max-width: 100vw;
+            height: clamp(350px, 50vh, 600px);
+            display: flex;
+            overflow: hidden;
+            border-radius: 0;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.8);
+            background: var(--page-glass); /* Adapts dynamically to light/dark themes */
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            z-index: 2;
+        }
+
+        .contact-info-side {
+            width: 62%;
+            padding: clamp(20px, 4vh, 50px);
+            padding-left: clamp(50px, 8vw, 100px); /* Space for vertical text in RTL on the left side */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: clamp(15px, 3vh, 30px);
+            background: transparent;
+            position: relative;
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .contact-info-side::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Large vertical text */
+        .vertical-title {
+            position: absolute;
+            left: clamp(10px, 2vw, 30px); /* Moved to the left edge to prevent overlap with RTL text */
+            top: 50%;
+            transform: translateY(-50%) rotate(90deg);
+            font-family: var(--font-arabic, 'IBM Plex Sans Arabic');
+            font-size: clamp(3rem, 10vmin, 8rem);
+            font-weight: 700;
+            color: var(--page-text);
+            opacity: 0.05;
+            pointer-events: none;
+            user-select: none;
+            transform-origin: center;
+        }
+
+        .contact-map-side {
+            width: 38%;
+            height: 100%;
+            /* config:developerMapPath */
+            background-image: url('assets/images/developer-location-map.webp');
+            /* /config:developerMapPath */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+            /* Removed grayscale to keep map colors normal */
+        }
+
+        .contact-header {
+            margin-bottom: clamp(10px, 2vh, 20px);
+            z-index: 2;
+        }
+        .contact-header h1 {
+            display: none;
+        }
+        .contact-header p {
+            font-family: var(--font-arabic, 'Outfit');
+            font-size: clamp(1rem, 2vmin, 1.2rem);
+            color: var(--page-text);
+            opacity: 0.8;
+            margin: 0;
+            font-weight: 400;
+        }
+
+        .info-list {
+            display: flex;
+            flex-direction: column;
+            gap: clamp(15px, 3vh, 35px);
+            z-index: 2;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5vw;
+        }
+
+        .info-icon {
+            width: clamp(20px, 3vmin, 28px);
+            height: clamp(20px, 3vmin, 28px);
+            color: var(--accent-color);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .info-content h4 {
+            font-family: var(--font-arabic, 'IBM Plex Sans Arabic');
+            font-size: clamp(0.9rem, 1.8vmin, 1.2rem);
+            color: var(--accent-color);
+            text-transform: uppercase;
+            font-weight: 400;
+            letter-spacing: 0;
+            margin-bottom: 5px;
+        }
+
+        .info-content p, .info-content a, .info-content div a {
+            font-family: var(--font-arabic, 'Outfit');
+            font-size: clamp(0.95rem, 1.8vmin, 1.1rem);
+            color: var(--page-text) !important;
+            font-weight: 400;
+            line-height: 1.6;
+            opacity: 1;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .info-content a:hover {
+            color: var(--accent-color) !important;
+            text-decoration: underline;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            z-index: 2;
+        }
+
+        .social-icon {
+            width: clamp(35px, 5vmin, 45px);
+            height: clamp(35px, 5vmin, 45px);
+            background: rgba(128, 128, 128, 0.15); /* Neutral glass tint */
+            color: var(--page-text); /* Adapts dynamically to light/dark themes */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+        }
+
+        .social-icon svg {
+            width: 50%;
+            height: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .social-icon:hover {
+            background: var(--accent-color);
+            color: #020712;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(223, 168, 67, 0.2);
+        }
+
+        .social-icon:hover svg {
+            transform: scale(1.1);
+        }
+
+        .social-btn {
+            height: clamp(35px, 5vmin, 45px);
+            padding: 0 15px;
+            background: rgba(128, 128, 128, 0.15);
+            color: var(--page-text);
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--font-arabic, 'Outfit');
+            font-weight: 400;
+            font-size: clamp(0.85rem, 1.5vmin, 1rem);
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .social-btn svg {
+            width: 20px;
+            height: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .social-btn:hover {
+            background: var(--accent-color);
+            color: #020712;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(223, 168, 67, 0.2);
+        }
+
+        .social-btn:hover svg {
+            transform: scale(1.1);
+        }
+
+        .directions-btn {
+            position: absolute;
+            bottom: clamp(15px, 3vh, 30px);
+            left: clamp(15px, 3vw, 30px); /* In RTL, place on bottom left of map */
+            background: var(--accent-color);
+            color: #ffffff;
+            padding: 10px 22px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-family: var(--font-arabic, 'Outfit');
+            font-weight: 400;
+            font-size: clamp(0.9rem, 1.6vmin, 1rem);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .directions-btn:hover {
+            transform: translateY(-5px);
+            background: #fff;
+            color: #020712;
+            box-shadow: 0 15px 40px rgba(255, 255, 255, 0.4);
+        }
+
+
+    </style>
+</head>
+<body class="theme-dark">
+    <div class="page-container">
+        <div class="contact-card luxury-card ">
+            <div class="contact-map-side">
+                <a data-config-href="developerOfficeMapsLink" href="https://maps.app.goo.gl/KB3293T7ZZTtTyvF9" target="_blank" rel="noopener noreferrer" class="directions-btn">
+                    الاتجاهات
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6"/><path d="M10 14L21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                </a>
+            </div>
+
+            <div class="contact-info-side">
+                <div class="vertical-title">اتصل بنا</div>
+
+                <div class="contact-header">
+                    <h1>اتصل بنا</h1>
+                    <p><!-- config:contactSubtitleAr -->شركة بيتك للتطوير العقاري<!-- /config:contactSubtitleAr --></p>
+                </div>
+                
+                <div class="info-list">
+                    <!-- Populated dynamically by script below -->
+                </div>
+
+                <!-- Social Media Icons -->
+                <div class="social-links">
+                    <!-- Populated dynamically by script below -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Configuration Placeholders -->
+    <script>
+        const CONTACT_CONFIG = {
+            address: `<!-- config:contactAddressAr -->محافظة المنوفية مدينة السادات المنطقة التاسعة مركز جولدن اوتو بجوار نادي انتر سيتي الدور الثالث<!-- /config:contactAddressAr -->`,
+            website: `<!-- config:websiteLink --><!-- /config:websiteLink -->`,
+            email: `<!-- config:emailLink --><!-- /config:emailLink -->`,
+            phones: `<!-- config:phoneNumbers -->01220169900,01060028849<!-- /config:phoneNumbers -->`,
+            whatsapps: `<!-- config:whatsappNumbers --><!-- /config:whatsappNumbers -->`,
+            facebook: `<!-- config:facebookLink -->https://www.facebook.com/share/1AZVq49VhS/<!-- /config:facebookLink -->`,
+            instagram: `<!-- config:instagramLink --><!-- /config:instagramLink -->`,
+            linkedin: `<!-- config:linkedinLink --><!-- /config:linkedinLink -->`
+        };
+    </script>
+
+    <script src="global.js"></script>
+    <script src="nav.js"></script>
+    <script>
+        function getCleanConfig(val) {
+            if (!val) return '';
+            const trimmed = val.trim();
+            if (trimmed.startsWith('<!-- config:') && trimmed.includes('-->')) {
+                return trimmed.replace(/<!--[\s\S]*?-->/g, '').trim();
+            }
+            return trimmed;
+        }
+
+        function isConfigured(val) {
+            const clean = getCleanConfig(val);
+            return clean !== '' && clean !== 'https://';
+        }
+
+        function initContactsPage() {
+            // Hide Get Directions button if maps link is empty or unconfigured
+            const dirBtn = document.querySelector('.contact-map-side .directions-btn');
+            const mapSide = document.querySelector('.contact-map-side');
+            let hasMapLink = false;
+            if (dirBtn) {
+                const href = dirBtn.getAttribute('href');
+                if (isConfigured(href) && href !== 'developerOfficeMapsLink') {
+                    hasMapLink = true;
+                    dirBtn.setAttribute('target', '_blank');
+                    dirBtn.setAttribute('rel', 'noopener noreferrer');
+                    dirBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        window.open(dirBtn.href, '_blank');
+                    });
+                } else {
+                    dirBtn.style.display = 'none';
+                }
+            }
+
+            let hasMapImg = false;
+            if (mapSide) {
+                const bg = window.getComputedStyle(mapSide).backgroundImage;
+                if (bg && bg !== 'none' && !bg.includes('url("")') && !bg.includes("url('')") && !bg.includes('/undefined')) {
+                    hasMapImg = true;
+                }
+            }
+
+            if (mapSide && !hasMapImg && !hasMapLink) {
+                mapSide.style.display = 'none';
+                const infoSide = document.querySelector('.contact-info-side');
+                if (infoSide) {
+                    infoSide.style.width = '100%';
+                    infoSide.style.maxWidth = '100%';
+                    infoSide.style.flex = '1';
+                }
+            }
+
+            const subtitleEl = document.querySelector('.contact-header p');
+            if (subtitleEl) {
+                if (!isConfigured(subtitleEl.innerHTML)) {
+                    subtitleEl.style.display = 'none';
+                }
+            }
+
+            const list = document.querySelector('.info-list');
+            if (list) {
+                list.innerHTML = '';
+
+                // 1. Address
+                if (isConfigured(CONTACT_CONFIG.address)) {
+                    list.innerHTML += `
+                        <div class="info-item">
+                            <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                            <div class="info-content">
+                                <h4>العنوان</h4>
+                                <p>${CONTACT_CONFIG.address}</p>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // 2. Website
+                const cleanWebsite = getCleanConfig(CONTACT_CONFIG.website);
+                if (isConfigured(cleanWebsite)) {
+                    list.innerHTML += `
+                        <div class="info-item">
+                            <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="2" y1="12" x2="22" y2="12"></line>
+                                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                            </svg>
+                            <div class="info-content">
+                                <h4>الموقع الإلكتروني</h4>
+                                <p><a href="${cleanWebsite}" target="_blank" rel="noopener noreferrer" onclick="window.open(this.href, '_blank'); return false;">${cleanWebsite.replace(/^https?:\/\//, '')}</a></p>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // 3. Email
+                const cleanEmail = getCleanConfig(CONTACT_CONFIG.email);
+                if (isConfigured(cleanEmail)) {
+                    list.innerHTML += `
+                        <div class="info-item">
+                            <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                <polyline points="22,6 12,13 2,6"></polyline>
+                            </svg>
+                            <div class="info-content">
+                                <h4>البريد الإلكتروني</h4>
+                                <p><a href="mailto:${cleanEmail}" target="_blank" rel="noopener noreferrer" onclick="window.open(this.href, '_blank'); return false;">${cleanEmail}</a></p>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // 4. Phone Numbers
+                const cleanPhones = getCleanConfig(CONTACT_CONFIG.phones);
+                if (isConfigured(cleanPhones)) {
+                    const phoneList = cleanPhones.split(',').map(p => p.trim()).filter(p => p);
+                    if (phoneList.length > 0) {
+                        const phoneLinks = phoneList.map(p => `<a href="tel:${p}" target="_blank" rel="noopener noreferrer" onclick="window.open(this.href, '_blank'); return false;" style="display:block; margin-bottom:4px; text-decoration:none;">${p}</a>`).join('');
+                        list.innerHTML += `
+                            <div class="info-item">
+                                <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                                </svg>
+                                <div class="info-content">
+                                    <h4>أرقام الاتصال</h4>
+                                    <div style="direction:ltr; text-align:right;">${phoneLinks}</div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+
+                // 5. WhatsApp Numbers
+                const cleanWhatsapps = getCleanConfig(CONTACT_CONFIG.whatsapps);
+                if (isConfigured(cleanWhatsapps)) {
+                    const waList = cleanWhatsapps.split(',').map(w => w.trim()).filter(w => w);
+                    if (waList.length > 0) {
+                        const waLinks = waList.map(w => `<a href="https://wa.me/${w.replace(/[^0-9]/g, '')}" target="_blank" rel="noopener noreferrer" onclick="window.open(this.href, '_blank'); return false;" style="display:block; margin-bottom:4px; text-decoration:none;">${w}</a>`).join('');
+                        list.innerHTML += `
+                            <div class="info-item">
+                                <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                                </svg>
+                                <div class="info-content">
+                                    <h4>واتساب</h4>
+                                    <div style="direction:ltr; text-align:right;">${waLinks}</div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+            }
+
+            // 6. Social Media
+            const socials = document.querySelector('.social-links');
+            if (socials) {
+                socials.innerHTML = '';
+                const socialData = [
+                    { key: 'facebook', label: 'Facebook', text: 'صفحتنا علي فيسبوك', svg: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>' },
+                    { key: 'instagram', label: 'Instagram', svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>' },
+                    { key: 'linkedin', label: 'LinkedIn', svg: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"></path><circle cx="4" cy="4" r="2"></circle></svg>' }
+                ];
+                socialData.forEach(s => {
+                    const url = getCleanConfig(CONTACT_CONFIG[s.key]);
+                    if (isConfigured(url)) {
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.target = '_blank';
+                        a.rel = 'noopener noreferrer';
+                        if (s.text) {
+                            a.className = 'social-btn';
+                            a.innerHTML = s.svg + `<span>${s.text}</span>`;
+                        } else {
+                            a.className = 'social-icon';
+                            a.innerHTML = s.svg;
+                        }
+                        a.setAttribute('aria-label', s.label);
+                        a.addEventListener('click', (e) => { e.preventDefault(); window.open(url, '_blank'); });
+                        socials.appendChild(a);
+                    }
+                });
+                if (socials.children.length === 0) socials.style.display = 'none';
+            }
+
+            // Global external link interceptor for PWA
+            document.addEventListener('click', (e) => {
+                const a = e.target.closest('a[target="_blank"]');
+                if (a && a.href) {
+                    e.preventDefault();
+                    window.open(a.href, '_blank');
+                }
+            });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initContactsPage);
+        } else {
+            initContactsPage();
+        }
+    </script>
+</body>
+</html>

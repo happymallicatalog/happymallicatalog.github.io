@@ -1,0 +1,9 @@
+{
+  "name": "thamall-icatalog",
+  "version": "1.0.0",
+  "description": "ThaMall Interactive Real Estate Catalog PWA",
+  "type": "module",
+  "dependencies": {
+    "@netlify/blobs": "^8.0.0"
+  }
+}

@@ -1,0 +1,265 @@
+/* Navigation Styles - Luxury Card Style */
+.nav-menu-container {
+    position: fixed;
+    bottom: clamp(10px, 2vmin, 20px);
+    right: clamp(10px, 2vmin, 20px);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 15px;
+    pointer-events: none;
+}
+
+.nav-menu-container > * {
+    pointer-events: auto;
+}
+
+:root {
+    --nav-btn-size: clamp(48px, 6vmin, 54px);
+    --nav-icon-size: clamp(22px, 3vmin, 24px);
+    --nav-glass-bg: #ffffff;
+    --nav-glass-border: #ffffff;
+    --nav-icon-color: #fb9a16;            /* Active icon & burger-line color */
+    --nav-icon-color-inactive: #42799a; /* Inactive icon color */
+    --nav-icon-color-hover: #fb9a16;                  /* Hover icon color */
+    --nav-btn-radius: 50%;                            /* 4px = square | 50% = circle */
+    --nav-panel-bg: transparent;
+    --nav-panel-border: none;
+    --nav-panel-shadow: none;
+    --nav-panel-backdrop: none;
+    --nav-accents-display: none;
+    --nav-item-bg: var(--nav-glass-bg);
+    --nav-item-border: 1px solid var(--nav-glass-border);
+    --nav-item-backdrop: blur(25px);
+}
+
+/* Toggle Button - Matching Theme */
+.nav-toggle-btn {
+    width: var(--nav-btn-size);
+    height: var(--nav-btn-size);
+    border-radius: var(--nav-btn-radius);
+    background: var(--nav-glass-bg);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid var(--nav-glass-border);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--nav-icon-color-inactive);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 1001;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+.nav-toggle-btn .burger-icon {
+    width: 20px;
+    height: 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.nav-toggle-btn span {
+    display: block;
+    width: 100%;
+    height: 1.5px;
+    background: var(--nav-icon-color-inactive);
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+.nav-menu-container.active .nav-toggle-btn {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+.nav-menu-container.active .nav-toggle-btn span {
+    background: var(--primary-color);
+}
+
+.nav-menu-container.active .nav-toggle-btn span:nth-child(1) {
+    transform: translateY(6px) rotate(45deg);
+}
+
+.nav-menu-container.active .nav-toggle-btn span:nth-child(2) {
+    opacity: 0;
+}
+
+.nav-menu-container.active .nav-toggle-btn span:nth-child(3) {
+    transform: translateY(-6px) rotate(-45deg);
+}
+
+/* Navigation Items Panel - The Card */
+.nav-items {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    background: var(--nav-panel-bg);
+    backdrop-filter: var(--nav-panel-backdrop);
+    -webkit-backdrop-filter: var(--nav-panel-backdrop);
+    border: var(--nav-panel-border);
+    border-radius: var(--nav-btn-radius);
+    padding: 15px 8px;
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+    transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+    pointer-events: none;
+    box-shadow: var(--nav-panel-shadow);
+}
+
+.nav-menu-container.active .nav-items {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+/* Card Accents */
+.nav-card-accent {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    border: 1px solid var(--accent-color);
+    opacity: 0.6;
+    pointer-events: none;
+    display: var(--nav-accents-display);
+}
+
+.nav-accent-tr { top: 6px; right: 6px; border-bottom: none; border-left: none; }
+.nav-accent-bl { bottom: 6px; left: 6px; border-top: none; border-right: none; }
+
+.nav-item {
+    width: var(--nav-btn-size);
+    height: var(--nav-btn-size);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: var(--nav-icon-color-inactive);
+    background: var(--nav-item-bg);
+    backdrop-filter: var(--nav-item-backdrop);
+    -webkit-backdrop-filter: var(--nav-item-backdrop);
+    border: var(--nav-item-border);
+    transition: all 0.3s ease;
+    border-radius: var(--nav-btn-radius);
+    position: relative;
+}
+
+.nav-item::after {
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background: var(--accent-color);
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.nav-item.active {
+    color: var(--accent-color);
+}
+
+.nav-item.active::after {
+    opacity: 1;
+}
+
+.nav-item:hover {
+    color: var(--nav-icon-color-hover);
+}
+
+.nav-item img {
+    filter: brightness(0) invert(1) opacity(0.6);
+}
+
+.nav-item.active img {
+    filter: sepia(1) saturate(5) hue-rotate(10deg) brightness(0.8) contrast(1.2); /* Gold-ish filter */
+    opacity: 1;
+}
+
+.nav-item:hover img {
+    filter: sepia(1) saturate(5) hue-rotate(10deg) brightness(0.8) contrast(1.2);
+    opacity: 1;
+}
+
+.nav-item svg, 
+.nav-item img,
+.nav-text-icon {
+    width: var(--nav-icon-size);
+    height: var(--nav-icon-size);
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.nav-item:hover svg, 
+.nav-item:hover img,
+.nav-item:hover .nav-text-icon {
+    transform: scale(1.15);
+}
+
+.nav-text-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: clamp(14px, 2vmin, 18px);
+}
+
+.nav-item.small-text-icon .nav-text-icon {
+    font-size: clamp(10px, 1.5vmin, 13px);
+}
+
+/* Horizontal Layout for Landscape/Small Height */
+.nav-menu-container.horizontal {
+    flex-direction: row-reverse;
+    align-items: center;
+}
+
+.nav-menu-container.horizontal .nav-items {
+    flex-direction: row-reverse;
+    padding: 8px 15px;
+    transform: translateX(20px) scale(0.95);
+}
+
+.nav-menu-container.horizontal.active .nav-items {
+    transform: translateX(0) scale(1);
+}
+
+/* Page Sliding & Dragging Transitions */
+.page-container {
+    transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.4s ease;
+    will-change: transform, opacity;
+}
+
+body.dragging .page-container {
+    transition: none !important;
+    cursor: grabbing !important;
+}
+
+body.navigating .page-container {
+    pointer-events: none;
+}
+
+@keyframes slideInFromRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideInFromLeft {
+    from { transform: translateX(-100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+.slide-in-right {
+    animation: slideInFromRight 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+.slide-in-left {
+    animation: slideInFromLeft 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}

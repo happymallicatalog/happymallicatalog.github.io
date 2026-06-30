@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>خطط الدفع | Payment Plans - TheMall iCatalog</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=IBM+Plex+Sans+Arabic:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="global.css">
+    <link rel="stylesheet" href="nav.css">
+    <style>
+        :root {
+            --page-text: #1A1A1A;
+            --text-muted: #666666;
+            --bg-gray: #F8F9FA;
+            --card-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+            --card-shadow-hover: 0 20px 50px rgba(11, 29, 51, 0.12);
+            --glass-bg: var(--page-glass);
+            --border-color: #E0E0E0;
+        }
+
+        html, body {
+            height: auto;
+            min-height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+            touch-action: pan-y !important;
+            background-color: var(--bg-gray);
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Scrollbar styles for visibility */
+        body::-webkit-scrollbar {
+            width: 4px;
+        }
+        body::-webkit-scrollbar-thumb {
+            background: rgba(11, 29, 51, 0.2);
+            border-radius: 10px;
+        }
+
+        .page-container {
+            width: 100%;
+            min-height: 100vh;
+            min-height: 100svh;
+            height: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: clamp(3vh, 5vh, 7vh) clamp(20px, 8vw, 80px);
+            overflow-x: hidden !important;
+            position: relative;
+            background-color: var(--bg-gray);
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3vh;
+            max-width: 800px;
+            position: relative;
+            width: 100%;
+        }
+
+        .page-title {
+            font-family: var(--font-arabic);
+            font-size: clamp(1.8rem, 5vmin, 4rem);
+            font-weight: 300;
+            line-height: 1.2;
+            color: var(--primary-color);
+            margin-bottom: 1vh;
+        }
+
+        .page-subtitle {
+            color: var(--text-muted);
+            font-size: clamp(0.9rem, 2.5vmin, 1.3rem);
+            font-weight: 400;
+        }
+
+        .plans-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            width: 100%;
+            max-width: 1200px;
+            padding: 2vh 0;
+            overflow: visible;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .plans-grid::-webkit-scrollbar {
+            display: none;
+        }
+
+        .plan-card {
+            background: #fff;
+            border: 1px solid #f0f0f0;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            width: 100%;
+            border-radius: 4px; 
+        }
+
+        .plan-card:hover {
+            box-shadow: var(--luxury-shadow);
+        }
+
+        .plan-header {
+            padding: clamp(10px, 2.5vmin, 20px);
+            text-align: center;
+            background: transparent;
+        }
+
+        .plan-header h2 {
+            margin: 0;
+            font-size: clamp(1.4rem, 4vmin, 2rem);
+            color: var(--primary-color);
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .plan-header .downpayment-main {
+            display: inline-block;
+            font-size: clamp(0.7rem, 1.8vmin, 0.9rem);
+            color: var(--accent-color);
+            margin-top: 0.5vh;
+            font-weight: 600;
+            text-transform: uppercase;
+            padding: clamp(2px, 0.5vmin, 4px) clamp(5px, 1.5vmin, 10px);
+            background: color-mix(in srgb, var(--accent-color) 10%, transparent);
+            border-radius: 20px;
+        }
+
+        .plan-body {
+            padding: 0 clamp(10px, 2.5vmin, 20px);
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .plan-stats {
+            list-style: none;
+            padding: 0;
+            margin: 1vh 0;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: clamp(6px, 1.5vmin, 12px) 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: clamp(0.95rem, 2.5vmin, 1.1rem);
+        }
+
+        .stat-value {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: clamp(1.1rem, 3vmin, 1.3rem);
+        }
+
+        .price-section {
+            padding: clamp(10px, 2.5vmin, 20px);
+            background: transparent;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        .total-label {
+            color: var(--text-muted);
+            font-size: clamp(0.6rem, 1.5vmin, 0.8rem);
+            margin-bottom: 0.3vh;
+            display: block;
+        }
+
+        .total-price-value {
+            font-size: clamp(1.3rem, 4vmin, 1.8rem);
+            font-weight: 700;
+            color: var(--primary-color);
+            font-family: 'Outfit', sans-serif;
+            margin: 0.2vh 0;
+            min-height: 2.5vh;
+        }
+
+        .monthly-box {
+            margin-top: 1.5vh;
+            background: var(--primary-color);
+            color: white;
+            padding: clamp(6px, 1.5vmin, 10px);
+            border-radius: 12px;
+            display: none;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .monthly-label {
+            font-size: clamp(0.6rem, 1.5vmin, 0.75rem);
+            opacity: 0.8;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .monthly-value {
+            font-size: clamp(1.2rem, 3.5vmin, 1.6rem);
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .global-selector-container {
+            margin-top: 2vh;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .unit-select {
+            width: 100%;
+            padding: clamp(12px, 2vmin, 18px) clamp(15px, 2.5vmin, 25px);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: clamp(1rem, 2.5vmin, 1.4rem);
+            color: var(--primary-color);
+            background-color: #fff;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%230B1D33' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: left 20px center;
+            background-size: 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        .unit-select:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 4px 20px color-mix(in srgb, var(--accent-color) 15%, transparent);
+        }
+
+        .online-indicator {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 11px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            user-select: none;
+            padding: 2px 5px;
+            border-radius: 15px;
+            z-index: 10000;
+        }
+
+        .online-indicator.online { color: #2ecc71; }
+        .online-indicator.offline { color: #e74c3c; }
+
+        .online-indicator.expanded {
+            /* No padding change to prevent vertical shift */
+        }
+
+        .online-indicator #statusText {
+            max-width: 500px;
+            opacity: 1;
+            margin-left: 8px;
+            overflow: visible;
+            white-space: nowrap;
+            transition: max-width 0.5s ease;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .online-indicator.expanded #statusText {
+            max-width: 500px;
+            opacity: 1;
+            margin-left: 8px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .status-dot.online {
+            background-color: #2ecc71;
+            box-shadow: 0 0 8px rgba(46, 204, 113, 0.4);
+        }
+
+        .status-dot.offline {
+            background-color: #e74c3c;
+            box-shadow: 0 0 8px rgba(231, 76, 60, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <div class="page-header">
+            <h1 class="page-title">خطط الدفع</h1>
+            <p class="page-subtitle">اختر خطة الدفع المناسبة لك واحسب أقساطك بسهولة</p>
+            <div class="global-selector-container">
+                <select id="globalUnitSelect" class="unit-select" onchange="updateAllCalculations(this.value)">
+                    <option value="">اختر الوحدة</option>
+                </select>
+            </div>
+        </div>
+        
+        <div id="plansGrid" class="plans-grid">
+            <!-- Plan cards will be injected here -->
+        </div>
+    </div>
+
+    <!-- Database Sync Layer -->
+    <script src="database.js"></script>
+    <!-- Navigation -->
+    <script src="global.js"></script>
+    <script src="nav.js"></script>
+
+    <script>
+        let catalogData = null;
+        const CACHE_KEY = typeof ThaMallDB !== 'undefined' ? ThaMallDB.LOCAL_KEY : 'tha_mall_admin_data';
+
+        async function loadData() {
+            if (typeof ThaMallDB !== 'undefined') {
+                const { data, source } = await ThaMallDB.load();
+                catalogData = data;
+                updateBadge(source);
+            } else {
+                // Fallback
+                const cached = localStorage.getItem(CACHE_KEY);
+                if (cached) { catalogData = JSON.parse(cached); }
+                else { initializeDefaultData(); return; }
+            }
+            if (!catalogData || !catalogData.plans || !catalogData.plans.length) {
+                initializeDefaultData();
+                return;
+            }
+            populateGlobalSelector();
+            renderPlans();
+        }
+
+        function populateGlobalSelector() {
+            const select = document.getElementById('globalUnitSelect');
+            if (!select) return;
+            const currentVal = select.value;
+            select.innerHTML = '<option value="">اختر الوحدة</option>';
+            
+            Object.values(catalogData.units)
+                .sort(ThaMallDB.sortUnits)
+                .forEach(u => {
+                    const opt = document.createElement('option');
+                    opt.value = u.code;
+                    opt.textContent = `${u.code} (${u.area} m2)`;
+                    select.appendChild(opt);
+                });
+            
+            if (currentVal) select.value = currentVal;
+        }
+
+        // ── STATUS INDICATOR ─────────────────────────────────────────────────────
+        function injectStatusBadge() {
+            if (document.getElementById('onlineIndicator')) return;
+            const indicator = document.createElement('div');
+            indicator.id = 'onlineIndicator';
+            indicator.className = 'online-indicator';
+            indicator.innerHTML = `
+                <span class="status-dot" id="statusDot"></span>
+                <span id="statusText">جاري اختبار الاتصال...</span>
+            `;
+            indicator.addEventListener('click', () => indicator.classList.toggle('expanded'));
+            document.querySelector('.page-header').appendChild(indicator);
+            updateBadge();
+            window.addEventListener('online',  updateBadge);
+            window.addEventListener('offline', updateBadge);
+        }
+
+        function updateBadge() {
+            const indicator = document.getElementById('onlineIndicator');
+            const dot = document.getElementById('statusDot');
+            const text = document.getElementById('statusText');
+            if (!indicator || !dot || !text) return;
+
+            const status = (typeof ThaMallDB !== 'undefined') ? ThaMallDB.getSyncStatus() : { online: navigator.onLine, checked: true, source: 'cache' };
+
+            const onlineMsg = "اونلاين - البيانات محدثة";
+            const offlineMsg = "اوفلاين - البيانات غير محدثة";
+            const checkingMsg = "جاري اختبار الاتصال...";
+
+            if (!status.checked) {
+                indicator.className = 'online-indicator';
+                dot.className = 'status-dot';
+                text.textContent = checkingMsg;
+            } else if (status.online) {
+                indicator.className = 'online-indicator online';
+                dot.className = 'status-dot online';
+                text.textContent = onlineMsg;
+            } else {
+                indicator.className = 'online-indicator offline';
+                dot.className = 'status-dot offline';
+                text.textContent = offlineMsg;
+            }
+        }
+
+        function initializeDefaultData() {
+            // Default settings matching assets/units logic
+            catalogData = {
+                plans: [
+                    { id: 'p1', name: 'الخطة الأولى', years: 5, down: 10, yearly: 0 },
+                    { id: 'p2', name: 'الخطة الثانية', years: 6, down: 15, yearly: 6 },
+                    { id: 'p3', name: 'الخطة الثالثة', years: 7, down: 20, yearly: 8 }
+                ],
+                categories: ["مطعم", "محل", "مكتب", "ملابس", "ادوات منزلية", "ادوات كهربائية", "موبايلات"],
+                positions: ["ارضي / خارجي", "ارضي / داخلي", "اول علوي / خارجي", "اول علوي / داخلي"],
+                units: {},
+                prices: {}
+            };
+
+            // Initialize basic units
+            for(let i=1; i<=12; i++) {
+                let code = 'G-' + (i < 10 ? '0' + i : i);
+                catalogData.units[code] = { code, area: 45 + Math.floor(Math.random() * 20), position: i <= 6 ? "ارضي / خارجي" : "ارضي / داخلي", categories: ["محل"] };
+            }
+            for(let i=1; i<=14; i++) {
+                let code = 'F-' + (i < 10 ? '0' + i : i);
+                catalogData.units[code] = { code, area: 30 + Math.floor(Math.random() * 15), position: i <= 7 ? "اول علوي / خارجي" : "اول علوي / داخلي", categories: ["مكتب"] };
+            }
+            catalogData.positions.forEach(pos => {
+                catalogData.prices[pos] = { 'p1': 115000, 'p2': 120000, 'p3': 125000 };
+            });
+
+            renderPlans();
+        }
+
+        function renderPlans() {
+            const grid = document.getElementById('plansGrid');
+            grid.innerHTML = '';
+
+            const sortedPlans = catalogData.plans;
+
+            sortedPlans.forEach(plan => {
+                const card = document.createElement('div');
+                card.className = 'plan-card luxury-card luxury-card-light';
+                card.innerHTML = `
+                    <div class="plan-header">
+                        <h2>${plan.name}</h2>
+                        <span class="downpayment-main">${plan.years} سنوات - ${plan.down}% مقدم</span>
+                    </div>
+                    <div class="plan-body">
+                        <ul class="plan-stats">
+                            <li class="stat-item">
+                                <span class="stat-label">سعر المتر</span>
+                                <span class="stat-value" id="val-price-meter-${plan.id}">-</span>
+                            </li>
+                            <li class="stat-item">
+                                <span class="stat-label">قيمة المقدم</span>
+                                <span class="stat-value" id="val-down-${plan.id}">-</span>
+                            </li>
+
+                        </ul>
+                    </div>
+                    <div class="price-section">
+                        <span class="total-label">إجمالي السعر</span>
+                        <div class="total-price-value" id="val-total-${plan.id}">-</div>
+                        <div class="monthly-box" id="pill-monthly-${plan.id}">
+                            <span class="monthly-label">القسط الربع سنوي</span>
+                            <div class="monthly-value" id="val-monthly-${plan.id}">-</div>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+            
+            // Re-apply calculations if a unit was already selected
+            const globalSelect = document.getElementById('globalUnitSelect');
+            if (globalSelect && globalSelect.value) {
+                updateAllCalculations(globalSelect.value);
+            }
+        }
+
+        function updateAllCalculations(unitCode) {
+            if (!catalogData || !catalogData.plans) return;
+            catalogData.plans.forEach(plan => {
+                updateCardCalculations(plan.id, unitCode);
+            });
+        }
+
+        function updateCardCalculations(planId, unitCode) {
+            const plan = catalogData.plans.find(p => p.id === planId);
+            const unit = catalogData.units[unitCode];
+            
+            const totalEl = document.getElementById(`val-total-${planId}`);
+            const downEl = document.getElementById(`val-down-${planId}`);
+            const priceMeterEl = document.getElementById(`val-price-meter-${planId}`);
+            const monthlyBox = document.getElementById(`pill-monthly-${planId}`);
+            const monthlyVal = document.getElementById(`val-monthly-${planId}`);
+
+            if (!unit) {
+                totalEl.textContent = '-';
+                downEl.textContent = '-';
+                priceMeterEl.textContent = '-';
+                monthlyBox.style.display = 'none';
+                return;
+            }
+
+            const pricePerMeter = (catalogData.prices[unit.position] && catalogData.prices[unit.position][plan.id]) ? catalogData.prices[unit.position][plan.id] : 0;
+            const totalPrice = pricePerMeter * unit.area;
+            const downpaymentValue = totalPrice * (plan.down / 100);
+            
+            const remainingAmount = totalPrice - downpaymentValue;
+            const monthlyInstallment = remainingAmount / (plan.years * 4);
+
+            totalEl.textContent = totalPrice.toLocaleString() + ' EGP';
+            downEl.textContent = downpaymentValue.toLocaleString() + ' EGP';
+            priceMeterEl.textContent = pricePerMeter.toLocaleString() + ' EGP';
+            monthlyVal.textContent = Math.round(monthlyInstallment).toLocaleString() + ' EGP';
+            monthlyBox.style.display = 'block';
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            injectStatusBadge();
+            await loadData();
+        });
+
+        // Listen for changes from same browser (admin panel in another tab)
+        window.addEventListener('storage', async (e) => {
+            if (e.key === CACHE_KEY + '_ping' || e.key === CACHE_KEY) {
+                console.log('[Plans] Data updated, refreshing...');
+                await loadData();
+            }
+        });
+
+        // ── REMOTE SYNC (admin panel changes from another device) ────────────────
+        window.addEventListener('thaMallRemoteUpdate', async () => {
+            console.log('[Plans] Remote update received, refreshing data...');
+            await loadData();
+        });
+
+        // ── NETWORK STATUS (Active detection from DB layer) ──────────────────────
+        window.addEventListener('thaMallDataEvent', e => {
+            if (e.detail.event === 'networkStatus' || e.detail.event === 'loaded') {
+                updateBadge();
+            }
+        });
+
+        // Periodic ping to keep status accurate (only when page is visible)
+        setInterval(() => {
+            if (!document.hidden && typeof ThaMallDB !== 'undefined') {
+                ThaMallDB.ping().then(() => updateBadge());
+            }
+        }, 30000);
+    </script>
+    <script src="nav.js"></script>
+</body>
+</html>

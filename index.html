@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="description" content="TheMall Interactive Real Estate Catalog — An immersive digital brochure experience.">
+    <title data-config-title="titleLandpage">HappyMall iCatalog</title>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="HappyMall iCatalog">
+    <meta name="theme-color" content="#030821">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=IBM+Plex+Sans+Arabic:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --navy: #030821;
+            --gold: #C5A059;
+            --gold-gradient: linear-gradient(135deg, #dfa843 0%, #fef1b2 50%, #dfa843 100%);
+            --white: #ffffff;
+            --glass-bg: var(--page-glass);
+            --glass-border: rgba(223, 168, 67, 0.15);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--page-bg);
+            min-height: 100vh;
+            min-height: 100svh;
+            width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            overflow-y: auto;
+            color: var(--white);
+            position: relative;
+            font-family: 'Outfit', 'IBM Plex Sans Arabic', sans-serif;
+            padding: 40px 0;
+        }
+
+        /* ── Background Image ── */
+        .bg-image {
+            position: fixed; inset: 0;
+            background-image: url('assets/images/MallCoverImage.webp');
+            background-size: cover;
+            background-position: center;
+            z-index: -2;
+        }
+
+        /* ── Full Screen Glass Effect ── */
+        .glass-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: -1;
+            border: 1px solid var(--glass-border);
+        }
+        .glass-overlay::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, transparent 0%, color-mix(in srgb, var(--page-bg) 40%, transparent) 100%);
+        }
+
+        /* ── Animated Orbs ── */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.2;
+            animation: move 25s infinite alternate ease-in-out;
+        }
+        .orb1 { width: 40vw; height: 40vw; background: var(--gold); top: -10%; left: -10%; }
+        .orb2 { width: 30vw; height: 30vw; background: #1a2a6c; bottom: -5%; right: -5%; animation-delay: -5s; }
+
+        @keyframes move {
+            from { transform: translate(0,0) scale(1); }
+            to { transform: translate(10vw, 5vh) scale(1.15); }
+        }
+
+        /* ── Responsive Content Container ── */
+        .container {
+            width: 100%;
+            max-width: 450px;
+            padding: 20px;
+            text-align: center;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeInUp 1s ease-out;
+            margin: auto;
+            text-shadow: var(--se-text-shadow);
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Logo ── */
+        .logo-section {
+            margin-bottom: 3vh;
+        }
+        .logo-img {
+            width: clamp(70px, 15vw, 90px);
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 0 10px rgba(197,160,89,0.2));
+        }
+
+        /* ── Titles (Smaller as requested) ── */
+        .mall-name {
+            font-size: clamp(1.8rem, 6vw, 2.4rem);
+            font-weight: 600;
+            margin-bottom: 0.2vh;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1.1;
+        }
+        .arabic-name {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            font-size: clamp(1.4rem, 4.5vw, 1.8rem);
+            display: block;
+            margin-bottom: 1.5vh;
+            color: var(--white);
+            opacity: 0.85;
+            font-weight: 300;
+            letter-spacing: 0 !important; /* Fix for Arabic */
+        }
+
+        .subtitle {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            font-size: clamp(0.85rem, 3vw, 0.95rem);
+            color: var(--gold);
+            margin-bottom: 3.5vh;
+            font-weight: 400;
+            letter-spacing: 0 !important; /* Fix for Arabic */
+            opacity: 0.9;
+        }
+
+        /* ── Divider ── */
+        .divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--gold), transparent);
+            margin-bottom: 4vh;
+            width: 50%;
+            opacity: 0.3;
+        }
+
+        /* ── Buttons ── */
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .btn {
+            width: 100%;
+            max-width: 240px;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: var(--gold-gradient);
+            color: #000;
+            box-shadow: 0 4px 15px rgba(197, 160, 89, 0.2);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(197, 160, 89, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--white);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(5px);
+        }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.08); }
+
+        .btn span { letter-spacing: 0 !important; } /* Fix for Arabic button text */
+
+        #install-hint { font-size: 0.75rem; color: rgba(255,255,255,0.4); margin-top: 8px; display: none; }
+
+        /* ── iOS instructions ── */
+        #ios-hint {
+            display: none;
+            margin-top: 15px;
+            padding: 12px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            line-height: 1.5;
+            color: #aaa;
+            text-align: center;
+            max-width: 280px;
+        }
+        #ios-hint strong { color: var(--gold); }
+
+        /* ── Footer ── */
+        .footer-credit {
+            position: relative;
+            margin-top: 40px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            opacity: 0.4;
+            font-weight: 300;
+            z-index: 20;
+        }
+        .footer-credit a {
+            color: inherit;
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+        .footer-credit a:hover {
+            opacity: 1;
+            color: var(--gold);
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                max-width: 92%;
+                padding: 10px;
+            }
+            .mall-name { font-size: 1.8rem; }
+            .btn { max-width: 100%; }
+            .footer-credit { margin-top: 20px; }
+        }
+
+        @media (max-height: 600px) {
+            .container { padding: 10px; }
+            .logo-section { margin-bottom: 1vh; }
+            .divider { margin-bottom: 2vh; }
+            .subtitle { margin-bottom: 2vh; }
+            .footer-credit { margin-top: 15px; }
+        }
+
+        @media (min-width: 1024px) {
+            .container {
+                max-width: 550px;
+                padding: 40px;
+            }
+            .logo-img { width: 110px; }
+            .mall-name { font-size: 3rem; }
+        }
+        .instructions-box {
+            display: none;
+            width: 100%;
+            max-width: 350px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 10px;
+            text-align: center;
+            animation: fadeIn 0.5s ease-out;
+            backdro        .pwa-header {
+            font-size: 1.1rem;
+            font-weight: 400; /* No bold */
+            margin-bottom: 20px;
+            color: var(--white);
+            display: block;
+            letter-spacing: 0 !important;
+        }
+
+        /* When it's a button */
+        #pwaActionBtn {
+            width: 100%;
+            max-width: 240px;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 400; /* No bold */
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            letter-spacing: 0 !important;
+            background: var(--gold-gradient);
+            color: #000;
+            margin-bottom: 20px;
+        }
+
+        /* When it's just text (unsupported or waiting) */
+        #pwaActionBtn.btn-text-only {
+            background: none !important;
+            color: var(--white) !important;
+            opacity: 0.8;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            font-weight: 400; /* No bold */
+            letter-spacing: 0 !important;
+        }
+
+        .instruction-item {
+            display: none; /* Hidden by default, shown by JS detection */
+            margin-bottom: 0;
+            text-align: right;
+        }
+
+        .instruction-item h4 {
+            color: var(--gold);
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 400; /* No bold */
+            letter-spacing: 0 !important;
+        }
+
+        .instruction-item p, .instruction-list li {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.7;
+            letter-spacing: 0 !important;
+            font-weight: 400;
+        }
+        
+        .instruction-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 10px;
+        }
+
+        .instruction-list li {
+            position: relative;
+            padding-right: 22px;
+            margin-bottom: 12px;
+            text-align: right;
+        }
+
+        .instruction-list li::before {
+            content: '•';
+            position: absolute;
+            right: 0;
+            color: var(--gold);
+            font-size: 1.2rem;
+        }
+        
+        .instruction-item p span, .instruction-list li span {
+            color: var(--gold);
+            font-weight: 400;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .direct-install-btn-small {
+            background: rgba(223, 168, 67, 0.1);
+            border: 1px solid var(--gold);
+            border-radius: 4px;
+            padding: 4px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 8px;
+            vertical-align: middle;
+            color: var(--gold);
+            transition: all 0.2s ease;
+            width: 32px;
+            height: 32px;
+            min-width: 32px;
+        }
+        .direct-install-btn-small:hover {
+            color: var(--white);
+        }
+        .direct-install-btn-small svg {
+            display: block;
+        }
+    </style>
+    <script>
+        // Cleanup old localStorage keys from previous projects
+        localStorage.removeItem('pwa_installed');
+
+        // Immediate redirect if inside PWA
+        if (window.matchMedia('(display-mode: standalone)').matches || window.matchMedia('(display-mode: fullscreen)').matches || window.navigator.standalone === true) {
+            localStorage.setItem('happymall_pwa_installed', 'true');
+            localStorage.removeItem('pwa_user_reset');
+            window.location.replace('/cover.html');
+        }
+    </script>
+</head>
+<body class="theme-dark">
+    <div class="bg-image"></div>
+    <div class="glass-overlay"></div>
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+
+    <div class="container">
+        <div class="logo-section">
+            <img class="logo-img" data-config-src="mallLogoPath" src="assets/images/Mall_horizontal_Logo.webp" alt="TheMall Logo">
+        </div>
+
+        <h1 class="mall-name" style="font-weight: 400;"><!-- config:mallNameEn -->Happy Mall<!-- /config:mallNameEn --></h1>
+        <span class="arabic-name" style="font-weight: 400; letter-spacing: 0 !important;"><!-- config:mallNameAr -->هابى مول<!-- /config:mallNameAr --></span>
+        
+        <p class="subtitle" style="font-weight: 400; letter-spacing: 0 !important;"><!-- config:mallTaglineAr -->كتالوج تفاعلي<!-- /config:mallTaglineAr --></p>
+        
+        <div class="divider"></div>
+
+        <!-- Action Area: rendered by JS based on device -->
+        <div id="manualInstructions" style="display:none; width:100%; max-width:350px; text-align:center;">
+
+            <!-- Direct install button (Chrome/Edge desktop & Android) -->
+            <button id="directInstallButton" style="display:none; width:100%; max-width:240px; padding:14px 24px; border-radius:4px; font-size:1rem; font-weight:400; border:none; cursor:pointer; letter-spacing:0; background:var(--gold-gradient); color:#000; align-items:center; justify-content:center; gap:10px; margin-bottom:20px; font-family:'IBM Plex Sans Arabic',sans-serif;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                حمل الكتالوج
+            </button>
+
+            <!-- Instruction card (iOS, Safari, Firefox) -->
+            <div id="instructionCard" style="display:none; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:24px; animation:fadeIn 0.5s ease-out; text-align:right;">
+                <h4 id="cardTitle" style="color:var(--gold); font-size:1.1rem; font-weight:400; margin-bottom:16px; letter-spacing:0; font-family:'IBM Plex Sans Arabic',sans-serif;"></h4>
+                <ul id="cardSteps" class="instruction-list"></ul>
+                <button id="iosVideoBtn" style="display:none; width:100%; margin-top:15px; padding:10px; border-radius:6px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:var(--white); font-family:'IBM Plex Sans Arabic',sans-serif; cursor:pointer; align-items:center; justify-content:center; gap:8px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                    فيديو الإرشادات
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Video Popup -->
+        <div id="videoPopupOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:999999; backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); flex-direction:column; justify-content:center; align-items:center;">
+            <div style="position:relative; width:90%; max-width:400px; background:#000; border-radius:12px; overflow:hidden; border:1px solid rgba(255,255,255,0.1); box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);">
+                <button id="closeVideoPopupBtn" style="position:absolute; top:10px; right:10px; z-index:10; background:rgba(0,0,0,0.5); border:none; color:white; width:36px; height:36px; border-radius:50%; display:flex; justify-content:center; align-items:center; cursor:pointer; backdrop-filter:blur(5px);">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+                <video id="iosVideo" src="assets/mall-icatalog-ios-download.mp4" muted playsinline controls style="width:100%; display:block;"></video>
+            </div>
+        </div>
+
+        <div class="footer-credit" style="font-weight: 400; margin-top:40px;">iCΛTALOG by <a href="https://marwasleem.netlify.app" target="_blank" rel="noopener noreferrer" onclick="window.open(this.href, '_blank'); return false;">MarwaSleem</a></div>
+    </div>
+
+
+    <script>
+        var deferredPrompt = null;
+
+        // ── 2. Platform Detection ──
+        function detectPlatform() {
+            var ua = navigator.userAgent;
+            var isIOS     = /iphone|ipad|ipod/i.test(ua)
+                         || (navigator.maxTouchPoints > 1 && /macintosh/i.test(ua));
+            var isAndroid = /android/i.test(ua);
+            var isEdge    = !isIOS && !isAndroid && /edg\//i.test(ua);
+            var isChrome  = !isIOS && !isAndroid && !isEdge && /chrome/i.test(ua) && !/opr/i.test(ua);
+            var isFirefox = !isIOS && !isAndroid && /firefox/i.test(ua);
+            var isSafari  = !isIOS && !isAndroid && /safari/i.test(ua) && !/chrome/i.test(ua) && !/edg/i.test(ua);
+            
+            return { isIOS: isIOS, isAndroid: isAndroid, isChrome: isChrome,
+                     isEdge: isEdge, isSafari: isSafari, isFirefox: isFirefox };
+        }
+
+        // ── 3. Render UI based on platform ──
+        function renderUI() {
+            var p = detectPlatform();
+            var wasInstalled = localStorage.getItem('happymall_pwa_installed') === 'true';
+            var wrapper        = document.getElementById('manualInstructions');
+            var btn            = document.getElementById('directInstallButton');
+            var card           = document.getElementById('instructionCard');
+            var title          = document.getElementById('cardTitle');
+            var steps              = document.getElementById('cardSteps');
+            var videoPopupOverlay  = document.getElementById('videoPopupOverlay');
+            var closeVideoPopupBtn = document.getElementById('closeVideoPopupBtn');
+            var videoBtn           = document.getElementById('iosVideoBtn');
+            var iosVideo           = document.getElementById('iosVideo');
+
+            if (!wrapper) return;
+            wrapper.style.display = 'block';
+            
+            if (videoBtn && videoPopupOverlay && closeVideoPopupBtn) {
+                videoBtn.onclick = function() {
+                    videoPopupOverlay.style.display = 'flex';
+                    if(iosVideo) iosVideo.play();
+                };
+                
+                closeVideoPopupBtn.onclick = function() {
+                    videoPopupOverlay.style.display = 'none';
+                    if(iosVideo) iosVideo.pause();
+                };
+                
+                videoPopupOverlay.onclick = function(e) {
+                    if (e.target === videoPopupOverlay) {
+                        videoPopupOverlay.style.display = 'none';
+                        if(iosVideo) iosVideo.pause();
+                    }
+                };
+            }
+
+            // iOS / iPad → instruction card (Always keep installation instructions, no already installed view)
+            if (p.isIOS) {
+                if (card) card.style.display = 'block';
+                if (btn) btn.style.display  = 'none';
+                if (videoBtn) videoBtn.style.display = 'inline-flex';
+                
+                if (title) title.textContent  = 'لتحميل الكتالوج';
+                if (steps) {
+                    steps.innerHTML =
+                        '<li>اضغط زر مشاركة من اعدادات المتصفح . ثم اختر إضافة الى الشاشة الرئيسية</li>';
+                }
+                return;
+            }
+
+            // Desktop Safari / Firefox → instruction card (recommend Chrome/Edge)
+            if (p.isSafari || p.isFirefox) {
+                if (card) card.style.display = 'block';
+                if (btn) btn.style.display  = 'none';
+                if (title) title.textContent  = 'لتحميل الكتالوج';
+                if (steps) {
+                    steps.innerHTML =
+                        '<li>للحصول على أفضل تجربة وتثبيت الكتالوج كتطبيق</li>' +
+                        '<li>يرجى استخدام متصفح <span>Google Chrome</span> أو <span>Microsoft Edge</span></li>';
+                }
+                return;
+            }
+
+            // Chrome / Edge (desktop) or Android → direct install button
+            if (p.isChrome || p.isEdge || p.isAndroid) {
+                if (wasInstalled) {
+                    if (card) card.style.display = 'block';
+                    if (btn) btn.style.display  = 'none';
+                    if (title) {
+                        title.textContent = 'الكتالوج محمل بالفعل';
+                        title.style.textAlign = 'center';
+                        title.style.color = 'var(--gold)';
+                    }
+                    if (steps) {
+                        steps.style.textAlign = 'center';
+                        steps.innerHTML = 
+                            '<li style="list-style:none; padding:0; font-weight:400; color:var(--white); font-size:1.1rem; margin-top:10px;">برجاء فتحه من التطبيقات</li>' +
+                            '<li style="list-style:none; padding:0; margin-top:20px; opacity:0.5;">(iCatalog)</li>' +
+                            '<li style="list-style:none; padding:0; margin-top:30px;"><a href="#" onclick="resetPWAInstall(event)" style="color:var(--gold); text-decoration:underline; font-size:0.85rem; font-family:\'IBM Plex Sans Arabic\',sans-serif;">إعادة التثبيت مرة أخرى</a></li>';
+                    }
+                } else {
+                    if (btn) {
+                        if (deferredPrompt) {
+                            if (card) card.style.display = 'none';
+                            btn.style.display = 'inline-flex';
+                            btn.onclick = triggerInstall;
+                        } else {
+                            // Waiting for browser to fire beforeinstallprompt, or it's blocked/already installed
+                            btn.style.display = 'none';
+                            if (card) card.style.display = 'block';
+                            if (title) { title.textContent = 'لتحميل الكتالوج'; title.style.textAlign = 'center'; title.style.color = 'var(--gold)'; }
+                            if (steps) steps.innerHTML = 
+                                '<li style="list-style:none; padding:0; font-weight:400; color:var(--white); font-size:1rem; margin-top:5px; text-align:center;">يرجى النقر على أيقونة التثبيت 💻</li>' +
+                                '<li style="list-style:none; padding:0; margin-top:10px; opacity:0.8; text-align:center; font-size:0.9rem;">الموجودة في شريط البحث (Address Bar) بالأعلى</li>';
+                        }
+                    }
+                }
+                return;
+            }
+
+            // Fallback
+            if (card) card.style.display = 'block';
+            if (btn) btn.style.display  = 'none';
+        }
+
+        // ── 4. Trigger native install prompt ──
+        function triggerInstall() {
+            var btn = document.getElementById('directInstallButton');
+            var card = document.getElementById('instructionCard');
+            var title = document.getElementById('cardTitle');
+            var steps = document.getElementById('cardSteps');
+            
+            if (!deferredPrompt) {
+                // If prompt isn't ready or already installed (but localStorage was cleared),
+                // instruct user to install from address bar.
+                if (card && title && steps) {
+                    btn.style.display = 'none';
+                    card.style.display = 'block';
+                    title.textContent = 'خطوة أخيرة';
+                    title.style.color = 'var(--gold)';
+                    title.style.textAlign = 'center';
+                    steps.innerHTML = 
+                        '<li style="list-style:none; padding:0; font-weight:400; color:var(--white); font-size:1rem; margin-top:5px; text-align:center;">يرجى النقر على أيقونة التثبيت 💻</li>' +
+                        '<li style="list-style:none; padding:0; margin-top:10px; opacity:0.8; text-align:center; font-size:0.9rem;">الموجودة في شريط العنوان (Search Bar) أعلى المتصفح</li>' +
+                        '<li style="list-style:none; padding:0; margin-top:20px;"><a href="#" onclick="window.location.reload()" style="color:var(--gold); text-decoration:underline; font-size:0.85rem; font-family:\'IBM Plex Sans Arabic\',sans-serif;">إعادة المحاولة</a></li>';
+                } else {
+                    alert('يرجى النقر على أيقونة التثبيت في شريط العنوان أعلى المتصفح.');
+                }
+                return;
+            }
+
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then(function(choice) {
+                if (choice.outcome === 'accepted') {
+                    localStorage.setItem('happymall_pwa_installed', 'true');
+                    renderUI();
+                }
+                deferredPrompt = null;
+            }).catch(function(err) {
+                console.warn('Install prompt error:', err);
+            });
+        }
+
+        // Helper to manually reset installation state (e.g. if uninstalled)
+        function resetPWAInstall(e) {
+            if (e) e.preventDefault();
+            localStorage.removeItem('happymall_pwa_installed');
+            localStorage.setItem('pwa_user_reset', 'true');
+            renderUI();
+        }
+
+        // ── 5. Capture beforeinstallprompt ──
+        window.addEventListener('beforeinstallprompt', function(e) {
+            e.preventDefault();
+            deferredPrompt = e;
+            // Clear installed flag because beforeinstallprompt fires only if NOT installed
+            localStorage.removeItem('happymall_pwa_installed');
+            renderUI();
+        });
+
+        // ── 6. After install events ──
+        window.addEventListener('appinstalled', function() {
+            localStorage.setItem('happymall_pwa_installed', 'true');
+            // Redirect immediately to cover.html to start the experience
+            window.location.replace('/cover.html');
+        });
+
+        // Listen for dynamic transition into PWA window (Android/Desktop)
+        window.matchMedia('(display-mode: standalone)').addEventListener('change', function(e) {
+            if (e.matches) {
+                localStorage.setItem('happymall_pwa_installed', 'true');
+                window.location.replace('/cover.html');
+            }
+        });
+
+        // ── 6.5. iOS specific background heuristics ──
+        // Since iOS Safari does not support the native 'appinstalled' event, we use visibilitychange
+        // and pagehide events: if the user is on iOS and Safari goes to the background, we flag the PWA as installed.
+        function handleIOSBackground() {
+            var p = detectPlatform();
+            if (p.isIOS) {
+                if (localStorage.getItem('pwa_user_reset') === 'true') {
+                    return;
+                }
+                localStorage.setItem('happymall_pwa_installed', 'true');
+                renderUI();
+            }
+        }
+        window.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                handleIOSBackground();
+            }
+        });
+        window.addEventListener('pagehide', handleIOSBackground);
+
+        // ── 7. Initialize ──
+        document.addEventListener('DOMContentLoaded', function() {
+            renderUI();
+        });
+
+        // ── 8. Service Worker ──
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js', { scope: '/' })
+                .then(function(reg) { 
+                    console.log('[SW] Registered'); 
+                    // Check for updates frequently
+                    setInterval(() => reg.update(), 1000 * 60 * 10);
+                })
+                .catch(function(e) { console.warn('[SW] Failed:', e); });
+
+            // Handle auto-reload when new SW takes control
+            let refreshing = false;
+            navigator.serviceWorker.addEventListener('controllerchange', function() {
+                if (refreshing) return;
+                refreshing = true;
+                window.location.reload();
+            });
+        }
+    </script>
+</body>
+</html>

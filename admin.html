@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم | TheMall iCatalog</title>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="stylesheet" href="global.css">
+    <style>
+        :root {
+            --primary-color: #0B1D33;
+            --accent-color: #C5A059;
+            --bg-light: #f4f7f6;
+            --white: #ffffff;
+            --page-text: #333;
+            --success: #28a745;
+            --danger: #dc3545;
+        }
+        html, body {
+            overflow: auto !important;
+            height: auto !important;
+            touch-action: auto !important;
+            background: var(--bg-light);
+        }
+        
+        /* Re-enable and style scrollbars for the admin panel only (override global.css scrollbar hiding) */
+        ::-webkit-scrollbar {
+            display: block !important;
+            width: 12px !important;
+            height: 12px !important;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05) !important;
+            border-radius: 6px !important;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-color, #C5A059) !important;
+            border-radius: 6px !important;
+            border: 3px solid var(--bg-light, #f4f7f6) !important;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #b38f48 !important;
+        }
+        * {
+            scrollbar-width: auto !important;
+            scrollbar-color: var(--accent-color, #C5A059) rgba(0, 0, 0, 0.05) !important;
+            -ms-overflow-style: auto !important;
+        }
+        body {
+            font-family: var(--font-arabic);
+            margin: 0;
+            color: var(--page-text);
+            min-height: 100vh;
+        }
+        .login-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary-color);
+        }
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .login-box img { margin-bottom: 20px; }
+
+        .login-box input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .login-box button {
+            width: 100%;
+            padding: 12px;
+            background: var(--accent-color);
+            color: var(--primary-color);
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .login-box button:hover { opacity: 0.9; }
+
+        /* Password Toggle Styling */
+        .password-wrapper {
+            position: relative;
+            width: 100%;
+            margin: 10px 0;
+        }
+        .password-wrapper input {
+            margin: 0 !important;
+            padding-left: 40px !important; /* Space for icon in RTL */
+        }
+        .toggle-password {
+            position: absolute;
+            top: 50%;
+            left: 10px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #666;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+        }
+        .toggle-password svg {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .admin-dashboard {
+            display: none;
+            padding: 40px 5%;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            overflow-x: auto;
+        }
+        h1 {
+            font-family: var(--font-arabic);
+            font-size: clamp(1.8rem, 4vmin, 2.5rem);
+            font-weight: 300;
+            color: var(--primary-color);
+            margin: 0;
+        }
+        h2 { 
+            font-family: var(--font-arabic);
+            font-size: clamp(1.5rem, 3vmin, 2rem);
+            font-weight: 300;
+            color: var(--primary-color); 
+            margin-top: 0; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+        }
+        h3 {
+            font-family: var(--font-arabic);
+            font-size: clamp(1.2rem, 2.5vmin, 1.8rem);
+            font-weight: 300;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 12px 8px; border: 1px solid #eee; text-align: center; font-size: clamp(12px, 1.4vmin, 14px); }
+        th { background: #f8f9fa; font-weight: 600; color: var(--primary-color); white-space: nowrap; }
+        
+        .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: 0.2s; }
+        .btn-add { background: var(--success); color: white; }
+        .btn-delete { background: var(--danger); color: white; padding: 5px 10px; font-size: 12px; }
+        .btn-save { background: var(--primary-color); color: white; width: 100%; margin-top: 20px; padding: 15px; font-size: 18px; }
+
+        /* Offline Mode Overrides */
+        .offline-mode input, 
+        .offline-mode select, 
+        .offline-mode button.btn-add, 
+        .offline-mode button.btn-delete,
+        .offline-mode .cat-tag span {
+            pointer-events: none !important;
+            opacity: 0.5 !important;
+            cursor: not-allowed;
+        }
+        .btn:hover { opacity: 0.8; transform: translateY(-1px); }
+
+        input[type="number"], input[type="text"], input[type="password"], select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+            font-size: 14px;
+            font-family: var(--font-arabic);
+        }
+        /* Hide numeric arrows */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+        .plan-input-small {
+            width: 70px !important;
+            text-align: center;
+        }
+        .percent-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            justify-content: center;
+        }
+        .percent-input-wrapper input {
+            width: 70px !important;
+            text-align: center;
+        }
+        /* Unit Table specific widths */
+        /* Unit Table column stabilization */
+        #unitManagementTable th:nth-child(1), #unitManagementTable td:nth-child(1) { width: 100px; }
+        #unitManagementTable th:nth-child(2), #unitManagementTable td:nth-child(2) { width: 90px; }
+        #unitManagementTable th:nth-child(3), #unitManagementTable td:nth-child(3) { width: 150px; }
+        #unitManagementTable th:nth-child(4), #unitManagementTable td:nth-child(4) { width: 120px; }
+        #unitManagementTable th:nth-child(5), #unitManagementTable td:nth-child(5) { min-width: 300px; text-align: right; }
+        .multi-select {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            width: 100%;
+        }
+        .cat-tag {
+            background: #e9ecef;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .cat-tag span { cursor: pointer; color: var(--danger); font-weight: bold; }
+        
+        .status-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: 4px;
+            transition: opacity 0.3s ease;
+        }
+        .status-online  { color: #28a745; }
+        .status-offline { color: #dc3545; }
+        .status-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        /* Tab System */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            background: transparent;
+            font-family: var(--font-arabic);
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            transition: 0.3s;
+            border-radius: 8px;
+        }
+        .tab-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Profile Styles */
+        .profile-row {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 10px;
+        }
+        .profile-row label {
+            width: 120px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        .profile-row input {
+            flex-grow: 1;
+            max-width: 300px;
+        }
+        .otp-box {
+            display: none;
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+            border: 1px solid #ffeeba;
+        }
+
+        /* Responsive Adjustments */
+    @media (max-width: 768px) {
+        .admin-dashboard {
+            padding: 20px 10px;
+        }
+        .header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        .card {
+            padding: 15px 10px;
+            margin-bottom: 20px;
+        }
+        .btn-save {
+            font-size: 16px;
+            padding: 12px;
+        }
+        input[type="text"], input[type="number"], select {
+            font-size: 14px;
+        }
+        h1 { font-size: 1.5rem; }
+        h2 { font-size: 1.2rem; }
+        
+        .tabs {
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        .tab-btn {
+            padding: 8px 12px;
+            font-size: 13px;
+            flex: 1;
+            text-align: center;
+        }
+        
+        /* Force tables to be scrollable */
+        table {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        
+        .profile-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .profile-row label {
+            width: 100%;
+        }
+        .profile-row input {
+            max-width: 100%;
+        }
+    }
+    </style>
+    <script src="database.js"></script>
+    <script type="text/javascript" src="assets/js/emailjs.min.js"></script>
+    <script type="text/javascript">
+       (function(){
+          window.addEventListener('load', function() {
+              if (window.emailjs) {
+                  emailjs.init({
+                      publicKey: "O6G_glvlSJ1tfNOZ_",
+                  });
+              }
+          });
+       })();
+    </script>
+</head>
+<body>
+    <!-- If opened inside the PWA (standalone), redirect to browser -->
+    <script>
+        (function() {
+            var isStandalone = window.matchMedia('(display-mode: standalone)').matches
+                            || window.matchMedia('(display-mode: fullscreen)').matches
+                            || window.navigator.standalone === true;
+            if (isStandalone) {
+                // Force open in browser tab
+                var url = window.location.href;
+                window.open(url, '_blank', 'noopener');
+                // Show message in case open was blocked
+                document.addEventListener('DOMContentLoaded', function() {
+                    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#0B1D33;color:#C5A059;font-family:sans-serif;text-align:center;padding:20px"><div><p style="font-size:1.2rem">لوحة التحكم تُفتح في المتصفح</p><p style="color:#fff;font-size:0.9rem;margin-top:10px">Admin Panel opens in your browser.<br>Please allow pop-ups or copy this URL to your browser.</p><p style="color:#C5A059;margin-top:15px;word-break:break-all">' + url + '</p></div></div>';
+                });
+            }
+        })();
+    </script>
+    <div id="loginScreen" class="login-screen">
+        <div class="login-box">
+            <img src="assets/images/MallLogo.webp" width="120" alt="Logo">
+            <h3>الدخول إلى لوحة التحكم</h3>
+            <input type="text" id="githubRepo" placeholder="اسم الحساب/اسم المشروع (مثال: myname/repo)" onkeydown="if(event.key === 'Enter') login()">
+            <div class="password-wrapper">
+                <input type="password" id="githubToken" placeholder="رمز GitHub السري (Token)" onkeydown="if(event.key === 'Enter') login()">
+                <span class="toggle-password" onclick="togglePassword('githubToken')">
+                    <svg viewBox="0 0 24 24" id="eye-githubToken"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                </span>
+            </div>
+            <button onclick="login()">حفظ الدخول وبدء التعديل</button>
+        </div>
+    </div>
+
+    <div id="adminDashboard" class="admin-dashboard">
+        <div class="header">
+            <h1>نظام إدارة الكتالوج</h1>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-delete" onclick="logout()">تسجيل الخروج</button>
+            </div>
+        </div>
+
+        <div class="tabs" style="display: flex; justify-content: space-between; align-items: flex-end;">
+            <div style="display: flex; gap: 10px;">
+                <button class="tab-btn active" onclick="switchTab('catalog')">إدارة الكتالوج</button>
+                <button class="tab-btn" onclick="switchTab('profile')">إعدادات الحساب</button>
+            </div>
+            <div id="statusBar" class="status-bar status-online" style="margin-bottom: 5px;">
+                <span id="statusText">متصل - البيانات محدثة</span>
+                <span id="statusDot" class="status-dot" style="background: #28a745;"></span>
+            </div>
+        </div>
+
+        <!-- Catalog Tab -->
+        <div id="catalogTab" class="tab-content active">
+
+
+        <!-- Payment Plans Section -->
+        <div class="card">
+            <h2>إدارة خطط السداد</h2>
+            <table id="planTable">
+                <thead>
+                    <tr>
+                        <th>اسم الخطة</th>
+                        <th>السنوات</th>
+                        <th>المقدم (%)</th>
+                        <th>إجراء</th>
+                    </tr>
+                </thead>
+                <tbody id="planList"></tbody>
+            </table>
+            <div style="margin-top: 15px; display: flex; gap: 10px;">
+                <input type="text" id="planName" placeholder="اسم الخطة (مثلاً: خطة أ)">
+                <input type="text" inputmode="decimal" id="planYears" placeholder="السنوات">
+                <input type="text" inputmode="decimal" id="planDown" placeholder="المقدم %">
+                <button class="btn btn-add" onclick="addPaymentPlan()">إضافة</button>
+            </div>
+        </div>
+
+        <!-- Price per Meter Section -->
+        <div class="card">
+            <h2>سعر المتر (حسب الموقع والخطة)</h2>
+            <div id="priceTablesContainer">
+                <!-- Tables will be generated dynamically per plan -->
+            </div>
+        </div>
+
+        <!-- Units Management -->
+        <div class="card">
+            <h2>الوحدات</h2>
+            <table id="unitManagementTable" style="table-layout: fixed;">
+                <thead>
+                    <tr>
+                        <th style="width: 15%;">كود الوحدة</th>
+                        <th style="width: 15%;">المساحة (م٢)</th>
+                        <th style="width: 25%;">الموقع</th>
+                        <th style="width: 45%; min-width: 300px;">الأنشطة</th>
+                    </tr>
+                </thead>
+                <tbody id="unitList"></tbody>
+            </table>
+        </div>
+
+        <!-- Categories Section -->
+        <div class="card">
+            <h2>أنشطة المول</h2>
+            <div id="categoryContainer" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;"></div>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="newCategoryName" placeholder="اسم النشاط">
+                <button class="btn btn-add" onclick="addCategory()">إضافة نشاط</button>
+            </div>
+        </div>
+
+        </div>
+
+        <!-- Profile Tab -->
+        <div id="profileTab" class="tab-content">
+            <div class="card">
+                <h2>Admin Profile Settings</h2>
+                
+                <div class="profile-row">
+                    <label>حساب/مستودع GitHub</label>
+                    <input type="text" id="profileRepo" placeholder="username/repository">
+                </div>
+                
+                <div class="profile-row">
+                    <label>رمز الأمان (Token)</label>
+                    <div class="password-wrapper" style="flex-grow: 1; max-width: 300px;">
+                        <input type="password" id="profileToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+                        <span class="toggle-password" onclick="togglePassword('profileToken')">
+                            <svg viewBox="0 0 24 24" id="eye-profileToken"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </span>
+                    </div>
+                </div>
+
+                <button class="btn btn-save" onclick="saveGithubSettings()">حفظ إعدادات الربط</button>
+
+                <div id="passwordOtpBox" class="otp-box">
+                    <p style="margin-bottom: 10px;">أدخل الرمز المكون من 4 أرقام لتأكيد كلمة المرور الجديدة:</p>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="passwordOtpInput" placeholder="0000" maxlength="4" style="width: 120px; text-align: center;">
+                        <button class="btn btn-add" onclick="verifyChange('password')">تأكيد التغيير</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        // ── Data ────────────────────────────────────────────────────────────────
+        let catalogData = {
+            plans: [],
+            categories: [],
+            positions: [
+                "بدروم / خارجي", "بدروم / داخلي",
+                "ارضي / خارجي", "ارضي / داخلي",
+                "اول علوي / خارجي", "اول علوي / داخلي",
+                "ثاني علوي / خارجي", "ثاني علوي / داخلي",
+                "ثالث علوي / خارجي", "ثالث علوي / داخلي"
+            ],
+            units: {},
+            prices: {}
+        };
+
+        const CACHE_KEY = ThaMallDB.LOCAL_KEY; // keep backward compat
+
+        function login() {
+            const repo = document.getElementById('githubRepo').value.trim();
+            const token = document.getElementById('githubToken').value.trim();
+            
+            if (repo && token) {
+                localStorage.setItem('admin_profile', JSON.stringify({ repo, token }));
+                localStorage.setItem('admin_logged_in', 'true');
+                showDashboard();
+            } else {
+                alert('يرجى إدخال اسم المستودع والـ Token');
+            }
+        }
+
+        function saveGithubSettings() {
+            const repo = document.getElementById('profileRepo').value.trim();
+            const token = document.getElementById('profileToken').value.trim();
+            
+            if (repo && token) {
+                localStorage.setItem('admin_profile', JSON.stringify({ repo, token }));
+                alert('تم حفظ إعدادات GitHub بنجاح!');
+            } else {
+                alert('يرجى إدخال البيانات كاملة');
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('admin_logged_in');
+            localStorage.removeItem('admin_profile');
+            location.reload();
+        }
+
+        function showDashboard() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('adminDashboard').style.display = 'block';
+            initDashboard();
+        }
+
+        // Auto-login check
+        window.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('admin_logged_in') === 'true') {
+                showDashboard();
+            }
+        });
+
+        // Utils
+        function cleanNum(n) {
+            if (n === undefined || n === null || n === '') return '0';
+            let en = n.toString().replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d));
+            en = en.replace(/[\s,]/g, '');
+            return en;
+        }
+
+        function formatNumberWithCommas(n) {
+            if (n === undefined || n === null || n === '') return '';
+            const cleaned = cleanNum(n);
+            const num = parseInt(cleaned);
+            if (isNaN(num)) return '';
+            return num.toLocaleString('en-US');
+        }
+
+        function formatInputWithCommas(el) {
+            const originalVal = el.value;
+            const selectionStart = el.selectionStart;
+            const originalLength = originalVal.length;
+            
+            const cleaned = cleanNum(originalVal);
+            if (cleaned === '' || cleaned === '0') {
+                if (cleaned === '') el.value = '';
+                return;
+            }
+            const numVal = parseInt(cleaned);
+            const formatted = isNaN(numVal) ? '' : numVal.toLocaleString('en-US');
+            el.value = formatted;
+            
+            const newLength = formatted.length;
+            const newPosition = Math.max(0, selectionStart + (newLength - originalLength));
+            el.setSelectionRange(newPosition, newPosition);
+        }
+
+        async function initDashboard() {
+            // Load Profile
+            const profile = JSON.parse(localStorage.getItem('admin_profile') || '{}');
+            if (profile.repo) document.getElementById('profileRepo').value = profile.repo;
+            if (profile.token) document.getElementById('profileToken').value = profile.token;
+
+            setStatusLoading();
+
+            // ── Load data via ThaMallDB sync layer ──────────────────────────
+            const { data, source } = await ThaMallDB.load();
+            catalogData = data;
+
+            // Ensure settings object exists
+            if (!catalogData.settings) catalogData.settings = {};
+
+            // FORCE OVERRIDE settings from local data.json to resolve Split-Brain with Netlify Blob
+            // because edit.html writes directly to data.json on disk!
+            try {
+                const staticData = await fetch('data.json?ping=1&_t=' + Date.now(), { cache: 'no-store' }).then(r => r.json());
+                if (staticData && staticData.settings) {
+                    catalogData.settings = Object.assign(catalogData.settings, staticData.settings);
+                }
+            } catch(e) { console.warn('Could not read local data.json settings'); }
+
+            // Ensure positions array always present
+            if (!catalogData.positions || !catalogData.positions.length) {
+                catalogData.positions = [
+                    "بدروم / خارجي", "بدروم / داخلي",
+                    "ارضي / خارجي", "ارضي / داخلي",
+                    "اول علوي / خارجي", "اول علوي / داخلي",
+                    "ثاني علوي / خارجي", "ثاني علوي / داخلي",
+                    "ثالث علوي / خارجي", "ثالث علوي / داخلي"
+                ];
+            }
+
+            // Sync units from config.js (add missing, remove stale)
+            syncUnitsFromConfig();
+
+            renderAll();
+            updateStatus(source);
+        }
+
+        /**
+         * Sync catalogData.units with the unit IDs defined in config.js → floors.
+         * Also syncs catalogData.positions from config.js → positions.
+         * - Units in config but NOT in data → created with empty defaults.
+         * - Units in data but NOT in config → deleted.
+         * - Existing units: position is ALWAYS updated from config (admin can't edit it).
+         *   All other fields (area, status, categories) are preserved.
+         * This runs ONCE on dashboard load, before renderAll().
+         */
+        function syncUnitsFromConfig() {
+            if (!window.MALL_CONFIG) return;
+
+            let changed = false;
+
+            // ── 1. Sync positions list from config ─────────────────────────
+            const positionsMap = window.MALL_CONFIG.positions || {};
+            const positionNames = Object.values(positionsMap);
+            if (positionNames.length > 0) {
+                catalogData.positions = positionNames;
+            }
+
+            // ── 2. Sync units from config.floors ───────────────────────────
+            if (!window.MALL_CONFIG.floors) return;
+
+            const configUnits = new Map(); // code → resolved position name
+
+            // Collect all unit IDs and resolve position keys to display names
+            Object.values(window.MALL_CONFIG.floors).forEach(floor => {
+                (floor.units || []).forEach(unit => {
+                    const code = typeof unit === 'string' ? unit : unit.id;
+                    const posKey = typeof unit === 'string' ? '' : (unit.position || '');
+                    // Resolve key → display name (e.g. "g-out" → "ارضي / خارجي")
+                    const position = positionsMap[posKey] || posKey;
+                    configUnits.set(code, position);
+                });
+            });
+
+            // Add missing units & sync position on existing ones
+            configUnits.forEach((position, code) => {
+                if (!catalogData.units[code]) {
+                    // New unit — create with defaults
+                    catalogData.units[code] = {
+                        code: code,
+                        area: 0,
+                        position: position,
+                        categories: [],
+                        status: "متاح"
+                    };
+                    changed = true;
+                } else if (catalogData.units[code].position !== position) {
+                    // Existing unit — sync position from config
+                    catalogData.units[code].position = position;
+                    changed = true;
+                }
+            });
+
+            // Remove units NOT in config
+            Object.keys(catalogData.units).forEach(code => {
+                if (!configUnits.has(code)) {
+                    delete catalogData.units[code];
+                    changed = true;
+                }
+            });
+
+            // Auto-save if anything changed so floor pages see updated units
+            if (changed) {
+                console.log('[Admin] Units synced from config.js');
+                saveAllData();
+            }
+        }
+
+        function renderAll() {
+            renderPlans();
+            renderPriceTables();
+            renderUnits();
+            renderCategories();
+        }
+
+        function renderPlans() {
+            const list = document.getElementById('planList');
+            list.innerHTML = '';
+            catalogData.plans.forEach(plan => {
+                const row = list.insertRow();
+                row.innerHTML = `
+                    <td><input type="text" value="${plan.name}" onchange="updatePlan('${plan.id}', 'name', this.value, this)"></td>
+                    <td><input class="plan-input-small" type="text" inputmode="decimal" value="${plan.years}" onchange="updatePlan('${plan.id}', 'years', this.value, this)"></td>
+                    <td><div class="percent-input-wrapper"><input type="text" inputmode="decimal" value="${plan.down}" onchange="updatePlan('${plan.id}', 'down', this.value, this)"> %</div></td>
+                    <td><button class="btn btn-delete" onclick="deletePlan('${plan.id}')">حذف</button></td>
+                `;
+            });
+        }
+
+        function renderPriceTables() {
+            const container = document.getElementById('priceTablesContainer');
+            
+            let tableHTML = '<table><thead><tr><th>الموقع</th>';
+            catalogData.plans.forEach(p => {
+                tableHTML += `<th>سعر ${p.name} /م٢</th>`;
+            });
+            tableHTML += '</tr></thead><tbody>';
+
+            const sortedPositions = [...catalogData.positions].sort((a, b) => {
+                const order = [
+                    "بدروم / خارجي", "بدروم / داخلي",
+                    "ارضي / خارجي", "ارضي / داخلي",
+                    "اول علوي / خارجي", "اول علوي / داخلي",
+                    "ثاني علوي / خارجي", "ثاني علوي / داخلي",
+                    "ثالث علوي / خارجي", "ثالث علوي / داخلي"
+                ];
+                const indexA = order.indexOf(a);
+                const indexB = order.indexOf(b);
+                if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+                if (indexA !== -1) return -1;
+                if (indexB !== -1) return 1;
+                return a.localeCompare(b, 'ar');
+            });
+
+            sortedPositions.forEach(pos => {
+                tableHTML += `<tr><td>${pos}</td>`;
+                catalogData.plans.forEach(p => {
+                    const price = (catalogData.prices[pos] && catalogData.prices[pos][p.id]) ? catalogData.prices[pos][p.id] : 0;
+                    const formattedPrice = formatNumberWithCommas(price);
+                    tableHTML += `<td><input type="text" inputmode="decimal" value="${formattedPrice}" oninput="formatInputWithCommas(this)" onchange="updatePrice('${pos}', '${p.id}', this.value, this)"></td>`;
+                });
+                tableHTML += '</tr>';
+            });
+            tableHTML += '</tbody></table>';
+            container.innerHTML = tableHTML;
+        }
+
+        function updatePrice(pos, planId, value, el) {
+            if(!catalogData.prices[pos]) catalogData.prices[pos] = {};
+            const cleaned = cleanNum(value);
+            const val = parseInt(cleaned) || 0;
+            catalogData.prices[pos][planId] = val;
+            if (el) el.value = formatNumberWithCommas(val);
+            saveAllData();
+        }
+
+        function renderUnits() {
+            const list = document.getElementById('unitList');
+            let html = '';
+            
+            const sortedPositions = [...catalogData.positions].sort((a, b) => {
+                const order = [
+                    "بدروم / خارجي", "بدروم / داخلي",
+                    "ارضي / خارجي", "ارضي / داخلي",
+                    "اول علوي / خارجي", "اول علوي / داخلي",
+                    "ثاني علوي / خارجي", "ثاني علوي / داخلي",
+                    "ثالث علوي / خارجي", "ثالث علوي / داخلي"
+                ];
+                const indexA = order.indexOf(a);
+                const indexB = order.indexOf(b);
+                if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+                if (indexA !== -1) return -1;
+                if (indexB !== -1) return 1;
+                return a.localeCompare(b, 'ar');
+            });
+
+            Object.values(catalogData.units).sort(ThaMallDB.sortUnits).forEach(unit => {
+                html += `
+                    <tr>
+                        <td style="font-weight: bold; color: var(--primary-color); font-size: 14px;">${unit.code}</td>
+                        <td><input type="text" inputmode="decimal" value="${unit.area}" onchange="updateUnit('${unit.code}', 'area', this.value, this)"></td>
+                        <td>
+                            <select onchange="updateUnit('${unit.code}', 'position', this.value)" style="width: 100%; padding: 4px; border-radius: 4px; border: 1px solid #ddd; font-family: var(--font-arabic);">
+                                <option value="" ${!unit.position ? 'selected' : ''}>- غير محدد -</option>
+                                ${sortedPositions.map(p => `<option value="${p}" ${unit.position === p ? 'selected' : ''}>${p}</option>`).join('')}
+                            </select>
+                        </td>
+                        <td>
+                            <div class="multi-select" id="tags-${unit.code}">
+                                ${(unit.categories || []).map(c => `
+                                    <div class="cat-tag">${c} <span onclick="removeUnitCategory('${unit.code}', '${c}')">×</span></div>
+                                `).join('')}
+                                <select style="width: 130px; font-size: 14px; padding: 6px 10px; border-radius: 4px; border: 1px solid #ddd; font-family: var(--font-arabic);" onchange="addUnitCategory('${unit.code}', this.value); this.value=''">
+                                    <option value="">+ إضافة</option>
+                                    ${catalogData.categories.filter(c => !(unit.categories || []).includes(c)).map(c => `<option value="${c}">${c}</option>`).join('')}
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            list.innerHTML = html;
+        }
+
+        function renderCategories() {
+            const container = document.getElementById('categoryContainer');
+            container.innerHTML = '';
+            catalogData.categories.forEach(cat => {
+                const item = document.createElement('div');
+                item.style.display = 'flex';
+                item.style.alignItems = 'center';
+                item.style.gap = '6px';
+                item.innerHTML = `
+                    <input type="text" value="${cat}" 
+                           onchange="updateCategoryName('${cat}', this.value, this)" 
+                           style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-family: var(--font-arabic); font-size: 14px; font-weight: 500; color: #333; width: 130px; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.05); outline: none;">
+                    <button onclick="deleteCategory('${cat}')" 
+                            style="background: transparent; border: none; color: #dc3545; font-weight: bold; font-size: 20px; cursor: pointer; padding: 0 8px; margin: 0; line-height: 1; display: flex; align-items: center; justify-content: center; height: 38px; outline: none; transition: all 0.2s ease;"
+                            onmouseover="this.style.color='#900'; this.style.transform='scale(1.2)'"
+                            onmouseout="this.style.color='#dc3545'; this.style.transform='scale(1)'">×</button>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // Action Functions
+
+
+        function addPaymentPlan() {
+            const name = document.getElementById('planName').value;
+            const years = document.getElementById('planYears').value;
+            const down = document.getElementById('planDown').value;
+            
+            if(name.trim() === "") {
+                alert('يرجى إدخال اسم الخطة');
+                return;
+            }
+            if(years === "" || years === null) {
+                alert('يرجى إدخال عدد السنوات');
+                return;
+            }
+
+            const id = 'p' + Date.now();
+            catalogData.plans.push({ 
+                id, 
+                name, 
+                years: parseInt(cleanNum(years)) || 0, 
+                down: parseInt(cleanNum(down)) || 0 
+            });
+            
+            // Reset fields
+            document.getElementById('planName').value = '';
+            document.getElementById('planYears').value = '';
+            document.getElementById('planDown').value = '';
+            
+            renderAll();
+            saveAllData();
+        }
+
+        function updatePlan(id, field, value, el) {
+            const plan = catalogData.plans.find(p => p.id === id);
+            if(plan) {
+                const cleaned = cleanNum(value);
+                plan[field] = field === 'name' ? value : (parseInt(cleaned) || 0);
+                if (el && field !== 'name') el.value = plan[field];
+                saveAllData();
+            }
+        }
+
+        function deletePlan(id) {
+
+            catalogData.plans = catalogData.plans.filter(p => p.id !== id);
+            renderAll();
+            saveAllData();
+        }
+
+        function updateUnit(code, field, value, el) {
+            const cleaned = cleanNum(value);
+            const val = field === 'area' ? (parseFloat(cleaned) || 0) : value;
+            catalogData.units[code][field] = val;
+            if (el && field === 'area') el.value = val;
+            saveAllData();
+        }
+
+        function addUnitCategory(code, cat) {
+
+            if(!cat) return;
+            if(!catalogData.units[code].categories) catalogData.units[code].categories = [];
+            if(!catalogData.units[code].categories.includes(cat)) {
+                catalogData.units[code].categories.push(cat);
+                renderUnits();
+                saveAllData();
+            }
+        }
+
+        function removeUnitCategory(code, cat) {
+
+            catalogData.units[code].categories = catalogData.units[code].categories.filter(c => c !== cat);
+            renderUnits();
+            saveAllData();
+        }
+
+        function addCategory() {
+
+            const name = document.getElementById('newCategoryName').value;
+            if(!name || catalogData.categories.includes(name)) return;
+            catalogData.categories.push(name);
+            
+            // Reset field
+            document.getElementById('newCategoryName').value = '';
+            
+            renderAll();
+            saveAllData();
+        }
+
+        function deleteCategory(name) {
+            catalogData.categories = catalogData.categories.filter(c => c !== name);
+            // Clean up: remove the deleted category from all units' assigned categories
+            Object.values(catalogData.units || {}).forEach(unit => {
+                if (unit.categories) {
+                    unit.categories = unit.categories.filter(c => c !== name);
+                }
+            });
+            renderAll();
+            saveAllData();
+        }
+
+        function updateCategoryName(oldName, newName, el) {
+            const trimmedNew = (newName || '').trim();
+            const trimmedOld = (oldName || '').trim();
+            if (!trimmedNew) {
+                alert('اسم النشاط لا يمكن أن يكون فارغاً');
+                if (el) el.value = trimmedOld;
+                return;
+            }
+            if (trimmedNew === trimmedOld) return;
+            
+            // Check if new name already exists globally
+            if (catalogData.categories.includes(trimmedNew)) {
+                alert('هذا النشاط موجود بالفعل');
+                if (el) el.value = trimmedOld;
+                return;
+            }
+
+            // Update in global categories list
+            catalogData.categories = catalogData.categories.map(c => c === trimmedOld ? trimmedNew : c);
+
+            // Cascade update: update in all units' assigned categories so links aren't lost
+            Object.values(catalogData.units || {}).forEach(unit => {
+                if (unit.categories) {
+                    unit.categories = unit.categories.map(c => c === trimmedOld ? trimmedNew : c);
+                }
+            });
+
+            renderAll();
+            saveAllData();
+        }
+
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(tabId + 'Tab').classList.add('active');
+            document.querySelector(`button[onclick="switchTab('${tabId}')"]`).classList.add('active');
+        }
+
+        // Profile Management Logic
+        let pendingOtp = null;
+        let pendingValue = null;
+
+        function startChange(type) {
+            const newValue = document.getElementById(type === 'email' ? 'adminEmail' : 'adminPassword').value;
+            
+            if (type === 'email' && (!newValue || !newValue.includes('@'))) {
+                alert('يرجى إدخال بريد إلكتروني جديد صالح أولاً.');
+                return;
+            }
+            if (type === 'password' && !newValue) {
+                alert('يرجى إدخال كلمة مرور جديدة أولاً.');
+                return;
+            }
+
+            pendingValue = newValue;
+            pendingOtp = Math.floor(1000 + Math.random() * 9000).toString();
+            
+            const profile = JSON.parse(localStorage.getItem('admin_profile') || '{"username":"admin","password":"admin","email":"iCatalog.dev@gmail.com"}');
+            
+            // EMAILJS INTEGRATION
+            const templateParams = {
+                to_email: profile.email,
+                otp: pendingOtp,
+                type: type === 'email' ? 'Email Update' : 'Password Reset'
+            };
+
+            showStatus('جاري إرسال الرمز إلى ' + profile.email + '...', 'online');
+
+            if (!window.emailjs) {
+                showStatus('خطأ: خدمة البريد غير متوفرة', 'online');
+                alert('عذراً، لا يمكن الوصول إلى خدمة البريد. يرجى التأكد من عدم وجود إضافات تمنع تحميل السكربتات (مثل AdBlock).');
+                return;
+            }
+
+            try {
+                emailjs.send('service_k8tk0mc', 'template_rioon3q', templateParams)
+                    .then(function(response) {
+                       console.log('SUCCESS!', response.status, response.text);
+                       showStatus('تم إرسال الرمز!', 'online');
+                       document.getElementById(type + 'OtpBox').style.display = 'block';
+                    }, function(error) {
+                       console.log('FAILED...', error);
+                       showStatus('فشل في إرسال البريد', 'online');
+                       alert('فشل إرسال البريد الإلكتروني: ' + (error.text || error.message || 'خطأ غير معروف'));
+                    });
+            } catch (err) {
+                console.error('EmailJS Error:', err);
+                showStatus('خطأ فني في البريد', 'online');
+                alert('حدث خطأ فني أثناء محاولة إرسال البريد. يرجى تحديث الصفحة والمحاولة مرة أخرى.');
+            }
+        }
+
+        function verifyChange(type) {
+            const otpInput = document.getElementById(type + 'OtpInput').value;
+            if (otpInput !== pendingOtp) {
+                alert('رمز غير صحيح. لم يتم حفظ التغييرات.');
+                // Revert UI value
+                const profile = JSON.parse(localStorage.getItem('admin_profile') || '{"username":"admin","password":"admin","email":"iCatalog.dev@gmail.com"}');
+                if (type === 'email') document.getElementById('adminEmail').value = profile.email;
+                else document.getElementById('adminPassword').value = '';
+                
+                document.getElementById(type + 'OtpBox').style.display = 'none';
+                return;
+            }
+
+            const profile = JSON.parse(localStorage.getItem('admin_profile') || '{"username":"admin","password":"admin","email":"iCatalog.dev@gmail.com"}');
+            
+            if (type === 'email') {
+                profile.email = pendingValue;
+                document.getElementById('emailOtpBox').style.display = 'none';
+            } else {
+                profile.password = pendingValue;
+                document.getElementById('adminPassword').value = ''; // Clear password field after save
+                document.getElementById('passwordOtpBox').style.display = 'none';
+            }
+
+            localStorage.setItem('admin_profile', JSON.stringify(profile));
+            alert('تم تحديث الملف الشخصي بنجاح!');
+            pendingOtp = null;
+            pendingValue = null;
+        }
+
+        async function saveAllData() {
+            if (!navigator.onLine) {
+                showStatus("Offline - can't edit", 'offline');
+                return;
+            }
+
+            const result = await ThaMallDB.save(catalogData);
+
+            if (result.ok) {
+                showStatus('اونلاين - وضع التحديث مفعل', 'online');
+                localStorage.setItem(CACHE_KEY + '_ping', Date.now().toString());
+            } else {
+                if (result.error && (result.error.includes('HTTP') || result.error.includes('Unauthorized') || result.error.includes('فشل'))) {
+                    showStatus('خطأ الخادم: ' + result.error, 'offline');
+                } else {
+                    showStatus('تم الحفظ محلياً (وضع المعاينة)', 'online');
+                }
+                localStorage.setItem(CACHE_KEY + '_ping', Date.now().toString());
+            }
+        }
+
+        function setSyncBadge(type, text) {
+            // Not used anymore
+        }
+
+        function showStatus(text, type) {
+            const statusText = document.getElementById('statusText');
+            const statusBar  = document.getElementById('statusBar');
+            const dot        = document.getElementById('statusDot');
+            statusText.textContent = text;
+            statusBar.className    = `status-bar status-${type}`;
+            dot.style.background = type === 'online' ? '#28a745' : '#dc3545';
+        }
+
+        function setStatusLoading() {
+            document.getElementById('statusText').textContent = 'جاري التحميل...';
+        }
+
+        function updateStatus() {
+            const statusText = document.getElementById('statusText');
+            const statusBar  = document.getElementById('statusBar');
+            const dot        = document.getElementById('statusDot');
+            const dashboard  = document.getElementById('adminDashboard');
+
+            if (navigator.onLine) {
+                statusText.textContent = 'اونلاين - وضع التحديث مفعل';
+                statusBar.className = 'status-bar status-online';
+                dot.style.background = '#28a745';
+                if (dashboard) dashboard.classList.remove('offline-mode');
+            } else {
+                statusText.textContent = 'اوفلاين - وضع معاينة فقط';
+                statusBar.className = 'status-bar status-offline';
+                dot.style.background = '#dc3545';
+                if (dashboard) dashboard.classList.add('offline-mode');
+            }
+        }
+
+        function togglePassword(id) {
+            const input = document.getElementById(id);
+            const icon = document.querySelector(`#eye-${id}`);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
+            } else {
+                input.type = 'password';
+                icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+            }
+        }
+
+        window.addEventListener('online',  () => { updateStatus(); });
+        window.addEventListener('offline', () => { updateStatus(); });
+
+        // Cross-tab ping (same browser, different tabs)
+        window.addEventListener('storage', (e) => {
+            if (e.key === CACHE_KEY + '_ping') {
+                console.log('[Admin] Data updated in another tab, refreshing...');
+                initDashboard();
+            }
+        });
+
+        // Cross-tab ping (same browser, different tabs)
+        window.addEventListener('storage', (e) => {
+            if (e.key === CACHE_KEY + '_ping') {
+                console.log('[Admin] Data updated in another tab, refreshing...');
+                initDashboard();
+            }
+        });
+    </script>
+</body>
+</html>

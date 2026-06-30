@@ -1,0 +1,293 @@
+/* 
+   Global Layout Constraints
+   Fluid Full-Viewport Catalog Engine
+*/
+
+:root {
+    /* Dark Theme Core Colors */
+    --dark-bg: #0b507b;
+    --dark-text: #F5F5F5;
+    --dark-primary: #0b507b;
+    --dark-accent: #fb9a16;
+
+    /* Light Theme Core Colors */
+    --light-bg: #F9F9F9;
+    --light-text: #060c33;
+    --light-primary: #0b507b;
+    --light-accent: #fb9a16;
+
+    /* Semantic Theme Variables (Default to Dark Mode) */
+    --page-bg: var(--dark-bg);
+    --page-text: var(--dark-text);
+    --primary-color: var(--dark-primary);
+    --accent-color: var(--dark-accent);
+    --page-glass: color-mix(in srgb, var(--page-bg) 75%, transparent);
+    
+    /* Nav settings (Independent) */
+    --nav-bg-color: var(--primary-color);
+    --nav-icon-color-override: var(--accent-color);
+
+    /* Misc */
+    --link-color: var(--accent-color);
+    --text-muted: color-mix(in srgb, var(--page-text) 70%, transparent);
+
+    /* Luxury Design Tokens */
+    --gold-gradient: linear-gradient(135deg, var(--accent-color) 0%, color-mix(in srgb, var(--accent-color) 70%, white) 50%, var(--accent-color) 100%);
+    --glass-border: color-mix(in srgb, var(--accent-color) 30%, transparent);
+    --luxury-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+
+    /* Highly Fluid Responsive Typography Scale - Improved for Mobile */
+    --font-size-h1: clamp(2.2rem, 8vmin, 4.5rem);
+    --font-size-h2: clamp(1.8rem, 6vmin, 3.5rem);
+    --font-size-body: clamp(1rem, 2vmin, 1.3rem);
+    --font-size-small: clamp(0.85rem, 1.5vmin, 1rem);
+    
+    /* Start/End Page Config */
+    --se-card-bg: transparent;
+    --se-card-border: none;
+    --se-card-radius: 4px;
+    --se-corners-display: none;
+    --se-text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    --se-card-blur: none;
+    --se-card-shadow: none;
+    
+    /* Font Families */
+    --font-arabic: 'Al-Jazeera Arabic', 'IBM Plex Sans Arabic', sans-serif;
+    --font-heading: 'BW Glenn sans', 'Outfit', sans-serif;
+    --font-subheading: 'Pluto', 'Outfit', sans-serif;
+}
+
+.theme-light {
+    --page-bg: var(--light-bg);
+    --page-text: var(--light-text);
+    --primary-color: var(--light-primary);
+    --accent-color: var(--light-accent);
+    --page-glass: color-mix(in srgb, var(--page-bg) 75%, transparent);
+    --text-muted: color-mix(in srgb, var(--page-text) 70%, transparent);
+    --gold-gradient: linear-gradient(135deg, var(--accent-color) 0%, color-mix(in srgb, var(--accent-color) 70%, white) 50%, var(--accent-color) 100%);
+    --glass-border: color-mix(in srgb, var(--accent-color) 30%, transparent);
+
+    /* Local Start/End Page Config */
+    --se-card-bg: transparent;
+    --se-card-border: none;
+    --se-card-radius: 4px;
+    --se-corners-display: none;
+    --se-text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    --se-card-blur: none;
+    --se-card-shadow: none;
+}
+
+/* Luxury Card Utilities */
+.luxury-card {
+    position: relative;
+    background: var(--se-card-bg, transparent);
+    backdrop-filter: var(--se-card-blur, blur(25px));
+    -webkit-backdrop-filter: var(--se-card-blur, blur(25px));
+    border: var(--se-card-border, 1px solid var(--glass-border));
+    box-shadow: var(--se-card-shadow, var(--luxury-shadow));
+    border-radius: var(--se-card-radius, 4px);
+    overflow: hidden;
+    color: var(--page-text);
+}
+
+/* Corner Accents */
+.luxury-card::before,
+.luxury-card::after {
+    content: '';
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.luxury-card::before {
+    top: 0;
+    right: 0;
+    border-top: 2px solid var(--accent-color);
+    border-right: 2px solid var(--accent-color);
+}
+
+.luxury-card::after {
+    bottom: 0;
+    left: 0;
+    border-bottom: 2px solid var(--accent-color);
+    border-left: 2px solid var(--accent-color);
+}
+
+/* Luxury Divider */
+.luxury-divider {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    margin: 2vh 0;
+}
+
+.luxury-divider-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--accent-color), transparent);
+}
+
+.luxury-divider-diamond {
+    width: 8px;
+    height: 8px;
+    background: var(--accent-color);
+    transform: rotate(45deg);
+}
+
+/* Luxury Arabic Header (Standardized) */
+.luxury-header-arabic {
+    font-family: var(--font-arabic);
+    font-size: clamp(2rem, 5vmin, 3.8rem);
+    font-weight: 300;
+    line-height: 1.2;
+    display: block;
+    letter-spacing: 0 !important;
+}
+
+[dir="rtl"] {
+    letter-spacing: normal;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* ZERO PAGE SCROLLING */
+    background: #000;
+    font-family: var(--font-arabic);
+    touch-action: none !important; /* Prevent browser gestures */
+}
+
+/* 
+   The Catalog Page Container 
+   Always rigidly 100vw x 100vh to fill the screen entirely.
+*/
+.page-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100svh;
+    display: flex;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: var(--page-bg);
+    z-index: 1;
+    padding-top: env(safe-area-inset-top, 0px);
+}
+
+/* Allow internal element scrolling ONLY for specific containers */
+.scrollable-element {
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y; /* Re-enable native browser scrolling for these elements */
+}
+
+/* Hide all scrollbars globally & helper class */
+.hide-scrollbar::-webkit-scrollbar,
+::-webkit-scrollbar {
+    display: none !important;
+}
+.hide-scrollbar {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+}
+* {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+/* Orientation Overlay */
+.orientation-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100svh;
+    background: #0b507b;
+    z-index: 10000;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-align: center;
+    padding: 4vmin;
+    backdrop-filter: blur(10px);
+}
+
+@media (orientation: portrait) {
+    .orientation-overlay {
+        display: flex;
+    }
+}
+
+.rotate-device-icon {
+    width: 15vmin;
+    height: 15vmin;
+    min-width: 80px;
+    margin-bottom: 4vh;
+    filter: drop-shadow(0 0 15px var(--accent-color));
+    animation: rotateLoop 2.5s ease-in-out infinite;
+}
+
+@keyframes rotateLoop {
+    0% { transform: rotate(0deg); }
+    30% { transform: rotate(-90deg); }
+    70% { transform: rotate(-90deg); }
+    100% { transform: rotate(0deg); }
+}
+
+.orientation-text .ar-text {
+    font-family: var(--font-arabic);
+    font-size: clamp(1.5rem, 5vmin, 3.5rem);
+    margin-bottom: 1vh;
+    font-weight: 600;
+}
+
+.orientation-text .en-text {
+    font-family: var(--font-heading);
+    font-size: clamp(0.7rem, 2vmin, 1.2rem); /* Smaller English text */
+    letter-spacing: 2px;
+    opacity: 0.8;
+    text-transform: uppercase;
+}
+
+/* Core constraint helpers */
+.fluid-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+/* RTL Helpers */
+[dir="rtl"] .en-text {
+    text-align: left;
+}
+[dir="rtl"] .ar-text {
+    text-align: right;
+}
+
+/* Prevent image dragging interference with page swipes */
+img {
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+    user-select: none;
+}

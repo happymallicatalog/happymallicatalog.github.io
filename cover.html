@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title data-config-title="titleCover">Cover | HappyMall iCatalog</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=IBM+Plex+Sans+Arabic:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <!-- Global & Component Styles -->
+    <link rel="stylesheet" href="global.css">
+    <link rel="stylesheet" href="nav.css">
+    
+    <style>
+        :root {
+            --gold-gradient: linear-gradient(135deg, #dfa843 0%, #fef1b2 50%, #dfa843 100%);
+            --accent-color: #dfa843;
+        }
+
+        html, body {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            overflow: hidden !important;
+            touch-action: none !important;
+            background-color: #020712; /* Blue black screen */
+            font-family: 'Outfit', 'IBM Plex Sans Arabic', sans-serif;
+            color: #fff;
+        }
+
+        /* Premium PWA Loading Splash */
+        .pwa-loading-splash {
+            position: fixed;
+            inset: 0;
+            background: var(--primary-color, #0b507b);
+            z-index: 999999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.8s;
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .pwa-loading-splash.fade-out {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .splash-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .splash-logo-container {
+            margin-bottom: 30px;
+            position: relative;
+            animation: splashLogoPulse 2s infinite ease-in-out;
+        }
+
+        .splash-logo {
+            width: 110px;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .splash-loading-text {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            font-size: 1.1rem;
+            color: #ffffff;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+            font-weight: 300;
+        }
+
+        .splash-loading-bar-container {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
+            margin-bottom: 10px;
+        }
+
+        .splash-loading-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #dfa843 0%, #fef1b2 50%, #dfa843 100%);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.4s cubic-bezier(0.1, 0.8, 0.25, 1);
+            box-shadow: 0 0 10px rgba(223, 168, 67, 0.8);
+        }
+
+        .splash-loading-percentage {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            color: var(--accent-color);
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        @keyframes splashLogoPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+
+        /* Cinematic Intro Styles */
+        .intro-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #020712;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Background layers */
+        .bg-layer, .bg-blueprint {
+            position: absolute;
+            top: -10%; left: -10%;
+            width: 120%; height: 120%;
+            background-size: cover;
+            background-position: center;
+            will-change: transform, opacity;
+        }
+
+        /* Realistic background layer */
+        /* config:mallCoverImagePath */
+        .bg-video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+        }
+        /* /config:mallCoverImagePath */
+
+        /* Light sweep over reflections */
+        .light-sweep {
+            position: absolute;
+            top: 0; left: -150%;
+            width: 100%; height: 100%;
+            background: linear-gradient(to right, transparent 0%, rgba(255,255,255,0.05) 40%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.05) 60%, transparent 100%);
+            transform: skewX(-25deg);
+            z-index: 3;
+            animation: sweep 12s ease-in-out 5s infinite;
+            pointer-events: none;
+        }
+
+        /* Vignette overlay for cinematic depth */
+        .vignette {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.8) 100%);
+            z-index: 4;
+            pointer-events: none;
+            opacity: 0;
+            animation: fadeInVignette 4s ease-in-out 2s forwards;
+        }
+
+        .typography-container {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5vh;
+            padding: 4rem; /* Increased padding to prevent shadow clipping */
+        }
+
+        .typography-container.show {
+            animation: emergeTypography 3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        .video-overlay {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.3) 100%);
+            z-index: 5;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 2.5s ease-in-out;
+        }
+
+        .video-overlay.show {
+            opacity: 1;
+        }
+
+        /* Elegant Gold Typography */
+        .cover-mall-logo {
+            width: clamp(180px, 30vmin, 320px); /* Increased size */
+            height: auto;
+            object-fit: contain;
+            margin-bottom: 4vh;
+        }
+
+        .mall-name {
+            font-size: clamp(1.8rem, 6vmin, 3.5rem);
+            font-weight: 400;
+            color: #ffffff;
+            margin: 0;
+            line-height: 1.2;
+            font-family: var(--font-arabic, 'IBM Plex Sans Arabic');
+            letter-spacing: normal;
+        }
+
+        .typography-container.show .mall-name {
+            animation: showMallNameShadow 1s ease forwards 2.5s;
+        }
+
+        .subtitle {
+            font-size: clamp(1.1rem, 2.5vmin, 1.6rem);
+            font-weight: 600;
+            color: var(--accent-color);
+            margin: 0;
+            font-family: var(--font-arabic, 'IBM Plex Sans Arabic');
+            letter-spacing: normal;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+        }
+
+        .typography-container.show .subtitle {
+            animation: showSubtitleShadow 1s ease forwards 2.5s;
+        }
+
+        .divider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+            margin: 10px 0;
+            max-width: 300px;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--accent-color), transparent);
+        }
+
+        .divider-diamond {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-color);
+            transform: rotate(45deg);
+            box-shadow: 0 0 8px var(--accent-color);
+        }
+
+        .developer {
+            font-size: clamp(1.2rem, 3vmin, 1.8rem);
+            color: #ffffff;
+            font-weight: 300;
+            margin-top: 3vh;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            font-family: var(--font-arabic, 'IBM Plex Sans Arabic');
+            letter-spacing: normal;
+        }
+
+        .typography-container.show .developer {
+            animation: showSubtitleShadow 1s ease forwards 2.5s;
+        }
+
+        .dev-name {
+            color: var(--accent-color);
+            font-weight: 400;
+            font-size: 1.2em;
+        }
+
+        /* Unused button styles removed */
+
+        /* Keyframes */
+        /* Unused animations removed */
+
+        @keyframes sweep {
+            0% { left: -150%; }
+            100% { left: 150%; }
+        }
+
+        @keyframes fadeInVignette {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes emergeTypography {
+            0% { opacity: 0; transform: translateY(30px) scale(0.95); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes showMallNameShadow {
+            from { text-shadow: 0 0 0 rgba(0,0,0,0); }
+            to { text-shadow: 0 0 50px rgba(0,0,0,1), 0 0 25px rgba(0,0,0,1), 0 5px 10px rgba(0,0,0,0.9); }
+        }
+
+        @keyframes showSubtitleShadow {
+            from { text-shadow: 0 0 0 rgba(0,0,0,0); }
+            to { text-shadow: 0 0 40px rgba(0,0,0,1), 0 0 20px rgba(0,0,0,1), 0 3px 8px rgba(0,0,0,0.9); }
+        }
+
+        /* Transition state when button clicked */
+        /* Transition state when button clicked */
+        .intro-container.transitioning .bg-video {
+            transform: scale(1.05) translateY(2%) !important;
+            filter: blur(10px) brightness(0.3);
+            transition: all 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Footer */
+        .end-footer {
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: clamp(0.7rem, 1.4vmin, 1rem);
+            color: rgba(255, 255, 255, 0.6);
+            text-align: center;
+            opacity: 0.9;
+            z-index: 10;
+            font-weight: 300;
+        }
+
+        .white-text {
+            color: #ffffff;
+            font-weight: 300;
+        }
+
+        .end-footer a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 300;
+        }
+        
+        .intro-container.transitioning .typography-container {
+            opacity: 0 !important;
+            transform: translateY(-50px) scale(1.05);
+            transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+    </style>
+</head>
+<body class="theme-dark">
+    <!-- Premium PWA Precache Loading Screen -->
+    <div id="pwa-loading-splash" class="pwa-loading-splash">
+        <script>
+            // Hide splash immediately only if this exact SW version was already precached
+            if (localStorage.getItem('happymall_precached_version') === 'happymall-v90') {
+                document.getElementById('pwa-loading-splash').style.setProperty('display', 'none', 'important');
+            }
+        </script>
+        <div class="splash-inner">
+            <div class="splash-logo-container">
+                <img data-config-src="mallLogoPath" src="assets/images/Mall_horizontal_Logo.webp" alt="Mall Logo" class="splash-logo">
+            </div>
+            <div class="splash-loading-text">جاري تحميل الكتالوج</div>
+            <div class="splash-loading-bar-container">
+                <div id="splash-loading-bar" class="splash-loading-bar"></div>
+            </div>
+            <div id="splash-loading-percentage" class="splash-loading-percentage">0%</div>
+        </div>
+    </div>
+
+    <!-- Cinematic Intro Container -->
+    <div class="intro-container" id="main-container">
+        <!-- Cinematic Video Intro -->
+        <video class="bg-video" id="introVideo" src="assets/HappyMallIntro.MP4" muted playsinline></video>
+        
+        <!-- Environment Effects -->
+        <div class="video-overlay" id="videoOverlay"></div>
+        <div class="vignette"></div>
+        <div class="light-sweep"></div>
+        
+        <!-- Gold Typography -->
+        <div class="typography-container">
+            <img data-config-src="mallLogoPath" src="assets/images/Mall_horizontal_Logo.webp" alt="Mall Logo" class="cover-mall-logo">
+            
+            <h1 class="mall-name">
+                <!-- config:mallNameAr -->هابى مول<!-- /config:mallNameAr --> HAPPY MALL
+            </h1>
+            <h2 class="subtitle"><!-- config:mallTaglineEn -->لأنك تستحق الأفضل<!-- /config:mallTaglineEn --></h2>
+            
+            <div class="divider-container">
+                <div class="divider-line"></div>
+                <div class="divider-diamond"></div>
+                <div class="divider-line"></div>
+            </div>
+
+            <div class="developer">
+                <span>المطور</span>
+                <span class="dev-name"><!-- config:developerNameAr -->بيتك<!-- /config:developerNameAr --> | <!-- config:developerNameEn -->Betak بيتك<!-- /config:developerNameEn --></span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="end-footer">
+            <a href="https://marwasleem.netlify.app" target="_blank" rel="noopener noreferrer" onclick="window.open(this.href, '_blank'); return false;" class="white-text" style="text-decoration: none;">iCΛTALOG</a>
+        </div>
+    </div>
+
+    <!-- Global Logic and Navigation -->
+    <script src="global.js"></script>
+    <script src="nav.js"></script>
+
+    <!-- Splash loading screen and transition logic -->
+    <script>
+        // Intro Video Sync Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const introVideo = document.getElementById('introVideo');
+            const videoOverlay = document.getElementById('videoOverlay');
+            const typography = document.querySelector('.typography-container');
+            
+            let introFinished = false;
+            let fallbackTimeout = null;
+
+            function finishIntro() {
+                if (introFinished) return;
+                introFinished = true;
+                videoOverlay.classList.add('show');
+                typography.classList.add('show');
+                if (fallbackTimeout) clearTimeout(fallbackTimeout);
+            }
+
+            function startVideoIfLandscape() {
+                if (!introVideo) return;
+                const isPortrait = window.matchMedia('(orientation: portrait)').matches;
+                if (!isPortrait) {
+                    introVideo.play().catch(e => {
+                        console.warn('Autoplay prevented:', e);
+                        finishIntro();
+                    });
+                    if (!fallbackTimeout && !introFinished) {
+                        fallbackTimeout = setTimeout(finishIntro, 12000);
+                    }
+                } else {
+                    introVideo.pause();
+                }
+            }
+
+            if (introVideo) {
+                introVideo.addEventListener('ended', finishIntro);
+                
+                // Trigger 3 seconds before the video ends for a seamless transition
+                introVideo.addEventListener('timeupdate', () => {
+                    if (introVideo.duration && (introVideo.duration - introVideo.currentTime) <= 3) {
+                        finishIntro();
+                    }
+                });
+
+                // Listen for orientation changes
+                window.matchMedia('(orientation: portrait)').addEventListener('change', startVideoIfLandscape);
+            } else {
+                finishIntro();
+            }
+
+            // ONLY start the video when the splash screen has fully hidden
+            window.addEventListener('splashHidden', () => {
+                startVideoIfLandscape();
+            });
+        });
+
+        // Splash Logic
+        (function() {
+            const splash = document.getElementById('pwa-loading-splash');
+            const bar = document.getElementById('splash-loading-bar');
+            const percent = document.getElementById('splash-loading-percentage');
+
+            let done = false;
+
+            // Tie precached flag to SW version — if version changed, re-precache everything
+            const SW_VERSION = 'happymall-v97';
+            const cachedVersion = localStorage.getItem('happymall_precached_version');
+            const isPrecached = cachedVersion === SW_VERSION;
+
+            function hideSplash() {
+                if (done) return;
+                done = true;
+                localStorage.setItem('happymall_precached', 'true');
+                localStorage.setItem('happymall_precached_version', SW_VERSION);
+
+                if (bar) bar.style.width = '100%';
+                if (percent) percent.textContent = '100%';
+
+                setTimeout(() => {
+                    if (splash) {
+                        splash.classList.add('fade-out');
+                    }
+
+                    if (!navigator.serviceWorker.controller && 'serviceWorker' in navigator) {
+                        window.location.reload();
+                    } else {
+                        window.dispatchEvent(new Event('splashHidden'));
+                    }
+                }, 400);
+            }
+
+            if (isPrecached) {
+                if (splash) {
+                    splash.style.display = 'none';
+                    splash.style.transition = 'none';
+                    splash.classList.add('fade-out');
+                }
+                setTimeout(() => window.dispatchEvent(new Event('splashHidden')), 50);
+                return;
+            }
+
+            function handleProgressUpdate(progress, status) {
+                if (bar) bar.style.width = `${progress}%`;
+                if (percent) percent.textContent = `${progress}%`;
+
+                if (progress >= 100 || status === 'complete') {
+                    hideSplash();
+                }
+            }
+
+            try {
+                const channel = new BroadcastChannel('pwa_precache_channel');
+                channel.onmessage = event => {
+                    if (event.data && event.data.type === 'SW_PRECACHE_PROGRESS') {
+                        handleProgressUpdate(event.data.progress, event.data.status);
+                    }
+                };
+            } catch(e) {
+                console.warn('[Cover] BroadcastChannel not supported:', e);
+            }
+
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.addEventListener('message', event => {
+                    if (event.data && event.data.type === 'SW_PRECACHE_PROGRESS') {
+                        handleProgressUpdate(event.data.progress, event.data.status);
+                    }
+                });
+
+                navigator.serviceWorker.register('/sw.js', { scope: '/' })
+                    .then(reg => {
+                        console.log('[Cover] Service Worker registered:', reg.scope);
+
+                        // If SW is already active (no new install needed), hide splash immediately
+                        if (reg.active && !reg.installing) {
+                            hideSplash();
+                        }
+
+                        // Watch for new SW installation completing
+                        if (reg.installing) {
+                            reg.installing.addEventListener('statechange', (e) => {
+                                if (e.target.state === 'installed' || e.target.state === 'activated') {
+                                    hideSplash();
+                                }
+                            });
+                        }
+
+                        setInterval(() => reg.update(), 1000 * 60 * 10);
+                    })
+                    .catch(err => {
+                        console.warn('[Cover] SW registration failed:', err);
+                        hideSplash();
+                    });
+            } else {
+                hideSplash();
+            }
+
+        // Fallback timeout — max 30s, after that force-hide splash and show content
+        setTimeout(hideSplash, 30000);
+        })();
+    
+    </script>
+</body>
+</html>

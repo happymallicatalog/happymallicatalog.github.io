@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title data-config-title="titleMall">Mall Info | HappyMall iCatalog</title>
+    
+    <!-- Preload first hero image for instant rendering -->
+    <link rel="preload" as="image" href="assets/images/Mall_images/1.jpg">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=IBM+Plex+Sans+Arabic:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Global & Component Styles -->
+    <link rel="stylesheet" href="global.css">
+    <link rel="stylesheet" href="nav.css">
+    <style>
+        :root {
+            --gold-gradient: linear-gradient(135deg, #dfa843 0%, #fef1b2 50%, #dfa843 100%);
+            --glass-bg: var(--page-glass);
+            --glass-border: rgba(223, 168, 67, 0.3);
+        }
+
+        html, body {
+            overflow: hidden !important;
+            height: 100vh !important;
+            height: 100svh !important;
+            touch-action: none !important;
+        }
+
+        .page-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            height: 100svh;
+            overflow: hidden;
+        }
+
+        /* Hero Photo Background - Animated */
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .hero-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* Only transition transform to prevent initial load fade delay */
+            transition: transform 12s linear;
+            filter: brightness(0.7) contrast(1.1);
+        }
+
+        .hero-bg.zooming .hero-photo {
+            transform: scale(1.15);
+        }
+
+        /* Luxury Overlay - Radial gradient starting from bottom-left corner */
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background-color: var(--page-glass); /* Dynamic glassmorphism */
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            -webkit-mask-image: radial-gradient(circle at bottom left, black 15%, transparent 50%);
+            mask-image: radial-gradient(circle at bottom left, black 15%, transparent 50%);
+            z-index: 2;
+        }
+
+        /* Left Content Panel (Replacing the old card) */
+        .left-content-panel {
+            position: absolute;
+            bottom: calc(clamp(20px, 5vh, 40px) + clamp(40px, 7vmin, 55px) + 50px);
+            left: 5vw;
+            width: clamp(280px, 30vw, 420px);
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5vh;
+            pointer-events: none;
+        }
+
+        .left-content-panel > * {
+            pointer-events: auto;
+        }
+
+        .mall-title {
+            font-family: var(--font-arabic, 'IBM Plex Sans Arabic');
+            font-size: clamp(2rem, 4vmin, 3.5rem);
+            color: var(--accent-color, #dfa843);
+            font-weight: 400;
+            letter-spacing: 0 !important;
+            margin: 0;
+            text-align: left;
+        }
+
+        .mall-info-text {
+            font-family: var(--font-arabic);
+            font-size: clamp(1rem, 1.8vmin, 1.2rem);
+            font-weight: 300;
+            line-height: 1.8;
+            color: #ffffff;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+            text-align: right;
+            margin: 0;
+            max-height: 35vh;
+            overflow-y: auto;
+            pointer-events: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            padding-left: 10px;
+        }
+        
+        .mall-info-text::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Staggered Content Animations */
+        .animate-item {
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Hidden Scrollbars */
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Features Section */
+        .features-section {
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            padding-top: 2.5vh;
+            display: flex;
+            flex-direction: column;
+            animation-delay: 0.4s;
+            align-items: flex-end; /* In RTL, this aligns items to the left */
+        }
+
+        .features-grid {
+            display: flex;
+            overflow-x: auto;
+            gap: 16px;
+            padding: 5px 0;
+            
+            width: 100%;
+        }
+
+        .feature-item {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 8px 16px;
+            border-radius: 30px;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+
+        .feat-text {
+            font-family: var(--font-arabic);
+            font-size: clamp(0.85rem, 1.6vmin, 1rem);
+            font-weight: 400;
+            color: #ffffff;
+            white-space: nowrap;
+        }
+
+        /* Gallery Overlay - Premium Round Thumbnails */
+        .thumbs-container {
+            position: absolute;
+            bottom: clamp(20px, 5vh, 40px);
+            left: 5vw;
+            width: clamp(280px, 30vw, 420px); /* Matches content panel width */
+            max-width: 30vw;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 15px;
+            background: color-mix(in srgb, var(--page-bg) 40%, transparent);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 50px;
+            border: 1px solid var(--glass-border);
+            overflow-x: auto;
+        }
+
+        .thumb-wrapper {
+            width: clamp(40px, 7vmin, 55px);
+            height: clamp(40px, 7vmin, 55px);
+            border-radius: 50%;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .thumb-wrapper::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            transition: opacity 0.3s;
+            z-index: 1;
+        }
+
+        .thumb-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .thumb-wrapper.active {
+            transform: scale(1.2) translateY(-4px);
+            border-color: var(--accent-color);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5), 0 0 15px rgba(223, 168, 67, 0.3);
+        }
+
+        .thumb-wrapper.active::before {
+            opacity: 0;
+        }
+    </style>
+</head>
+<body class="theme-dark">
+    <div class="page-container">
+        <!-- Hero Photo Background -->
+        <div class="hero-bg" id="heroBg">
+            <img src="assets/images/Mall_images/1.jpg" alt="TheMall iCatalog" class="hero-photo" id="mainHeroPhoto">
+            <div class="hero-overlay"></div>
+        </div>
+
+        <!-- Left Content Panel (Replacing the old card) -->
+        <div class="left-content-panel">
+            <h2 class="mall-title animate-item"><!-- config:mallNameAr -->هابى مول<!-- /config:mallNameAr --></h2>
+            <div class="mall-info-text animate-item scrollable-element">
+                <!-- config:mallDescAr -->أول مول تجاري اداري ترفيهي في مدينة السادات ويقع المشروع مباشرة علي طريق ابو بكر الرئيسي
+
+بلازا: تعتبر البلازا الخاصة بالمشروع اطلالة رائعة للمحلات والمكاتب كما تحتوي علي تصميم لاندسكيب رائع وتحتوي علي اماكن يوجد بها كراسي للمساج
+
+مطاعم وكافيهات: يحتوي المشروع علي أفضل المطاعم والكافيهات لخدمة العملاء والزوار وتحقيق الرفاهية لهم
+
+منطقة لعب أطفال: يحتوي المشروع علي منطقة لعب للأطفال واماكن تلوين ورسم خاصة بهم لتحقيق وإيجاد البيئة المناسبة لهم من حيث الرفاهية والأمان
+
+صالة بولينج: يحتوي المشروع علي صالة بولينج ولأول مرة في مدينة السادات لتحقيق المتعة والرفاهية داخل المول
+
+العاب الواقع الافتراضي: يحتوي المشروع أيضا علي ألعاب الواقع الافتراضي وألعاب الحرب بالليزر وألعاب البلايستيشن والبلياردو<!-- /config:mallDescAr -->
+            </div>
+
+            <div class="features-section animate-item">
+                <div class="features-grid hide-scrollbar scrollable-element" id="featuresGrid">
+                    <!-- Features populated by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Gallery Overlay -->
+        <div class="thumbs-container hide-scrollbar scrollable-element" id="thumbsScroll">
+            <!-- Thumbs populated by JS -->
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <script src="global.js"></script>
+    <script src="nav.js"></script>
+    
+    <script>
+        // config:mallImages
+        const mallImages = [
+            'assets/images/Mall_images/1.jpg',
+            'assets/images/Mall_images/2.jpg',
+            'assets/images/Mall_images/3.jpg',
+            'assets/images/Mall_images/4.jpg',
+            'assets/images/Mall_images/5.jpg',
+            'assets/images/Mall_images/6.jpg'
+        ];
+        // /config:mallImages
+
+        // config:mallFeatures
+        const features = [
+            { icon: "<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M8 14s1.5 2 4 2 4-2 4-2\"/><line x1=\"9\" y1=\"9\" x2=\"9.01\" y2=\"9\" stroke-width=\"3\"/><line x1=\"15\" y1=\"9\" x2=\"15.01\" y2=\"9\" stroke-width=\"3\"/>", text: "منطقة لعب أطفال" },
+            { icon: "<path d=\"M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2\"/><path d=\"M7 2v20\"/><path d=\"M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7\"/>", text: "مطاعم وكافيهات" },
+            { icon: "<line x1=\"6\" y1=\"11\" x2=\"10\" y2=\"11\"/><line x1=\"8\" y1=\"9\" x2=\"8\" y2=\"13\"/><line x1=\"15\" y1=\"12.5\" x2=\"15.01\" y2=\"12.5\" stroke-width=\"3\"/><line x1=\"18\" y1=\"10.5\" x2=\"18.01\" y2=\"10.5\" stroke-width=\"3\"/><rect width=\"20\" height=\"12\" x=\"2\" y=\"6\" rx=\"2\"/>", text: "العاب الواقع الافتراضي" },
+            { icon: "<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M19.13 5.09C15.22 9.14 10 10.44 2.25 10.94\"/><path d=\"M21.75 12.84c-6.62-1.41-12.14 1-16.38 6.32\"/><path d=\"M8.56 2.75c4.37 6 6 9.42 8 17.72\"/>", text: "صالة بولينج" },
+            { icon: "<path d=\"M13 19v4\"/><path d=\"M10 19v4\"/><path d=\"M8 19h8\"/><path d=\"M12 2C8 2 6 6 6 9c0 2.5 1.5 4 1.5 7h9c0-3 1.5-4.5 1.5-7 0-3-2-7-6-7Z\"/>", text: "بلازا" }
+        ];
+        // /config:mallFeatures
+
+        // Populate Features
+        const grid = document.getElementById('featuresGrid');
+        if (grid) {
+            grid.innerHTML = '';
+            if (features.length === 0) {
+                const sect = document.querySelector('.features-section');
+                if (sect) sect.style.display = 'none';
+            } else {
+                features.forEach(f => {
+                    const item = document.createElement('div');
+                    item.className = 'feature-item';
+                    item.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 8px;">${f.icon}</svg><span class="feat-text">${f.text}</span>`;
+                    grid.appendChild(item);
+                });
+            }
+        }
+
+        // Populate Gallery
+        const hero = document.getElementById('mainHeroPhoto');
+        const heroBg = document.getElementById('heroBg');
+        const thumbBar = document.getElementById('thumbsScroll');
+
+        mallImages.forEach((imgSrc, idx) => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'thumb-wrapper' + (idx === 0 ? ' active' : '');
+            wrapper.innerHTML = `<img src="${imgSrc}" class="thumb-img" alt="Mall Photo ${idx+1}">`;
+            
+            wrapper.addEventListener('click', () => {
+                if (wrapper.classList.contains('active')) return;
+                
+                // Switch active thumb
+                document.querySelectorAll('.thumb-wrapper').forEach(t => t.classList.remove('active'));
+                wrapper.classList.add('active');
+                
+                // Switch hero with crossfade (temporarily enabling transition)
+                hero.style.transition = 'opacity 0.4s ease, transform 12s linear';
+                hero.style.opacity = 0;
+                setTimeout(() => {
+                    hero.src = imgSrc;
+                    hero.style.opacity = 1;
+                    resetZoom();
+                    setTimeout(() => {
+                        hero.style.transition = 'transform 12s linear';
+                    }, 400);
+                }, 400);
+            });
+            thumbBar.appendChild(wrapper);
+        });
+
+        // Ken Burns Effect Logic
+        function resetZoom() {
+            heroBg.classList.remove('zooming');
+            void heroBg.offsetWidth; // Force reflow
+            heroBg.classList.add('zooming');
+        }
+
+        // Start initial zoom
+        window.onload = resetZoom;
+
+
+
+    </script>
+</body>
+</html>

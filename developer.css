@@ -1,0 +1,182 @@
+/* developer.css */
+
+html, body {
+    overflow: hidden !important;
+    height: 100vh !important;
+    height: 100svh !important;
+    touch-action: none !important;
+    background-color: var(--page-bg) !important;
+}
+
+.developer-page {
+    background-color: var(--page-bg);
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    height: 100svh;
+    overflow: hidden;
+}
+
+/* Full Screen Image Background */
+.full-image-bg {
+    position: absolute;
+    inset: 0;
+    /* config:developerImagePath */
+    background-image: url('assets/images/DeveloperPageImage.webp');
+    /* /config:developerImagePath */
+    background-size: cover;
+    background-position: center right; /* Focus on the right side where the wall logo is */
+    z-index: 1;
+}
+
+/* Content Area - Left side visually */
+.content-area {
+    position: absolute;
+    top: 0;
+    left: 0; /* Align to left edge */
+    width: 54vw; /* Widen slightly from 48vw */
+    height: 100%;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* Push content downwards */
+}
+
+/* Gradient Background using Primary Branding Color */
+.content-bg {
+    position: absolute;
+    inset: 0;
+    background-color: var(--page-glass); /* Dynamic glassmorphism */
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    /* Fades to transparent slightly later to match width */
+    -webkit-mask-image: linear-gradient(to right, black 42%, transparent 100%);
+    mask-image: linear-gradient(to right, black 42%, transparent 100%);
+    z-index: -1;
+}
+
+.content-inner {
+    padding: 8vh 4vw 12vh 6vw; /* Pushed bottom padding to 12vh to raise slightly from bottom edge */
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: flex-end; /* Move content block downwards */
+    align-items: flex-end; /* Align elements to the left visually in RTL */
+}
+
+/* Developer Info */
+.dev-info-section {
+    margin-top: 4vh;
+    animation: fadeInUp 1s ease forwards 0.2s;
+    opacity: 0;
+    text-align: left; /* Align text to the left */
+    width: 100%;
+}
+
+.dev-label {
+    font-family: var(--font-arabic, 'IBM Plex Sans Arabic');
+    font-size: clamp(0.9rem, 1.8vmin, 1.3rem);
+    color: var(--accent-color, #dfa843);
+    text-transform: uppercase;
+    letter-spacing: 0 !important;
+    font-weight: 300;
+    margin-bottom: 0.5vh;
+}
+
+.dev-name {
+    font-family: var(--font-arabic, 'IBM Plex Sans Arabic');
+    font-size: clamp(2rem, 4vmin, 3.5rem);
+    color: var(--accent-color, #dfa843);
+    font-weight: 400;
+    letter-spacing: 0 !important;
+    margin-bottom: 1.5vh;
+    margin-top: 0;
+}
+
+.dev-description {
+    font-family: var(--font-arabic, 'IBM Plex Sans Arabic');
+    font-size: clamp(1rem, 1.8vmin, 1.2rem);
+    line-height: 1.8;
+    color: #f0f0f0;
+    max-width: 90%;
+    font-weight: 300;
+    margin: 0;
+    margin-left: 0; /* Align block to the left visually in RTL */
+    margin-right: auto;
+    text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    text-align: right; /* Align text to right for Arabic */
+    white-space: pre-wrap;
+    max-height: 35vh;
+    overflow-y: auto;
+    padding-left: 10px;
+    pointer-events: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+/* Scrollbar for Description */
+.dev-description::-webkit-scrollbar {
+    display: none;
+}
+
+/* Stats Row */
+.stats-row {
+    margin-top: 8vh;
+    display: flex;
+    align-items: center;
+    gap: 4vw;
+    animation: fadeInUp 1s ease forwards 0.5s;
+    opacity: 0;
+    justify-content: flex-end; /* Push stats to the left visually in RTL */
+    width: 100%;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* Align value and text to the left visually in RTL */
+    text-align: left;
+}
+
+.stat-value {
+    font-family: var(--font-heading, 'Outfit');
+    font-size: clamp(2.5rem, 6vmin, 4.5rem);
+    color: var(--accent-color, #dfa843);
+    font-weight: 300;
+    line-height: 1;
+    margin-bottom: 1.5vh;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.stat-label {
+    font-family: var(--font-arabic, 'IBM Plex Sans Arabic');
+    font-size: clamp(0.85rem, 1.5vmin, 1.1rem);
+    color: #e0e0e0;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0;
+    max-width: 140px;
+    line-height: 1.4;
+}
+
+.stat-divider {
+    width: 1px;
+    height: 70px;
+    background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.3), transparent);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+

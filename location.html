@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title data-config-title="titleLocation">Location | HappyMall iCatalog</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=IBM+Plex+Sans+Arabic:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Global & Component Styles -->
+    <link rel="stylesheet" href="global.css">
+    <link rel="stylesheet" href="nav.css">
+    <style>
+        :root {
+            --gold-gradient: linear-gradient(135deg, #dfa843 0%, #fef1b2 50%, #dfa843 100%);
+            --glass-bg: var(--page-glass);
+            --glass-border: rgba(223, 168, 67, 0.3);
+        }
+
+        .page-container {
+        }
+
+
+
+        html, body {
+            overflow: hidden !important;
+            height: 100vh !important;
+            height: 100svh !important;
+            touch-action: none !important;
+        }
+
+        .page-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            height: 100svh;
+            overflow: hidden;
+            display: flex;
+        }
+
+        /* Map Background */
+        .map-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .map-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Luxury Overlay - Radial gradient starting from bottom-left corner */
+        .page-container::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-color: var(--page-glass); /* Dynamic glassmorphism */
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            -webkit-mask-image: radial-gradient(circle at bottom left, black 15%, transparent 50%);
+            mask-image: radial-gradient(circle at bottom left, black 15%, transparent 50%);
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        /* Left Panel Container (Holds content and bottom features bar) */
+        .left-panel-container {
+            position: absolute;
+            bottom: clamp(20px, 5vh, 40px);
+            left: 5vw;
+            width: clamp(280px, 30vw, 420px);
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            gap: 3vh;
+            pointer-events: none;
+        }
+
+        .left-panel-container > * {
+            pointer-events: auto;
+        }
+
+        /* Left Content Panel (Replacing the old card) */
+        .left-content-panel {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 2.5vh;
+            pointer-events: none;
+        }
+
+        .left-content-panel > * {
+            pointer-events: auto;
+        }
+
+        /* Staggered Content Animations */
+        .animate-item {
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .location-title {
+            font-family: var(--font-arabic, 'IBM Plex Sans Arabic');
+            font-size: clamp(1.2rem, 2.5vmin, 1.8rem);
+            color: var(--accent-color, #dfa843);
+            font-weight: 400;
+            letter-spacing: 0 !important;
+            margin: 0;
+            margin-bottom: 3vh;
+            text-align: left;
+            animation-delay: 0.4s;
+        }
+
+        .location-subtitle {
+            font-family: var(--font-arabic);
+            font-size: clamp(1rem, 1.8vmin, 1.2rem);
+            line-height: 1.7;
+            opacity: 0.9;
+            text-align: left;
+            margin: 0;
+            color: #ffffff;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+            animation-delay: 0.6s;
+        }
+
+        /* Get Directions Button */
+        .directions-btn {
+            background: var(--accent-color);
+            color: #ffffff;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-family: var(--font-arabic);
+            font-size: clamp(0.85rem, 1.8vmin, 1rem);
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: fit-content;
+            animation: fadeInUp 0.8s ease forwards;
+            animation-delay: 0.8s;
+            opacity: 0;
+            margin-top: 1.5vh;
+        }
+
+        .directions-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(197, 160, 89, 0.3);
+        }
+
+        /* Bottom Distance Bar (Features and Distances Combined) */
+        .bottom-slider-bar {
+            width: 100%;
+            height: calc(clamp(40px, 7vmin, 55px) + 20px); /* Exactly matches thumbs bar height */
+            background: color-mix(in srgb, var(--page-bg) 40%, transparent);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            padding: 10px 15px;
+            display: /* config:showLocationFeatures */none/* /config:showLocationFeatures */;
+            align-items: center;
+            overflow-x: auto;
+            scrollbar-width: none;
+            cursor: grab;
+            user-select: none;
+            opacity: 1;
+        }
+
+        .bottom-slider-bar::-webkit-scrollbar { display: none; }
+        .bottom-slider-bar:active { cursor: grabbing; }
+
+        .slider-inner {
+            display: flex;
+            height: 100%;
+            align-items: center;
+            min-width: max-content;
+            padding: 0 2vw;
+        }
+
+        .slider-group {
+            display: flex;
+            gap: clamp(15px, 3vw, 40px);
+            align-items: center;
+        }
+
+        .slider-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 2px;
+            min-width: 40px;
+            padding: 0 10px; /* Added padding */
+        }
+
+        .slider-icon-svg {
+            width: clamp(12px, 1.5vw, 16px); /* Even smaller */
+            height: clamp(12px, 1.5vw, 16px);
+            color: var(--accent-color);
+            stroke-width: 1.2;
+            opacity: 0.8;
+        }
+
+        .slider-main-text {
+            font-family: var(--font-arabic);
+            font-size: clamp(0.75rem, 1vmin, 0.85rem); /* Even smaller */
+            font-weight: 400;
+            color: white;
+            white-space: nowrap;
+        }
+
+        .slider-sub-text {
+            font-family: var(--font-arabic);
+            font-size: clamp(0.65rem, 0.8vmin, 0.75rem); /* Even smaller */
+            color: var(--accent-color);
+            opacity: 0.7;
+            white-space: nowrap;
+        }
+
+        /* Vertical Divider between groups */
+        .group-divider {
+            width: 1px;
+            height: 20px;
+            background: rgba(197, 160, 89, 0.2);
+            margin: 0 10px;
+        }
+
+        /* Credit Footer */
+        .footer-credit {
+            position: absolute;
+            bottom: 12px;
+            left: 0;
+            width: 100%;
+            font-family: var(--font-subheading);
+            font-size: clamp(0.45rem, 0.85vmin, 0.6rem);
+            letter-spacing: 1px;
+            text-align: center;
+            z-index: 30;
+            opacity: 0;
+            animation: fadeInSubtle 1.5s ease forwards 1s;
+        }
+
+        @keyframes fadeInSubtle {
+            from { opacity: 0; }
+            to { opacity: 0.4; }
+        }
+        .footer-credit a { color: var(--accent-color); text-decoration: none; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+
+    </style>
+</head>
+<body class="theme-dark">
+    <div class="page-container">
+        <!-- Map Background -->
+        <div class="map-bg">
+            <img data-config-src="mallMapPath" src="assets/images/Mall-Location-Map.webp" alt="Mall Location Map" class="map-image">
+        </div>
+
+        <!-- Left Panel Container (Holds content and bottom features bar) -->
+        <div class="left-panel-container">
+            <!-- Left Content Panel (Replacing the old card) -->
+            <div class="left-content-panel">
+                <div class="location-text animate-item">
+                    <h1 class="location-title">
+                        <!-- config:locationTitleAr -->في قلب مدينة السادات<!-- /config:locationTitleAr -->
+                    </h1>
+                    
+                    <p class="location-subtitle">
+                        <!-- config:locationDescAr -->يتميز هابى مول بموقع استراتيجي علي شارع ابو بكر الصديق مباشرة وسط اكبر كتلة سكنية في مدينة السادات حيث يقع المشروع علي ناصية محور خدمات المنطقة ال15 والمنطقة ال17 حيث ان هابى مول يقع بين المنطقة التاسعة والمنطقة العاشرة وبيت وطن ال17 والمنطقة ال23 والمنطقة ال15 وشريط مميز ال15<!-- /config:locationDescAr -->
+                    </p>
+                </div>
+                
+                <!-- Get Directions Button inside left content panel -->
+                <a data-config-href="mapsLink" href="https://maps.app.goo.gl/taBqTgAvXrqkvdAA7" target="_blank" rel="noopener noreferrer" class="directions-btn animate-item">
+                    الاتجاهات
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h6v6"/><path d="M10 14L21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                </a>
+            </div>
+
+            <!-- Bottom Slider Bar (Restored Features + Distances) -->
+            <div class="bottom-slider-bar">
+                <div class="slider-inner scrollable-element" id="sliderScroll">
+                    <!-- Dynamically populated -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="global.js"></script>
+    <script src="nav.js"></script>
+    <script>
+        // config:locationFeatures
+        const locationFeatures = [
+            { icon: "<path d=\"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\"/>", text: "محور رئيسي", sub: "سهولة الوصول" },
+            { icon: "<circle cx=\"12\" cy=\"12\" r=\"3\"/><path d=\"M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z\"/>", text: "موقع حيوي", sub: "منطقة راقية" },
+            { icon: "<path d=\"M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/><path d=\"M23 21v-2a4 4 0 0 0-3-3.87\"/><path d=\"M16 3.13a4 4 0 0 1 0 7.75\"/>", text: "كثافة عالية", sub: "٥٠٠ ألف نسمة" },
+            { icon: "<path d=\"M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/>", text: "واجهة مميزة", sub: "رؤية مباشرة" }
+        ];
+        // /config:locationFeatures
+
+        // config:locationDistances
+        const locationDistances = [
+            { icon: "<path d=\"M3 10h18M3 14h18M7 2v20M17 2v20\"/>", text: "٢ دقيقة", sub: "محور التسعين" },
+            { icon: "<path d=\"M22 10v6M2 10l10-5 10 5-10 5z\"/><path d=\"M6 12v5c3 3 9 3 12 0v-5\"/>", text: "٤ دقائق", sub: "الجامعة الأمريكية" },
+            { icon: "<path d=\"M3 21h18M9 21V9m0 0V3h6v6m-6 0h6m0 0v12\"/>", text: "٥ دقائق", sub: "الرحاب" },
+            { icon: "<path d=\"M3 21h18M5 21V7l8-4v18M19 21V11l-6-4v14\"/>", text: "٥ دقائق", sub: "العاصمة الإدارية" },
+            { icon: "<path d=\"M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z\"/>", text: "٦ دقائق", sub: "ميفيدا" },
+            { icon: "<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20z\"/><path d=\"M2 12h20\"/>", text: "٧ دقائق", sub: "الطريق الدائري" },
+            { icon: "<path d=\"M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3.5 20.5 3 18.5 3.5 17 5L13.5 8.5 5.3 6.7c-1.1-.2-2.2.5-2.4 1.5l-.4 1.8L9 13.5l-3 3-2 .5-.5 1.5 2.5 1 1 2.5 1.5-.5.5-2 3-3 3.5 6.5 1.8-.4c1-.2 1.7-1.3 1.5-2.4z\"/>", text: "١٠ دقائق", sub: "مطار القاهرة" }
+        ];
+        // /config:locationDistances
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Hide Get Directions button if mapsLink is empty or unconfigured
+            const dirBtn = document.querySelector('.directions-btn');
+            if (dirBtn) {
+                const href = dirBtn.getAttribute('href');
+                if (!href || href === 'mapsLink' || href.trim() === '') {
+                    dirBtn.style.display = 'none';
+                } else {
+                    dirBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        window.open(dirBtn.href, '_blank');
+                    });
+                }
+            }
+
+            // Hide bottom slider bar if features and distances are both empty
+            if (locationFeatures.length === 0 && locationDistances.length === 0) {
+                const sliderBar = document.querySelector('.bottom-slider-bar');
+                if (sliderBar) sliderBar.style.display = 'none';
+            }
+
+            const sliderInner = document.getElementById('sliderScroll');
+            if (sliderInner) {
+                sliderInner.innerHTML = '';
+                
+                // Group 1: Features
+                const group1 = document.createElement('div');
+                group1.className = 'slider-group';
+                locationFeatures.forEach(f => {
+                    const item = document.createElement('div');
+                    item.className = 'slider-item';
+                    item.innerHTML = `
+                        <svg class="slider-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"></svg>
+                        <span class="slider-main-text">${f.text}</span>
+                        <span class="slider-sub-text">${f.sub}</span>
+                    `;
+                    const svgEl = item.querySelector('svg');
+                    if (f.icon.trim().endsWith('.svg') || f.icon.trim().startsWith('assets/')) {
+                        fetch(f.icon)
+                            .then(res => res.text())
+                            .then(text => {
+                                const parser = new DOMParser();
+                                const doc = parser.parseFromString(text, 'image/svg+xml');
+                                const svg = doc.querySelector('svg');
+                                if (svg) {
+                                    svgEl.innerHTML = svg.innerHTML;
+                                    if (svg.getAttribute('viewBox')) {
+                                        svgEl.setAttribute('viewBox', svg.getAttribute('viewBox'));
+                                    }
+                                    
+                                    // Process inner shapes to inherit currentColor
+                                    const shapes = svgEl.querySelectorAll('path, circle, rect, polygon, polyline, line, ellipse, g');
+                                    shapes.forEach(shape => {
+                                        const fill = shape.getAttribute('fill');
+                                        const stroke = shape.getAttribute('stroke');
+                                        if (fill && fill !== 'none') {
+                                            shape.setAttribute('fill', 'currentColor');
+                                        }
+                                        if (stroke && stroke !== 'none') {
+                                            shape.setAttribute('stroke', 'currentColor');
+                                        }
+                                    });
+
+                                    const sourceFill = svg.getAttribute('fill');
+                                    const sourceStroke = svg.getAttribute('stroke');
+                                    if (sourceFill && sourceFill !== 'none') {
+                                        svgEl.setAttribute('fill', 'currentColor');
+                                        if (!sourceStroke || sourceStroke === 'none') {
+                                            svgEl.setAttribute('stroke', 'none');
+                                        }
+                                    } else {
+                                        svgEl.setAttribute('fill', 'none');
+                                        svgEl.setAttribute('stroke', 'currentColor');
+                                    }
+                                    if (sourceStroke && sourceStroke !== 'none') {
+                                        svgEl.setAttribute('stroke', 'currentColor');
+                                    }
+                                }
+                            })
+                            .catch(err => console.error('Error loading SVG icon:', err));
+                    } else {
+                        svgEl.setAttribute('fill', 'none');
+                        svgEl.setAttribute('stroke', 'currentColor');
+                        svgEl.innerHTML = f.icon;
+                    }
+                    group1.appendChild(item);
+                });
+                sliderInner.appendChild(group1);
+
+                // Divider
+                const divider = document.createElement('div');
+                divider.className = 'group-divider';
+                sliderInner.appendChild(divider);
+
+                // Group 2: Distances
+                const group2 = document.createElement('div');
+                group2.className = 'slider-group';
+                locationDistances.forEach(f => {
+                    const item = document.createElement('div');
+                    item.className = 'slider-item';
+                    item.innerHTML = `
+                        <svg class="slider-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"></svg>
+                        <span class="slider-main-text">${f.text}</span>
+                        <span class="slider-sub-text">${f.sub}</span>
+                    `;
+                    const svgEl = item.querySelector('svg');
+                    if (f.icon.trim().endsWith('.svg') || f.icon.trim().startsWith('assets/')) {
+                        fetch(f.icon)
+                            .then(res => res.text())
+                            .then(text => {
+                                const parser = new DOMParser();
+                                const doc = parser.parseFromString(text, 'image/svg+xml');
+                                const svg = doc.querySelector('svg');
+                                if (svg) {
+                                    svgEl.innerHTML = svg.innerHTML;
+                                    if (svg.getAttribute('viewBox')) {
+                                        svgEl.setAttribute('viewBox', svg.getAttribute('viewBox'));
+                                    }
+                                    
+                                    // Process inner shapes to inherit currentColor
+                                    const shapes = svgEl.querySelectorAll('path, circle, rect, polygon, polyline, line, ellipse, g');
+                                    shapes.forEach(shape => {
+                                        const fill = shape.getAttribute('fill');
+                                        const stroke = shape.getAttribute('stroke');
+                                        if (fill && fill !== 'none') {
+                                            shape.setAttribute('fill', 'currentColor');
+                                        }
+                                        if (stroke && stroke !== 'none') {
+                                            shape.setAttribute('stroke', 'currentColor');
+                                        }
+                                    });
+
+                                    const sourceFill = svg.getAttribute('fill');
+                                    const sourceStroke = svg.getAttribute('stroke');
+                                    if (sourceFill && sourceFill !== 'none') {
+                                        svgEl.setAttribute('fill', 'currentColor');
+                                        if (!sourceStroke || sourceStroke === 'none') {
+                                            svgEl.setAttribute('stroke', 'none');
+                                        }
+                                    } else {
+                                        svgEl.setAttribute('fill', 'none');
+                                        svgEl.setAttribute('stroke', 'currentColor');
+                                    }
+                                    if (sourceStroke && sourceStroke !== 'none') {
+                                        svgEl.setAttribute('stroke', 'currentColor');
+                                    }
+                                }
+                            })
+                            .catch(err => console.error('Error loading SVG icon:', err));
+                    } else {
+                        svgEl.setAttribute('fill', 'none');
+                        svgEl.setAttribute('stroke', 'currentColor');
+                        svgEl.innerHTML = f.icon;
+                    }
+                    group2.appendChild(item);
+                });
+                sliderInner.appendChild(group2);
+            }
+        });
+
+        // Drag to scroll for slider bar
+        const slider = document.getElementById('sliderScroll').parentElement;
+        let isDown = false;
+        let startX;
+        let scrollLeft;
+
+        slider.addEventListener('mousedown', (e) => {
+            isDown = true;
+            startX = e.pageX - slider.offsetLeft;
+            scrollLeft = slider.scrollLeft;
+        });
+        slider.addEventListener('mouseleave', () => { isDown = false; });
+        slider.addEventListener('mouseup', () => { isDown = false; });
+        slider.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - slider.offsetLeft;
+            const walk = (x - startX) * 2;
+            slider.scrollLeft = scrollLeft - walk;
+        });
+
+        // Touch support
+        slider.addEventListener('touchstart', (e) => {
+            isDown = true;
+            startX = e.touches[0].pageX - slider.offsetLeft;
+            scrollLeft = slider.scrollLeft;
+        }, {passive: true});
+        slider.addEventListener('touchend', () => { isDown = false; }, {passive: true});
+        slider.addEventListener('touchmove', (e) => {
+            if (!isDown) return;
+            const x = e.touches[0].pageX - slider.offsetLeft;
+            const walk = (x - startX) * 2;
+            slider.scrollLeft = scrollLeft - walk;
+        }, {passive: true});
+    </script>
+</body>
+</html>
