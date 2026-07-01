@@ -25,11 +25,7 @@
     ],
     "categories": [
         "محل",
-        "مكتب",
-        "lxul",
-        "khfd",
-        "ffrddcv",
-        "sasffrr"
+        "مكتب"
     ],
     "settings": {
         "showUnitStatus": true,
@@ -53,12 +49,7 @@
             "area": 99.02,
             "position": "ارضي / خارجي",
             "categories": [
-                "محل",
-                "مكتب",
-                "lxul",
-                "khfd",
-                "ffrddcv",
-                "sasffrr"
+                "محل"
             ],
             "status": "متاح"
         },
@@ -311,6 +302,6 @@
             "p3": 120000
         }
     },
-    "_savedAt": "2026-07-01T12:27:11.269Z",
-    "_version": 10
+    "_savedAt": "2026-07-01T12:27:42.090Z",
+    "_version": 19
 }
