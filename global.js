@@ -36,10 +36,17 @@ document.addEventListener('click', (e) => {
     const isSms = href.startsWith('sms:');
     const isWhatsapp = href.startsWith('whatsapp:') || href.includes('wa.me') || href.includes('api.whatsapp.com');
     const isExternalHttp = (href.startsWith('http://') || href.startsWith('https://')) && !href.includes(window.location.hostname);
+    const isMapsLink = href.includes('maps.app.goo.gl') || href.includes('maps.google.com') || href.includes('google.com/maps') || href.includes('goo.gl/maps');
 
-    if (isMailto || isTel || isSms || isWhatsapp || isExternalHttp) {
+    if (isMailto || isTel || isSms) {
+        // Protocol links: open natively (tel/mailto/sms handled by OS)
         e.preventDefault();
         window.location.href = href;
+    } else if (isWhatsapp || isExternalHttp || isMapsLink) {
+        // External HTTP links and maps: always open in a NEW tab/window
+        // This ensures the catalog page stays open and users can return to it
+        e.preventDefault();
+        window.open(href, '_blank', 'noopener,noreferrer');
     }
 });
 
