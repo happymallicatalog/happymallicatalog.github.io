@@ -72,7 +72,36 @@ function initNavigation() {
     
     document.body.appendChild(navContainer);
 
+    // Start pulsing after 3 seconds to prompt the user that this button opens a menu
+    let pulseTimeout;
+    let stopPulseTimeout;
+
+    function startPulseTimer() {
+        pulseTimeout = setTimeout(() => {
+            if (!navContainer.classList.contains('active')) {
+                toggleBtn.classList.add('pulse-indicator');
+                
+                // Stop pulsing automatically after 6 seconds to avoid distraction
+                stopPulseTimeout = setTimeout(() => {
+                    toggleBtn.classList.remove('pulse-indicator');
+                }, 6000);
+            }
+        }, 3000);
+    }
+
+    const hasIntroVideo = document.getElementById('introVideo');
+    if (hasIntroVideo) {
+        window.addEventListener('introFinished', () => {
+            startPulseTimer();
+        });
+    } else {
+        startPulseTimer();
+    }
+
     toggleBtn.addEventListener('click', () => {
+        clearTimeout(pulseTimeout);
+        clearTimeout(stopPulseTimeout);
+        toggleBtn.classList.remove('pulse-indicator');
         navContainer.classList.toggle('active');
     });
 

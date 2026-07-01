@@ -376,17 +376,17 @@
 
             desc.addEventListener('mousedown', (e) => {
                 isDown = true;
-                desc.style.cursor = 'grabbing';
+                desc.style.cursor = 'ns-resize';
                 startY = e.pageY - desc.offsetTop;
                 scrollTop = desc.scrollTop;
             });
             desc.addEventListener('mouseleave', () => {
                 isDown = false;
-                desc.style.cursor = 'grab';
+                desc.style.cursor = 'ns-resize';
             });
             desc.addEventListener('mouseup', () => {
                 isDown = false;
-                desc.style.cursor = 'grab';
+                desc.style.cursor = 'ns-resize';
             });
             desc.addEventListener('mousemove', (e) => {
                 if (!isDown) return;
@@ -395,7 +395,7 @@
                 const walk = (y - startY) * 2; // Scroll-fast
                 desc.scrollTop = scrollTop - walk;
             });
-            desc.style.cursor = 'grab';
+            desc.style.cursor = 'ns-resize';
         }
 
         // Start initial zoom

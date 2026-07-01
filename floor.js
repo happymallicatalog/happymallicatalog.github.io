@@ -153,7 +153,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             startY = pageY - el.offsetTop;
             scrollLeft = el.scrollLeft;
             scrollTop = el.scrollTop;
-            el.style.cursor = 'grabbing';
+            if (el.classList.contains('detail-scroll-area')) {
+                el.style.cursor = 'ns-resize';
+            } else {
+                el.style.cursor = 'grabbing';
+            }
             el.style.userSelect = 'none';
         };
 

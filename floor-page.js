@@ -115,7 +115,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             const py = e.pageY || (e.touches && e.touches[0].pageY);
             startX = px - el.offsetLeft; startY = py - el.offsetTop;
             scrollLeft = el.scrollLeft; scrollTop = el.scrollTop;
-            el.style.cursor = 'grabbing'; el.style.userSelect = 'none';
+            if (el.classList.contains('detail-scroll-area')) {
+                el.style.cursor = 'ns-resize';
+            } else {
+                el.style.cursor = 'grabbing';
+            }
+            el.style.userSelect = 'none';
         };
         const handleEnd = () => { isDown = false; el.classList.remove('dragging'); el.style.cursor = ''; el.style.userSelect = ''; };
         const handleMove = (e) => {
@@ -552,10 +557,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         const unit = catalogData.units[selectedUnitId]; if (!unit) return;
         modalUnitId.textContent = unit.code + ' (' + unit.area + ' م²)';
         let headerLabelText = 'القسط';
-        if (catalogData.plans && catalogData.plans.length > 0) {
-            const firstPlanMonths = catalogData.plans[0].months || 1;
-            headerLabelText = firstPlanMonths === 1 ? 'القسط الشهري' : (firstPlanMonths === 3 ? 'القسط الربع سنوي' : (firstPlanMonths === 6 ? 'القسط النصف سنوي' : (firstPlanMonths === 12 ? 'القسط السنوي' : `قسط كل ${firstPlanMonths} شهور`)));
-        }
 
         let gridHTML = `<div class="plans-table-wrapper" style="width:100%;margin-top:clamp(10px,2vw,20px);border-radius:8px;box-shadow:0 4px 15px rgba(0,0,0,0.05);background:white;">
             <table style="width:100%;border-collapse:collapse;text-align:center;background:white;">
@@ -586,6 +587,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const rem = total - down - totalPeriodicDeduction;
             const months = plan.months || 1;
             const mo = rem / ((plan.years * 12) / months);
+            const moLabel = months === 1 ? 'شهرياً' : (months === 3 ? 'ربع سنوي' : (months === 6 ? 'نصف سنوي' : (months === 12 ? 'سنوياً' : `كل ${months} شهور`)));
             
             const pInterval = plan.periodicInterval || 12;
             const pLabel = pInterval === 12 ? 'دفعة سنوية' : (pInterval === 6 ? 'دفعة نصف سنوية' : (pInterval === 3 ? 'دفعة ربع سنوية' : `دفعة كل ${pInterval} شهور`));
@@ -606,6 +608,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </td>
                 <td style="padding:clamp(5px,1vw,15px);border:1px solid #eee;text-align:center;vertical-align:middle;">
                     <div style="display:inline-flex;flex-direction:column;align-items:center;background:var(--dark-bg);padding:clamp(4px,1vw,8px) clamp(8px,1.5vw,16px);border-radius:8px;">
+                        <span style="color:rgba(255,255,255,0.9);font-size:clamp(0.5rem,1vw,0.75rem);margin-bottom:2px;font-weight:500;">${moLabel}</span>
                         <span style="color:white;font-weight:700;font-size:clamp(0.65rem,1.3vw,1rem);">EGP ${Math.round(mo).toLocaleString()}</span>
                     </div>
                 </td>

@@ -434,6 +434,7 @@
                 videoOverlay.classList.add('show');
                 typography.classList.add('show');
                 if (fallbackTimeout) clearTimeout(fallbackTimeout);
+                window.dispatchEvent(new Event('introFinished'));
             }
 
             function startVideoIfLandscape() {

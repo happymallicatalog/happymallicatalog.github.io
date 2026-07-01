@@ -490,11 +490,11 @@
                 <tfoot id="planAddRow">
                     <tr style="background: #f8f9fa;">
                         <td><input type="text" id="planName" placeholder="اسم الخطة" style="width: 100%; min-width: 100px; box-sizing: border-box; padding: 6px;"></td>
-                        <td><input type="text" inputmode="decimal" id="planYears" placeholder="السنوات" style="width: 100%; box-sizing: border-box; text-align: center; padding: 6px;"></td>
-                        <td><input type="text" inputmode="decimal" id="planMonths" placeholder="الأشهر" style="width: 100%; box-sizing: border-box; text-align: center; padding: 6px;"></td>
+                        <td><input type="text" inputmode="decimal" id="planYears" placeholder="السنوات" style="width: 100%; box-sizing: border-box; text-align: center; padding: 6px;" oninput="formatInputWithCommas(this)"></td>
+                        <td><input type="text" inputmode="decimal" id="planMonths" placeholder="الأشهر" style="width: 100%; box-sizing: border-box; text-align: center; padding: 6px;" oninput="formatInputWithCommas(this)"></td>
                         <td>
                             <div style="display: flex; gap: 4px;">
-                                <input type="text" inputmode="decimal" id="planDown" placeholder="المقدم" style="flex: 1; box-sizing: border-box; text-align: center; padding: 6px; min-width: 0;">
+                                <input type="text" inputmode="decimal" id="planDown" placeholder="المقدم" style="flex: 1; box-sizing: border-box; text-align: center; padding: 6px; min-width: 0;" oninput="formatInputWithCommas(this)">
                                 <select id="planDownType" style="width: 50px; padding: 6px 2px; font-family: var(--font-arabic); box-sizing: border-box;">
                                     <option value="percent">%</option>
                                     <option value="fixed">ج.م</option>
@@ -503,14 +503,14 @@
                         </td>
                         <td>
                             <div style="display: flex; gap: 4px;">
-                                <input type="text" inputmode="decimal" id="planPeriodicAmount" placeholder="الدفعة" style="flex: 1; box-sizing: border-box; text-align: center; padding: 6px; min-width: 0;">
+                                <input type="text" inputmode="decimal" id="planPeriodicAmount" placeholder="الدفعة" style="flex: 1; box-sizing: border-box; text-align: center; padding: 6px; min-width: 0;" oninput="formatInputWithCommas(this)">
                                 <select id="planPeriodicType" style="width: 50px; padding: 6px 2px; font-family: var(--font-arabic); box-sizing: border-box;">
                                     <option value="percent">%</option>
                                     <option value="fixed">ج.م</option>
                                 </select>
                             </div>
                         </td>
-                        <td><input type="text" inputmode="decimal" id="planPeriodicInterval" placeholder="الأشهر" style="width: 100%; box-sizing: border-box; text-align: center; padding: 6px;"></td>
+                        <td><input type="text" inputmode="decimal" id="planPeriodicInterval" placeholder="الأشهر" style="width: 100%; box-sizing: border-box; text-align: center; padding: 6px;" oninput="formatInputWithCommas(this)"></td>
                         <td><button class="btn btn-add" onclick="addPaymentPlan()">إضافة</button></td>
                     </tr>
                 </tfoot>
@@ -568,7 +568,7 @@
                 <div id="emailOtpBox" class="otp-box">
                     <p style="margin-bottom: 10px;">أدخل الرمز المكون من 4 أرقام المرسل إلى بريدك <b>الحالي</b>:</p>
                     <div style="display: flex; gap: 10px;">
-                        <input type="text" id="emailOtpInput" placeholder="0000" maxlength="4" style="width: 100px; text-align: center;">
+                        <input type="text" id="emailOtpInput" placeholder="0000" maxlength="4" style="width: 100px; text-align: center;" oninput="cleanOtpInput(this)">
                         <button class="btn btn-add" onclick="verifyChange('email')">تأكيد التغيير</button>
                     </div>
                 </div>
@@ -587,7 +587,7 @@
                 <div id="passwordOtpBox" class="otp-box">
                     <p style="margin-bottom: 10px;">أدخل الرمز المكون من 4 أرقام لتأكيد كلمة المرور الجديدة:</p>
                     <div style="display: flex; gap: 10px;">
-                        <input type="text" id="passwordOtpInput" placeholder="0000" maxlength="4" style="width: 120px; text-align: center;">
+                        <input type="text" id="passwordOtpInput" placeholder="0000" maxlength="4" style="width: 120px; text-align: center;" oninput="cleanOtpInput(this)">
                         <button class="btn btn-add" onclick="verifyChange('password')">تأكيد التغيير</button>
                     </div>
                 </div>
@@ -623,11 +623,9 @@
             plans: [],
             categories: [],
             positions: [
-                "بدروم / خارجي", "بدروم / داخلي",
                 "ارضي / خارجي", "ارضي / داخلي",
                 "اول علوي / خارجي", "اول علوي / داخلي",
-                "ثاني علوي / خارجي", "ثاني علوي / داخلي",
-                "ثالث علوي / خارجي", "ثالث علوي / داخلي"
+                "ثاني علوي / خارجي", "ثاني علوي / داخلي"
             ],
             units: {},
             prices: {}
@@ -635,18 +633,46 @@
 
         const CACHE_KEY = ThaMallDB.LOCAL_KEY; // keep backward compat
 
-        function login() {
+        async function hashPassword(password) {
+            const msgUint8 = new TextEncoder().encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        async function login() {
             const user = document.getElementById('username').value;
             const pass = document.getElementById('password').value;
+            const loginBtn = document.querySelector('.login-box button');
+            const originalText = loginBtn.innerText;
             
-            // Get current profile data
-            const profile = JSON.parse(localStorage.getItem('admin_profile') || '{"username":"admin","password":"admin","email":"iCatalog.dev@gmail.com"}');
+            loginBtn.innerText = 'جاري التحقق...';
+            loginBtn.disabled = true;
 
-            if (user === profile.username && pass === profile.password) {
-                localStorage.setItem('admin_logged_in', 'true');
-                showDashboard();
-            } else {
-                alert('بيانات الدخول غير صحيحة');
+            try {
+                const { data } = await ThaMallDB.load();
+                if (!data.settings) data.settings = {};
+                if (!data.settings.adminProfile) {
+                    data.settings.adminProfile = {
+                        username: 'admin',
+                        passwordHash: await hashPassword('admin'),
+                        email: 'iCatalog.dev@gmail.com'
+                    };
+                }
+
+                const inputHash = await hashPassword(pass);
+                if (user === data.settings.adminProfile.username && inputHash === data.settings.adminProfile.passwordHash) {
+                    localStorage.setItem('admin_logged_in', 'true');
+                    showDashboard();
+                } else {
+                    alert('بيانات الدخول غير صحيحة');
+                }
+            } catch (err) {
+                alert('حدث خطأ أثناء الاتصال بالبيانات');
+                console.error(err);
+            } finally {
+                loginBtn.innerText = originalText;
+                loginBtn.disabled = false;
             }
         }
 
@@ -678,10 +704,25 @@
 
         function formatNumberWithCommas(n) {
             if (n === undefined || n === null || n === '') return '';
-            const cleaned = cleanNum(n);
-            const num = parseInt(cleaned);
-            if (isNaN(num)) return '';
-            return num.toLocaleString('en-US');
+            let val = n.toString().replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d));
+            let cleaned = val.replace(/[\s,]/g, '');
+            if (cleaned === '') return '';
+            
+            const parts = cleaned.split('.');
+            const intStr = parts[0];
+            
+            let formattedInt = '';
+            if (intStr !== '') {
+                const numVal = parseInt(intStr);
+                formattedInt = isNaN(numVal) ? '' : numVal.toLocaleString('en-US');
+            }
+            
+            let formatted = formattedInt;
+            if (parts.length > 1) {
+                const decStr = parts.slice(1).join('').replace(/[^0-9]/g, '');
+                formatted += '.' + decStr;
+            }
+            return formatted;
         }
 
         function formatInputWithCommas(el) {
@@ -689,13 +730,29 @@
             const selectionStart = el.selectionStart;
             const originalLength = originalVal.length;
             
-            const cleaned = cleanNum(originalVal);
-            if (cleaned === '' || cleaned === '0') {
-                if (cleaned === '') el.value = '';
+            let val = originalVal.toString().replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d));
+            let cleaned = val.replace(/[\s,]/g, '');
+            
+            if (cleaned === '') {
+                el.value = '';
                 return;
             }
-            const numVal = parseInt(cleaned);
-            const formatted = isNaN(numVal) ? '' : numVal.toLocaleString('en-US');
+            
+            const parts = cleaned.split('.');
+            const intStr = parts[0];
+            
+            let formattedInt = '';
+            if (intStr !== '') {
+                const numVal = parseInt(intStr);
+                formattedInt = isNaN(numVal) ? '' : numVal.toLocaleString('en-US');
+            }
+            
+            let formatted = formattedInt;
+            if (parts.length > 1) {
+                const decStr = parts.slice(1).join('').replace(/[^0-9]/g, '');
+                formatted += '.' + decStr;
+            }
+            
             el.value = formatted;
             
             const newLength = formatted.length;
@@ -703,11 +760,12 @@
             el.setSelectionRange(newPosition, newPosition);
         }
 
-        async function initDashboard() {
-            // Load Profile
-            const profile = JSON.parse(localStorage.getItem('admin_profile') || '{"username":"admin","password":"admin","email":"iCatalog.dev@gmail.com"}');
-            document.getElementById('adminEmail').value = profile.email;
+        function cleanOtpInput(el) {
+            let val = el.value.toString().replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d));
+            el.value = val.replace(/[^0-9]/g, '');
+        }
 
+        async function initDashboard() {
             setStatusLoading();
 
             // ── Load data via ThaMallDB sync layer ──────────────────────────
@@ -716,6 +774,15 @@
 
             // Ensure settings object exists
             if (!catalogData.settings) catalogData.settings = {};
+            
+            if (!catalogData.settings.adminProfile) {
+                catalogData.settings.adminProfile = {
+                    username: 'admin',
+                    passwordHash: await hashPassword('admin'),
+                    email: 'iCatalog.dev@gmail.com'
+                };
+            }
+            document.getElementById('adminEmail').value = catalogData.settings.adminProfile.email;
 
             // FORCE OVERRIDE settings from local data.json to resolve Split-Brain with Netlify Blob
             // because edit.html writes directly to data.json on disk!
@@ -729,11 +796,9 @@
             // Ensure positions array always present
             if (!catalogData.positions || !catalogData.positions.length) {
                 catalogData.positions = [
-                    "بدروم / خارجي", "بدروم / داخلي",
                     "ارضي / خارجي", "ارضي / داخلي",
                     "اول علوي / خارجي", "اول علوي / داخلي",
-                    "ثاني علوي / خارجي", "ثاني علوي / داخلي",
-                    "ثالث علوي / خارجي", "ثالث علوي / داخلي"
+                    "ثاني علوي / خارجي", "ثاني علوي / داخلي"
                 ];
             }
 
@@ -831,11 +896,11 @@
                 const row = list.insertRow();
                 row.innerHTML = `
                     <td><input type="text" value="${plan.name}" onchange="updatePlan('${plan.id}', 'name', this.value, this)"></td>
-                    <td><input class="plan-input-small" type="text" inputmode="decimal" value="${plan.years}" onchange="updatePlan('${plan.id}', 'years', this.value, this)"></td>
-                    <td><input class="plan-input-small" type="text" inputmode="decimal" value="${plan.months || 1}" onchange="updatePlan('${plan.id}', 'months', this.value, this)"></td>
+                    <td><input class="plan-input-small" type="text" inputmode="decimal" value="${formatNumberWithCommas(plan.years)}" oninput="formatInputWithCommas(this)" onchange="updatePlan('${plan.id}', 'years', this.value, this)"></td>
+                    <td><input class="plan-input-small" type="text" inputmode="decimal" value="${formatNumberWithCommas(plan.months || 1)}" oninput="formatInputWithCommas(this)" onchange="updatePlan('${plan.id}', 'months', this.value, this)"></td>
                     <td>
                         <div style="display: flex; gap: 4px;">
-                            <input class="plan-input-small" style="flex: 1; min-width: 0;" type="text" inputmode="decimal" value="${plan.down}" onchange="updatePlan('${plan.id}', 'down', this.value, this)">
+                            <input class="plan-input-small" style="flex: 1; min-width: 0;" type="text" inputmode="decimal" value="${formatNumberWithCommas(plan.down)}" oninput="formatInputWithCommas(this)" onchange="updatePlan('${plan.id}', 'down', this.value, this)">
                             <select onchange="updatePlan('${plan.id}', 'downType', this.value, this)" style="width: 50px; padding: 4px 2px; font-family: var(--font-arabic);">
                                 <option value="percent" ${plan.downType === 'percent' || !plan.downType ? 'selected' : ''}>%</option>
                                 <option value="fixed" ${plan.downType === 'fixed' ? 'selected' : ''}>ج.م</option>
@@ -844,14 +909,14 @@
                     </td>
                     <td>
                         <div style="display: flex; gap: 4px;">
-                            <input class="plan-input-small" style="flex: 1; min-width: 0;" type="text" inputmode="decimal" value="${plan.periodicAmount || 0}" onchange="updatePlan('${plan.id}', 'periodicAmount', this.value, this)">
+                            <input class="plan-input-small" style="flex: 1; min-width: 0;" type="text" inputmode="decimal" value="${formatNumberWithCommas(plan.periodicAmount || 0)}" oninput="formatInputWithCommas(this)" onchange="updatePlan('${plan.id}', 'periodicAmount', this.value, this)">
                             <select onchange="updatePlan('${plan.id}', 'periodicType', this.value, this)" style="width: 50px; padding: 4px 2px; font-family: var(--font-arabic);">
                                 <option value="percent" ${plan.periodicType === 'percent' || !plan.periodicType ? 'selected' : ''}>%</option>
                                 <option value="fixed" ${plan.periodicType === 'fixed' ? 'selected' : ''}>ج.م</option>
                             </select>
                         </div>
                     </td>
-                    <td><input class="plan-input-small" type="text" inputmode="decimal" value="${plan.periodicInterval || 12}" onchange="updatePlan('${plan.id}', 'periodicInterval', this.value, this)"></td>
+                    <td><input class="plan-input-small" type="text" inputmode="decimal" value="${formatNumberWithCommas(plan.periodicInterval || 12)}" oninput="formatInputWithCommas(this)" onchange="updatePlan('${plan.id}', 'periodicInterval', this.value, this)"></td>
                     <td><button class="btn btn-delete" onclick="deletePlan('${plan.id}')">حذف</button></td>
                 `;
             });
@@ -929,7 +994,7 @@
                 html += `
                     <tr>
                         <td style="font-weight: bold; color: var(--primary-color); font-size: 14px;">${unit.code}</td>
-                        <td><input type="text" inputmode="decimal" value="${unit.area}" onchange="updateUnit('${unit.code}', 'area', this.value, this)"></td>
+                        <td><input type="text" inputmode="decimal" value="${formatNumberWithCommas(unit.area)}" oninput="formatInputWithCommas(this)" onchange="updateUnit('${unit.code}', 'area', this.value, this)"></td>
                         <td>
                             <select onchange="updateUnit('${unit.code}', 'position', this.value)" style="width: 100%; padding: 4px; border-radius: 4px; border: 1px solid #ddd; font-family: var(--font-arabic);">
                                 <option value="" ${!unit.position ? 'selected' : ''}>- غير محدد -</option>
@@ -1036,7 +1101,7 @@
                 } else {
                     const cleaned = cleanNum(value);
                     plan[field] = parseInt(cleaned) || 0;
-                    if (el) el.value = plan[field];
+                    if (el) el.value = formatNumberWithCommas(plan[field]);
                 }
                 saveAllData();
             }
@@ -1053,7 +1118,7 @@
             const cleaned = cleanNum(value);
             const val = field === 'area' ? (parseFloat(cleaned) || 0) : value;
             catalogData.units[code][field] = val;
-            if (el && field === 'area') el.value = val;
+            if (el && field === 'area') el.value = formatNumberWithCommas(val);
             saveAllData();
         }
 
@@ -1159,16 +1224,16 @@
             pendingValue = newValue;
             pendingOtp = Math.floor(1000 + Math.random() * 9000).toString();
             
-            const profile = JSON.parse(localStorage.getItem('admin_profile') || '{"username":"admin","password":"admin","email":"iCatalog.dev@gmail.com"}');
+            const currentEmail = (catalogData.settings && catalogData.settings.adminProfile) ? catalogData.settings.adminProfile.email : 'iCatalog.dev@gmail.com';
             
             // EMAILJS INTEGRATION
             const templateParams = {
-                to_email: profile.email,
+                to_email: currentEmail,
                 otp: pendingOtp,
                 type: type === 'email' ? 'Email Update' : 'Password Reset'
             };
 
-            showStatus('جاري إرسال الرمز إلى ' + profile.email + '...', 'online');
+            showStatus('جاري إرسال الرمز إلى ' + currentEmail + '...', 'online');
 
             if (!window.emailjs) {
                 showStatus('خطأ: خدمة البريد غير متوفرة', 'online');
@@ -1194,12 +1259,24 @@
             }
         }
 
-        function verifyChange(type) {
+        function getAdminProfile() {
+            if (!catalogData.settings) catalogData.settings = {};
+            if (!catalogData.settings.adminProfile) {
+                catalogData.settings.adminProfile = {
+                    username: 'admin',
+                    passwordHash: 'c7ad44cbad762a5da0a452f9e854fdc1e0e7a52a38015f23f3eab1d80b931dd4', // sha256 of 'admin'
+                    email: 'iCatalog.dev@gmail.com'
+                };
+            }
+            return catalogData.settings.adminProfile;
+        }
+
+        async function verifyChange(type) {
             const otpInput = document.getElementById(type + 'OtpInput').value;
             if (otpInput !== pendingOtp) {
                 alert('رمز غير صحيح. لم يتم حفظ التغييرات.');
                 // Revert UI value
-                const profile = JSON.parse(localStorage.getItem('admin_profile') || '{"username":"admin","password":"admin","email":"iCatalog.dev@gmail.com"}');
+                const profile = getAdminProfile();
                 if (type === 'email') document.getElementById('adminEmail').value = profile.email;
                 else document.getElementById('adminPassword').value = '';
                 
@@ -1207,18 +1284,18 @@
                 return;
             }
 
-            const profile = JSON.parse(localStorage.getItem('admin_profile') || '{"username":"admin","password":"admin","email":"iCatalog.dev@gmail.com"}');
+            const profile = getAdminProfile();
             
             if (type === 'email') {
                 profile.email = pendingValue;
                 document.getElementById('emailOtpBox').style.display = 'none';
             } else {
-                profile.password = pendingValue;
+                profile.passwordHash = await hashPassword(pendingValue);
                 document.getElementById('adminPassword').value = ''; // Clear password field after save
                 document.getElementById('passwordOtpBox').style.display = 'none';
             }
 
-            localStorage.setItem('admin_profile', JSON.stringify(profile));
+            await saveAllData();
             alert('تم تحديث الملف الشخصي بنجاح!');
             pendingOtp = null;
             pendingValue = null;

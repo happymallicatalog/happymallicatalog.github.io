@@ -1,307 +1,270 @@
 {
-    "plans": [
-        {
-            "id": "p1",
-            "name": "نظام قسط ٣ سنوات",
-            "years": 3,
-            "months": 1,
-            "down": 20,
-            "downType": "percent",
-            "periodicAmount": 0,
-            "periodicType": "percent",
-            "periodicInterval": 12
-        },
-        {
-            "id": "p2",
-            "name": "نظام قسط ٤ سنوات",
-            "years": 4,
-            "months": 1,
-            "down": 25,
-            "downType": "percent",
-            "periodicAmount": 0,
-            "periodicType": "percent",
-            "periodicInterval": 12
-        }
-    ],
-    "categories": [
-        "محل",
+  "plans": [
+    {
+      "id": "p1",
+      "name": "نظام قسط ٣ سنوات",
+      "years": 3,
+      "down": 20,
+      "yearly": 0
+    },
+    {
+      "id": "p2",
+      "name": "نظام قسط ٤ سنوات",
+      "years": 4,
+      "down": 25,
+      "yearly": 6
+    }
+  ],
+  "categories": [
+    "محل",
+    "مكتب"
+  ],
+  "positions": [
+    "ارضي / خارجي",
+    "ارضي / داخلي",
+    "اول علوي / خارجي",
+    "اول علوي / داخلي",
+    "ثاني علوي / خارجي",
+    "ثاني علوي / داخلي"
+  ],
+  "prices": {
+    "ارضي / خارجي": {
+      "p1": 115000,
+      "p2": 120000,
+      "p3": 125000
+    },
+    "ارضي / داخلي": {
+      "p1": 100000,
+      "p2": 105000,
+      "p3": 125000
+    },
+    "اول علوي / خارجي": {
+      "p1": 65000,
+      "p2": 70000,
+      "p3": 125000
+    },
+    "اول علوي / داخلي": {
+      "p1": 55000,
+      "p2": 60000,
+      "p3": 125000
+    },
+    "ثاني علوي / خارجي": {
+      "p1": 50000,
+      "p2": 55000,
+      "p3": 120000
+    },
+    "ثاني علوي / داخلي": {
+      "p1": 45000,
+      "p2": 50000,
+      "p3": 120000
+    }
+  },
+  "settings": {
+    "showUnitStatus": true,
+    "showTable": false,
+    "showCategories": false,
+    "showStatus": true
+  },
+  "units": {
+    "G-6": {
+      "code": "G-6",
+      "area": 99.02,
+      "position": "ارضي / خارجي",
+      "categories": [
+        "محل"
+      ],
+      "status": "متاح"
+    },
+    "G-8": {
+      "code": "G-8",
+      "area": 54.61,
+      "position": "ارضي / داخلي",
+      "categories": [
+        "محل"
+      ],
+      "status": "متاح"
+    },
+    "G-10": {
+      "code": "G-10",
+      "area": 35.78,
+      "position": "ارضي / داخلي",
+      "categories": [
+        "محل"
+      ],
+      "status": "متاح"
+    },
+    "G-14": {
+      "code": "G-14",
+      "area": 47.97,
+      "position": "ارضي / خارجي",
+      "categories": [
+        "محل"
+      ],
+      "status": "متاح"
+    },
+    "G-16": {
+      "code": "G-16",
+      "area": 49.01,
+      "position": "ارضي / داخلي",
+      "categories": [
+        "محل"
+      ],
+      "status": "متاح"
+    },
+    "G-17": {
+      "code": "G-17",
+      "area": 75.91,
+      "position": "ارضي / داخلي",
+      "categories": [
+        "محل"
+      ],
+      "status": "متاح"
+    },
+    "F-1": {
+      "code": "F-1",
+      "area": 92.1,
+      "position": "اول علوي / خارجي",
+      "categories": [
+        "محل"
+      ],
+      "status": "متاح"
+    },
+    "F-2": {
+      "code": "F-2",
+      "area": 76.21,
+      "position": "اول علوي / خارجي",
+      "categories": [
+        "محل"
+      ],
+      "status": "متاح"
+    },
+    "F-3": {
+      "code": "F-3",
+      "area": 60.95,
+      "position": "اول علوي / خارجي",
+      "categories": [
+        "محل"
+      ],
+      "status": "متاح"
+    },
+    "F-5": {
+      "code": "F-5",
+      "area": 45.97,
+      "position": "اول علوي / خارجي",
+      "categories": [
+        "محل"
+      ],
+      "status": "متاح"
+    },
+    "F-6": {
+      "code": "F-6",
+      "area": 57.82,
+      "position": "اول علوي / خارجي",
+      "categories": [
+        "محل"
+      ],
+      "status": "متاح"
+    },
+    "F-10": {
+      "code": "F-10",
+      "area": 35.92,
+      "position": "اول علوي / داخلي",
+      "categories": [
+        "محل"
+      ],
+      "status": "متاح"
+    },
+    "F-11": {
+      "code": "F-11",
+      "area": 48.8,
+      "position": "اول علوي / داخلي",
+      "categories": [
+        "محل"
+      ],
+      "status": "متاح"
+    },
+    "F-12": {
+      "code": "F-12",
+      "area": 29.89,
+      "position": "اول علوي / داخلي",
+      "categories": [
+        "محل"
+      ],
+      "status": "متاح"
+    },
+    "F-15": {
+      "code": "F-15",
+      "area": 38.72,
+      "position": "اول علوي / داخلي",
+      "categories": [
+        "محل"
+      ],
+      "status": "متاح"
+    },
+    "F-16": {
+      "code": "F-16",
+      "area": 51.35,
+      "position": "اول علوي / خارجي",
+      "categories": [
+        "محل"
+      ],
+      "status": "متاح"
+    },
+    "F-17": {
+      "code": "F-17",
+      "area": 36.19,
+      "position": "اول علوي / خارجي",
+      "categories": [
+        "محل"
+      ],
+      "status": "متاح"
+    },
+    "F-18": {
+      "code": "F-18",
+      "area": 52.96,
+      "position": "اول علوي / داخلي",
+      "categories": [
+        "محل"
+      ],
+      "status": "متاح"
+    },
+    "S-6": {
+      "code": "S-6",
+      "area": 71.17,
+      "position": "ثاني علوي / خارجي",
+      "categories": [
         "مكتب"
-    ],
-    "settings": {
-        "showUnitStatus": true,
-        "adminProfile": {
-            "username": "admin",
-            "passwordHash": "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
-            "email": "iCatalog.dev@gmail.com"
-        }
+      ],
+      "status": "متاح"
     },
-    "positions": [
-        "ارضي / خارجي",
-        "ارضي / داخلي",
-        "اول علوي / خارجي",
-        "اول علوي / داخلي",
-        "ثاني علوي / خارجي",
-        "ثاني علوي / داخلي"
-    ],
-    "units": {
-        "G-6": {
-            "code": "G-6",
-            "area": 99.02,
-            "position": "ارضي / خارجي",
-            "categories": [
-                "محل"
-            ],
-            "status": "متاح"
-        },
-        "G-8": {
-            "code": "G-8",
-            "area": 54.61,
-            "position": "ارضي / داخلي",
-            "categories": [
-                "محل"
-            ],
-            "status": "متاح"
-        },
-        "G-10": {
-            "code": "G-10",
-            "area": 35.78,
-            "position": "ارضي / داخلي",
-            "categories": [
-                "محل"
-            ],
-            "status": "متاح"
-        },
-        "G-14": {
-            "code": "G-14",
-            "area": 47.97,
-            "position": "ارضي / خارجي",
-            "categories": [
-                "محل"
-            ],
-            "status": "متاح"
-        },
-        "G-16": {
-            "code": "G-16",
-            "area": 49.01,
-            "position": "ارضي / داخلي",
-            "categories": [
-                "محل"
-            ],
-            "status": "متاح"
-        },
-        "G-17": {
-            "code": "G-17",
-            "area": 75.91,
-            "position": "ارضي / داخلي",
-            "categories": [
-                "محل"
-            ],
-            "status": "متاح"
-        },
-        "G-13": {
-            "code": "G-13",
-            "area": 53.03,
-            "position": "ارضي / جانبي",
-            "categories": [
-                "محل"
-            ],
-            "status": "متاح"
-        },
-        "G-11A": {
-            "code": "G-11A",
-            "area": 38.81,
-            "position": "ارضي / داخلي",
-            "categories": [
-                "محل"
-            ],
-            "status": "متاح"
-        },
-        "G-11B": {
-            "code": "G-11B",
-            "area": 35.95,
-            "position": "ارضي / داخلي",
-            "categories": [
-                "محل"
-            ],
-            "status": "متاح"
-        },
-        "F-1": {
-            "code": "F-1",
-            "area": 92.1,
-            "position": "اول علوي / خارجي",
-            "categories": [
-                "محل"
-            ],
-            "status": "متاح"
-        },
-        "F-2": {
-            "code": "F-2",
-            "area": 76.21,
-            "position": "اول علوي / خارجي",
-            "categories": [
-                "محل"
-            ],
-            "status": "متاح"
-        },
-        "F-3": {
-            "code": "F-3",
-            "area": 60.95,
-            "position": "اول علوي / خارجي",
-            "categories": [
-                "محل"
-            ],
-            "status": "متاح"
-        },
-        "F-5": {
-            "code": "F-5",
-            "area": 45.97,
-            "position": "اول علوي / خارجي",
-            "categories": [
-                "محل"
-            ],
-            "status": "متاح"
-        },
-        "F-6": {
-            "code": "F-6",
-            "area": 57.82,
-            "position": "اول علوي / خارجي",
-            "categories": [
-                "محل"
-            ],
-            "status": "متاح"
-        },
-        "F-10": {
-            "code": "F-10",
-            "area": 35.92,
-            "position": "اول علوي / داخلي",
-            "categories": [
-                "محل"
-            ],
-            "status": "متاح"
-        },
-        "F-11": {
-            "code": "F-11",
-            "area": 48.8,
-            "position": "اول علوي / داخلي",
-            "categories": [
-                "محل"
-            ],
-            "status": "متاح"
-        },
-        "F-12": {
-            "code": "F-12",
-            "area": 29.89,
-            "position": "اول علوي / داخلي",
-            "categories": [
-                "محل"
-            ],
-            "status": "متاح"
-        },
-        "F-15": {
-            "code": "F-15",
-            "area": 38.72,
-            "position": "اول علوي / داخلي",
-            "categories": [
-                "محل"
-            ],
-            "status": "متاح"
-        },
-        "F-16": {
-            "code": "F-16",
-            "area": 51.35,
-            "position": "اول علوي / خارجي",
-            "categories": [
-                "محل"
-            ],
-            "status": "متاح"
-        },
-        "F-17": {
-            "code": "F-17",
-            "area": 36.19,
-            "position": "اول علوي / خارجي",
-            "categories": [
-                "محل"
-            ],
-            "status": "متاح"
-        },
-        "F-18": {
-            "code": "F-18",
-            "area": 52.96,
-            "position": "اول علوي / داخلي",
-            "categories": [
-                "محل"
-            ],
-            "status": "متاح"
-        },
-        "S-6": {
-            "code": "S-6",
-            "area": 71.17,
-            "position": "ثاني علوي / خارجي",
-            "categories": [
-                "مكتب"
-            ],
-            "status": "متاح"
-        },
-        "S-7": {
-            "code": "S-7",
-            "area": 98.82,
-            "position": "ثاني علوي / خارجي",
-            "categories": [
-                "مكتب"
-            ],
-            "status": "متاح"
-        },
-        "S-8": {
-            "code": "S-8",
-            "area": 90.15,
-            "position": "ثاني علوي / داخلي",
-            "categories": [
-                "مكتب"
-            ],
-            "status": "متاح"
-        },
-        "S-9": {
-            "code": "S-9",
-            "area": 57.09,
-            "position": "ثاني علوي / داخلي",
-            "categories": [
-                "مكتب"
-            ],
-            "status": "متاح"
-        }
+    "S-7": {
+      "code": "S-7",
+      "area": 98.82,
+      "position": "ثاني علوي / خارجي",
+      "categories": [
+        "مكتب"
+      ],
+      "status": "متاح"
     },
-    "prices": {
-        "ارضي / خارجي": {
-            "p1": 115000,
-            "p2": 120000,
-            "p3": 125000
-        },
-        "ارضي / داخلي": {
-            "p1": 100000,
-            "p2": 105000,
-            "p3": 125000
-        },
-        "اول علوي / خارجي": {
-            "p1": 65000,
-            "p2": 70000,
-            "p3": 125000
-        },
-        "اول علوي / داخلي": {
-            "p1": 55000,
-            "p2": 60000,
-            "p3": 125000
-        },
-        "ثاني علوي / خارجي": {
-            "p1": 50000,
-            "p2": 55000,
-            "p3": 120000
-        },
-        "ثاني علوي / داخلي": {
-            "p1": 45000,
-            "p2": 50000,
-            "p3": 120000
-        }
+    "S-8": {
+      "code": "S-8",
+      "area": 90.15,
+      "position": "ثاني علوي / داخلي",
+      "categories": [
+        "مكتب"
+      ],
+      "status": "متاح"
     },
-    "_savedAt": "2026-07-01T12:28:24.358Z",
-    "_version": 20
+    "S-9": {
+      "code": "S-9",
+      "area": 57.09,
+      "position": "ثاني علوي / داخلي",
+      "categories": [
+        "مكتب"
+      ],
+      "status": "متاح"
+    }
+  },
+  "_savedAt": null,
+  "_version": 1
 }

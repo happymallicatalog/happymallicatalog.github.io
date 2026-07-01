@@ -22,7 +22,7 @@
     --nav-glass-border: #ffffff;
     --nav-icon-color: #fb9a16;            /* Active icon & burger-line color */
     --nav-icon-color-inactive: #42799a; /* Inactive icon color */
-    --nav-icon-color-hover: #ffffff;                  /* Hover icon color */
+    --nav-icon-color-hover: var(--accent-color);                  /* Hover icon color */
     --nav-btn-radius: 50%;                            /* 4px = square | 50% = circle */
     --nav-panel-bg: transparent;
     --nav-panel-border: none;
@@ -51,6 +51,25 @@
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     z-index: 1001;
     box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+.nav-toggle-btn.pulse-indicator {
+    animation: menuPulse 2.2s infinite ease-in-out;
+}
+
+@keyframes menuPulse {
+    0% {
+        box-shadow: 0 10px 20px rgba(0,0,0,0.3), 0 0 0 0 color-mix(in srgb, var(--accent-color) 60%, transparent);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2), 0 0 0 15px color-mix(in srgb, var(--accent-color) 0%, transparent);
+        transform: scale(1.08);
+    }
+    100% {
+        box-shadow: 0 10px 20px rgba(0,0,0,0.3), 0 0 0 0 color-mix(in srgb, var(--accent-color) 0%, transparent);
+        transform: scale(1);
+    }
 }
 
 .nav-toggle-btn .burger-icon {
@@ -183,7 +202,8 @@
 }
 
 .nav-item:hover img {
-    filter: brightness(0) invert(1) opacity(1);
+    filter: sepia(1) saturate(5) hue-rotate(10deg) brightness(0.8) contrast(1.2);
+    opacity: 1;
 }
 
 .nav-item svg, 

@@ -260,6 +260,42 @@
             box-shadow: 0 4px 20px color-mix(in srgb, var(--accent-color) 15%, transparent);
         }
 
+        .unit-meta-info {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-top: 15px;
+            padding: 12px 20px;
+            background: #ffffff;
+            border: 1px dashed var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            animation: fadeIn 0.4s ease forwards;
+            gap: 15px;
+        }
+
+        .unit-meta-info .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: clamp(0.85rem, 2vmin, 1.1rem);
+            font-family: var(--font-arabic);
+        }
+
+        .unit-meta-info .meta-label {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .unit-meta-info .meta-value {
+            color: var(--primary-color);
+            font-weight: 600;
+            background: color-mix(in srgb, var(--accent-color) 8%, transparent);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: clamp(0.8rem, 1.8vmin, 1rem);
+        }
+
         .online-indicator {
             position: fixed;
             top: 20px;
@@ -328,6 +364,16 @@
                 <select id="globalUnitSelect" class="unit-select" onchange="updateAllCalculations(this.value)">
                     <option value="">اختر الوحدة</option>
                 </select>
+                <div id="unitMetaInfo" class="unit-meta-info" style="display: none;">
+                    <div class="meta-item">
+                        <span class="meta-label">موقع الوحدة:</span>
+                        <span class="meta-value" id="unitMetaPosition">-</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">النشاطات المتاحة:</span>
+                        <span class="meta-value" id="unitMetaCategories">-</span>
+                    </div>
+                </div>
             </div>
         </div>
         
@@ -509,6 +555,25 @@
 
         function updateAllCalculations(unitCode) {
             if (!catalogData || !catalogData.plans) return;
+
+            const metaContainer = document.getElementById('unitMetaInfo');
+            const positionEl = document.getElementById('unitMetaPosition');
+            const categoriesEl = document.getElementById('unitMetaCategories');
+            const unit = catalogData.units[unitCode];
+
+            if (unit) {
+                if (positionEl) positionEl.textContent = unit.position || 'غير محدد';
+                if (categoriesEl) {
+                    const cats = unit.categories
+                        ? (Array.isArray(unit.categories) ? unit.categories : unit.categories.split(',').map(c => c.trim()).filter(Boolean))
+                        : [];
+                    categoriesEl.textContent = cats.join('، ') || 'عام';
+                }
+                if (metaContainer) metaContainer.style.display = 'flex';
+            } else {
+                if (metaContainer) metaContainer.style.display = 'none';
+            }
+
             catalogData.plans.forEach(plan => {
                 updateCardCalculations(plan.id, unitCode);
             });

@@ -22,7 +22,7 @@ const ThaMallDB = (() => {
     const LOCAL_KEY  = 'tha_mall_admin_data';
     const TS_KEY     = 'tha_mall_data_ts';
     // Bump this when unit IDs change — forces stale localStorage to be cleared
-    const DATA_SCHEMA_VERSION = 2; // v2: new SVG unit IDs (G-6, F-1, S-6 etc.)
+    const DATA_SCHEMA_VERSION = 3; // v3: remove basement and third floor positions
     const SCHEMA_KEY = 'tha_mall_schema_v';
 
     let _lastSource = 'cache';
@@ -259,11 +259,9 @@ const ThaMallDB = (() => {
             categories: ['محل', 'مكتب'],
             settings: { showUnitStatus: true },
             positions: [
-                'بدروم / خارجي', 'بدروم / داخلي',
                 'ارضي / خارجي', 'ارضي / داخلي',
                 'اول علوي / خارجي', 'اول علوي / داخلي',
-                'ثاني علوي / خارجي', 'ثاني علوي / داخلي',
-                'ثالث علوي / خارجي', 'ثالث علوي / داخلي'
+                'ثاني علوي / خارجي', 'ثاني علوي / داخلي'
             ],
             units: {
                 'G-6':  { code: 'G-6',  area: 99.02, position: 'ارضي / خارجي',      categories: ['محل'],   status: 'متاح' },
@@ -293,16 +291,12 @@ const ThaMallDB = (() => {
                 'S-9':  { code: 'S-9',  area: 57.09, position: 'ثاني علوي / داخلي', categories: ['مكتب'],  status: 'متاح' }
             },
             prices: {
-                'بدروم / خارجي':     { p1: 0,      p2: 0,      p3: 110000 },
-                'بدروم / داخلي':     { p1: 0,      p2: 0,      p3: 110000 },
                 'ارضي / خارجي':      { p1: 115000, p2: 120000, p3: 125000 },
                 'ارضي / داخلي':      { p1: 100000, p2: 105000, p3: 125000 },
                 'اول علوي / خارجي':  { p1: 65000,  p2: 70000,  p3: 125000 },
                 'اول علوي / داخلي':  { p1: 55000,  p2: 60000,  p3: 125000 },
                 'ثاني علوي / خارجي': { p1: 50000,  p2: 55000,  p3: 120000 },
-                'ثاني علوي / داخلي': { p1: 45000,  p2: 50000,  p3: 120000 },
-                'ثالث علوي / خارجي': { p1: 0,      p2: 0,      p3: 115000 },
-                'ثالث علوي / داخلي': { p1: 0,      p2: 0,      p3: 115000 }
+                'ثاني علوي / داخلي': { p1: 45000,  p2: 50000,  p3: 120000 }
             },
             _savedAt: null, _version: 1
         };
