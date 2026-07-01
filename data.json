@@ -4,7 +4,7 @@
             "id": "p1",
             "name": "نظام قسط ٣ سنوات",
             "years": 3,
-            "months": 1,
+            "months": 3,
             "down": 20,
             "downType": "percent",
             "periodicAmount": 0,
@@ -321,6 +321,6 @@
             "p3": 115000
         }
     },
-    "_savedAt": "2026-07-01T11:29:22.208Z",
-    "_version": 10
+    "_savedAt": "2026-07-01T11:29:38.737Z",
+    "_version": 11
 }
