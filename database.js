@@ -132,7 +132,7 @@ const ThaMallDB = (() => {
     }
 
     /**
-     * Silent, non-blocking background sync with the Netlify Blobs Cloud Storage.
+     * Silent, non-blocking background sync.
      * Only runs when online. Falls back gracefully without throwing.
      */
     async function _backgroundSync() {
@@ -149,30 +149,19 @@ const ThaMallDB = (() => {
             _notify('networkStatus', { online: realOnline, checked: true });
 
             if (!realOnline) {
-                // Offline: serve from localStorage (already done in load())
                 console.log('[ThaMallDB] Offline — using local cache.');
                 return;
             }
 
             let newData = null;
-            let newSource = 'api';
+            let newSource = 'seed';
 
-            // Try the API endpoint first
             try {
-                const res = await fetch(`${API_URL}?_t=${Date.now()}`, { cache: 'no-store' });
-                if (!res.ok) throw new Error(`API ${res.status}`);
+                const res = await fetch(`${SEED_URL}?_t=${Date.now()}`, { cache: 'no-store' });
+                if (!res.ok) throw new Error(`Seed ${res.status}`);
                 newData = await res.json();
-                newSource = 'api';
-            } catch (e) {
-                // Fall back to data.json seed file
-                try {
-                    const res = await fetch(`${SEED_URL}?_t=${Date.now()}`, { cache: 'no-store' });
-                    if (!res.ok) throw new Error(`Seed ${res.status}`);
-                    newData = await res.json();
-                    newSource = 'seed';
-                } catch (se) {
-                    console.log('[ThaMallDB] BG sync fetch failed (both API and seed):', se.message);
-                }
+            } catch (se) {
+                console.log('[ThaMallDB] BG sync fetch failed:', se.message);
             }
 
             if (newData) {
@@ -182,8 +171,11 @@ const ThaMallDB = (() => {
 
                 _lastSource = newSource;
                 _lastSyncTime = Date.now();
+                
+                const newTime = newSavedAt ? new Date(newSavedAt).getTime() : 0;
+                const oldTime = oldSavedAt ? new Date(oldSavedAt).getTime() : 0;
 
-                if (newSavedAt !== oldSavedAt) {
+                if (newTime > oldTime) {
                     _cacheWrite(newData);
                     console.log(`[ThaMallDB] Remote update received (${newSource})`);
                     _notify('loaded', { source: newSource, data: newData });
@@ -202,7 +194,7 @@ const ThaMallDB = (() => {
     // ── SAVE ────────────────────────────────────────────────────────────────
     /**
      * Save catalog data (admin only).
-     * Always updates localStorage. Also POSTs to API when online.
+     * Always updates localStorage.
      * Returns Promise<{ ok: boolean, source: 'api'|'local', error?: string }>
      */
     async function save(data) {
@@ -212,48 +204,16 @@ const ThaMallDB = (() => {
         // Always write to local cache
         _cacheWrite(data);
 
-        const realOnline = await ping();
-        if (!realOnline) {
-            _lastSource = 'cache';
-            _notify('saveError', { error: 'offline' });
-            return { ok: false, source: 'local', error: 'offline' };
+        // Tell SW to broadcast to all open tabs
+        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({ type: 'CACHE_UPDATED' });
         }
 
-        try {
-            const res = await fetch(API_URL, {
-                method:  'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Admin-Key':  _getAdminPassword()
-                },
-                body: JSON.stringify(data)
-            });
-
-            if (!res.ok) {
-                const msg = await res.text();
-                throw new Error(`HTTP ${res.status}: ${msg}`);
-            }
-
-            _lastSource = 'api';
-            _notify('saved', { source: 'api', data });
-
-            // Tell SW to broadcast to all open tabs
-            if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-                navigator.serviceWorker.controller.postMessage({ type: 'CACHE_UPDATED' });
-            }
-
-            return { ok: true, source: 'api' };
-
-        } catch(err) {
-            console.error('[ThaMallDB] Cloud save failed:', err.message);
-            _lastSource = 'cache';
-            let userError = err.message;
-            if (err.message === 'Load failed' || err.name === 'TypeError') {
-                userError = 'فشل الاتصال بالخادم (تأكد من تشغيل netlify dev أو الاتصال بالإنترنت)';
-            }
-            _notify('saveError', { error: userError });
-            return { ok: false, source: 'local', error: userError };
-        }
+        _lastSource = 'cache';
+        _notify('saved', { source: 'cache', data });
+        
+        // Return ok: false so the UI knows it needs to be pushed to GitHub
+        return { ok: false, source: 'local' };
     }
 
     // ── STATUS HELPERS ──────────────────────────────────────────────────────
@@ -269,15 +229,14 @@ const ThaMallDB = (() => {
         const id = setTimeout(() => controller.abort(), 2500); // 2.5s timeout
 
         try {
-            // Fetch the API endpoint with a unique ping parameter using GET
-            // The Service Worker will ignore this because of url.searchParams.has('ping')
-            const res = await fetch(`${API_URL}?ping=${Date.now()}-${Math.random()}`, { 
+            // Fetch the SEED_URL with a unique ping parameter
+            const res = await fetch(`${SEED_URL}?ping=${Date.now()}-${Math.random()}`, { 
                 method: 'GET', 
                 cache: 'no-store',
                 signal: controller.signal
             });
             clearTimeout(id);
-            // Any response code under 500 (e.g. 200, 304, 404 fallback) means the server is running and accessible
+            // Any response code under 500 means the server is running and accessible
             const online = res.status < 500;
             _isOnline = online;
             _connChecked = true;
