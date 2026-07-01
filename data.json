@@ -6,14 +6,15 @@
             "years": 3,
             "down": 20,
             "yearly": 0,
-            "months": 3
+            "months": 1
         },
         {
             "id": "p2",
             "name": "نظام قسط ٤ سنوات",
             "years": 4,
             "down": 25,
-            "yearly": 6
+            "yearly": 6,
+            "months": 3
         }
     ],
     "categories": [
@@ -317,6 +318,6 @@
             "status": "متاح"
         }
     },
-    "_savedAt": "2026-06-30T23:55:18.551Z",
-    "_version": 2
+    "_savedAt": "2026-07-01T00:03:52.443Z",
+    "_version": 4
 }
