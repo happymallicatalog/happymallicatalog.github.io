@@ -43,11 +43,17 @@ document.addEventListener('click', (e) => {
         e.preventDefault();
         window.location.href = href;
     } else if (isWhatsapp || isExternalHttp || isMapsLink) {
-        // External HTTP links and maps: always open in a NEW tab/window
-        // This ensures the catalog page stays open and users can return to it
-        // By setting target and NOT preventing default, we avoid iOS PWA blank screen bug
-        anchor.target = '_blank';
-        anchor.rel = 'noopener noreferrer';
+        // iOS PWA handles _blank poorly (blank screen). We must use location.href for iOS.
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        
+        if (isIOS) {
+            e.preventDefault();
+            window.location.href = href;
+        } else {
+            // Android and Mac: Use native new tab behavior
+            anchor.target = '_blank';
+            anchor.rel = 'noopener noreferrer';
+        }
     }
 });
 
