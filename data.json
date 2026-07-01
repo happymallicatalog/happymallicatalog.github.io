@@ -21,6 +21,17 @@
             "periodicAmount": 50000,
             "periodicType": "percent",
             "periodicInterval": 12
+        },
+        {
+            "id": "p1782906027186",
+            "name": "لبييس",
+            "years": 5,
+            "months": 3,
+            "down": 20,
+            "downType": "percent",
+            "periodicAmount": 300000,
+            "periodicType": "fixed",
+            "periodicInterval": 6
         }
     ],
     "categories": [
@@ -28,7 +39,12 @@
         "مكتب"
     ],
     "settings": {
-        "showUnitStatus": true
+        "showUnitStatus": true,
+        "adminProfile": {
+            "username": "admin",
+            "passwordHash": "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
+            "email": "iCatalog.dev@gmail.com"
+        }
     },
     "positions": [
         "بدروم / خارجي",
@@ -321,6 +337,6 @@
             "p3": 115000
         }
     },
-    "_savedAt": "2026-07-01T11:37:37.766Z",
-    "_version": 18
+    "_savedAt": "2026-07-01T11:40:27.193Z",
+    "_version": 19
 }
