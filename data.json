@@ -71,7 +71,7 @@
         "adminProfile": {
             "username": "admin",
             "passwordHash": "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
-            "email": "mero_rose_wah@yahoo.com"
+            "email": "iCatalog.dev@gmail.com"
         }
     },
     "units": {
@@ -301,6 +301,6 @@
             "status": "متاح"
         }
     },
-    "_savedAt": "2026-07-01T13:09:32.480Z",
-    "_version": 6
+    "_savedAt": "2026-07-01T13:18:02.977Z",
+    "_version": 7
 }
