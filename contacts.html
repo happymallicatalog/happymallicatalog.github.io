@@ -267,7 +267,7 @@
     <div class="page-container">
         <div class="contact-card luxury-card ">
             <div class="contact-map-side">
-                <a data-config-href="developerOfficeMapsLink" href="https://maps.app.goo.gl/KB3293T7ZZTtTyvF9" target="_blank" rel="noopener noreferrer" onclick="window.open(this.href, '_blank'); return false;" class="directions-btn">
+                <a data-config-href="developerOfficeMapsLink" href="https://maps.app.goo.gl/KB3293T7ZZTtTyvF9" target="_blank" rel="noopener noreferrer" class="directions-btn">
                     الاتجاهات
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6"/><path d="M10 14L21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
                 </a>
@@ -397,7 +397,7 @@
                             </svg>
                             <div class="info-content">
                                 <h4>الموقع الإلكتروني</h4>
-                                <p><a href="${cleanWebsite}" target="_blank" rel="noopener noreferrer" onclick="window.open(this.href, '_blank'); return false;">${cleanWebsite.replace(/^https?:\/\//, '')}</a></p>
+                                <p><a href="${cleanWebsite}" target="_blank" rel="noopener noreferrer">${cleanWebsite.replace(/^https?:\/\//, '')}</a></p>
                             </div>
                         </div>
                     `;
@@ -414,7 +414,7 @@
                             </svg>
                             <div class="info-content">
                                 <h4>البريد الإلكتروني</h4>
-                                <p><a href="mailto:${cleanEmail}" target="_blank" rel="noopener noreferrer" onclick="window.open(this.href, '_blank'); return false;">${cleanEmail}</a></p>
+                                <p><a href="mailto:${cleanEmail}" target="_blank" rel="noopener noreferrer">${cleanEmail}</a></p>
                             </div>
                         </div>
                     `;
@@ -425,7 +425,7 @@
                 if (isConfigured(cleanPhones)) {
                     const phoneList = cleanPhones.split(',').map(p => p.trim()).filter(p => p);
                     if (phoneList.length > 0) {
-                        const phoneLinks = phoneList.map(p => `<a href="tel:${p}" target="_blank" rel="noopener noreferrer" onclick="window.open(this.href, '_blank'); return false;" style="display:block; margin-bottom:4px; text-decoration:none;">${p}</a>`).join('');
+                        const phoneLinks = phoneList.map(p => `<a href="tel:${p}" target="_blank" rel="noopener noreferrer" style="display:block; margin-bottom:4px; text-decoration:none;">${p}</a>`).join('');
                         list.innerHTML += `
                             <div class="info-item">
                                 <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -445,7 +445,7 @@
                 if (isConfigured(cleanWhatsapps)) {
                     const waList = cleanWhatsapps.split(',').map(w => w.trim()).filter(w => w);
                     if (waList.length > 0) {
-                        const waLinks = waList.map(w => `<a href="https://wa.me/${w.replace(/[^0-9]/g, '')}" target="_blank" rel="noopener noreferrer" onclick="window.open(this.href, '_blank'); return false;" style="display:block; margin-bottom:4px; text-decoration:none;">${w}</a>`).join('');
+                        const waLinks = waList.map(w => `<a href="https://wa.me/${w.replace(/[^0-9]/g, '')}" target="_blank" rel="noopener noreferrer" style="display:block; margin-bottom:4px; text-decoration:none;">${w}</a>`).join('');
                         list.innerHTML += `
                             <div class="info-item">
                                 <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
