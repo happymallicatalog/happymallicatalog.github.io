@@ -45,8 +45,9 @@ document.addEventListener('click', (e) => {
     } else if (isWhatsapp || isExternalHttp || isMapsLink) {
         // External HTTP links and maps: always open in a NEW tab/window
         // This ensures the catalog page stays open and users can return to it
-        e.preventDefault();
-        window.open(href, '_blank', 'noopener,noreferrer');
+        // By setting target and NOT preventing default, we avoid iOS PWA blank screen bug
+        anchor.target = '_blank';
+        anchor.rel = 'noopener noreferrer';
     }
 });
 
