@@ -6,7 +6,8 @@
             "years": 3,
             "down": 20,
             "yearly": 0,
-            "months": 3
+            "months": 3,
+            "periodicInterval": 0
         },
         {
             "id": "p2",
@@ -14,7 +15,8 @@
             "years": 4,
             "down": 25,
             "yearly": 6,
-            "months": 3
+            "months": 3,
+            "periodicInterval": 0
         }
     ],
     "categories": [
@@ -299,6 +301,6 @@
             "status": "متاح"
         }
     },
-    "_savedAt": "2026-07-01T13:03:19.402Z",
-    "_version": 3
+    "_savedAt": "2026-07-01T13:03:36.502Z",
+    "_version": 5
 }
