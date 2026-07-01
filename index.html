@@ -409,11 +409,18 @@
         // Cleanup old localStorage keys from previous projects
         localStorage.removeItem('pwa_installed');
 
-        // Immediate redirect if inside PWA
+        // Immediate redirect if inside PWA — restore last visited page
         if (window.matchMedia('(display-mode: standalone)').matches || window.matchMedia('(display-mode: fullscreen)').matches || window.navigator.standalone === true) {
             localStorage.setItem('happymall_pwa_installed', 'true');
             localStorage.removeItem('pwa_user_reset');
-            window.location.replace('/cover.html');
+            // Restore the last catalog page the user was on (e.g. contacts.html, mall.html, etc.)
+            var lastPage = localStorage.getItem('happymall_last_page');
+            var validPages = ['cover.html','developer.html','mall.html','location.html','b-floor.html','g-floor.html','1st-floor.html','2nd-floor.html','3rd-floor.html','plans.html','contacts.html','end.html'];
+            if (lastPage && validPages.indexOf(lastPage) !== -1) {
+                window.location.replace('/' + lastPage);
+            } else {
+                window.location.replace('/cover.html');
+            }
         }
     </script>
 </head>

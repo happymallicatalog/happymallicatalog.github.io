@@ -10,7 +10,7 @@
  * Cache-busting is done via fetch options only, not stored in the cache key.
  */
 
-const CACHE_NAME    = 'happymall-v102';
+const CACHE_NAME    = 'happymall-v103';
 const DATA_URL      = '/data.json';
 const API_URL       = '/api/data';
 const API_FUNCTIONS_URL = '/.netlify/functions/data';
