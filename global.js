@@ -43,6 +43,15 @@ document.addEventListener('click', (e) => {
         e.preventDefault();
         window.location.href = href;
     } else if (isWhatsapp || isExternalHttp || isMapsLink) {
+        // Specific fix for iCatalog and Facebook links to force opening in native browser
+        const isBrowserLink = href.includes('ms-marwasleem.github.io') || href.includes('facebook.com');
+
+        if (isBrowserLink) {
+            e.preventDefault();
+            window.open(href, '_blank');
+            return;
+        }
+
         // iOS PWA handles _blank poorly (blank screen). We must use location.href for iOS.
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
         
