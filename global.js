@@ -47,9 +47,9 @@ document.addEventListener('click', (e) => {
         const isBrowserLink = href.includes('ms-marwasleem.github.io') || href.includes('facebook.com');
 
         if (isBrowserLink) {
-            e.preventDefault();
-            window.open(href, '_blank');
-            return;
+            anchor.target = '_blank';
+            anchor.rel = 'noopener noreferrer';
+            return; // Let the browser handle the click natively
         }
 
         // iOS PWA handles _blank poorly (blank screen). We must use location.href for iOS.
