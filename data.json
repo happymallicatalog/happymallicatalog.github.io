@@ -25,7 +25,8 @@
     ],
     "categories": [
         "محل",
-        "مكتب"
+        "مكتب",
+        "ننتت"
     ],
     "settings": {
         "showUnitStatus": true,
@@ -51,7 +52,7 @@
             "categories": [
                 "محل"
             ],
-            "status": "مباع"
+            "status": "متاح"
         },
         "G-8": {
             "code": "G-8",
@@ -302,6 +303,6 @@
             "p3": 120000
         }
     },
-    "_savedAt": "2026-07-06T10:47:20.126Z",
-    "_version": 39
+    "_savedAt": "2026-07-06T11:00:13.868Z",
+    "_version": 38
 }
