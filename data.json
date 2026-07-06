@@ -4,7 +4,7 @@
             "id": "p1",
             "name": "نظام قسط ٣ سنوات",
             "years": 3,
-            "months": 3,
+            "months": 1,
             "down": 20,
             "downType": "percent",
             "periodicAmount": 0,
@@ -15,7 +15,7 @@
             "id": "p2",
             "name": "نظام قسط ٤ سنوات",
             "years": 4,
-            "months": 3,
+            "months": 1,
             "down": 25,
             "downType": "percent",
             "periodicAmount": 0,
@@ -277,7 +277,7 @@
             "p3": 125000
         },
         "ارضي / داخلي": {
-            "p1": 100000,
+            "p1": 110000,
             "p2": 105000,
             "p3": 125000
         },
@@ -302,6 +302,6 @@
             "p3": 120000
         }
     },
-    "_savedAt": "2026-07-06T12:44:19.235Z",
-    "_version": 49
+    "_savedAt": "2026-07-06T12:46:39.960Z",
+    "_version": 46
 }
