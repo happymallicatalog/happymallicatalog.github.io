@@ -1,7 +1,11 @@
 /* 
    Global Catalog Logic
    - Orientation Control
+   - Blank-page recovery on iOS PWA return
 */
+
+// ─── Catalog page list (shared across functions) ───────────────────────────
+const CATALOG_PAGES = ['cover.html','developer.html','mall.html','location.html','b-floor.html','g-floor.html','1st-floor.html','2nd-floor.html','3rd-floor.html','plans.html','contacts.html','end.html'];
 
 document.addEventListener('DOMContentLoaded', () => {
     // Detect if running in PWA mode
@@ -11,15 +15,55 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.removeItem('pwa_user_reset');
     }
 
-    // Save current catalog page so PWA can restore it after returning from external links (e.g. Google Maps)
+    // Save current catalog page so PWA can restore it after returning from external links
     const currentPage = window.location.pathname.split('/').pop();
-    const catalogPages = ['cover.html','developer.html','mall.html','location.html','b-floor.html','g-floor.html','1st-floor.html','2nd-floor.html','3rd-floor.html','plans.html','contacts.html','end.html'];
-    if (currentPage && catalogPages.includes(currentPage)) {
+    if (currentPage && CATALOG_PAGES.includes(currentPage)) {
         localStorage.setItem('happymall_last_page', currentPage);
     }
 
     initOrientationControl();
     initDragToScroll();
+});
+
+// ─── Blank-page recovery: iOS PWA ──────────────────────────────────────────
+// When window.open() is called from an iOS PWA, Safari opens the link.
+// When the user returns to the PWA, iOS sometimes restores a blank/white page.
+// We detect this and force a reload to bring the catalog back.
+
+function _pwaHasContent() {
+    // Returns true if the page has visible catalog content
+    return !!(document.querySelector('.page-container') ||
+              document.querySelector('.intro-container') ||
+              document.querySelector('.floor-wrapper') ||
+              document.querySelector('.nav-menu-container'));
+}
+
+function _pwaRecoverPage() {
+    // If page content is missing, navigate back to the last saved catalog page
+    if (!_pwaHasContent()) {
+        const lastPage = localStorage.getItem('happymall_last_page') || 'cover.html';
+        window.location.replace(lastPage);
+    }
+}
+
+// 1. pageshow fires when page is shown (including bfcache restores on iOS)
+window.addEventListener('pageshow', (e) => {
+    if (e.persisted) {
+        // Page was restored from bfcache — iOS can leave it in a broken state
+        setTimeout(_pwaRecoverPage, 150);
+    }
+});
+
+// 2. visibilitychange fires when user switches back from Safari/external app
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+        // Only act if we specifically opened an external link (not just any app switch)
+        if (sessionStorage.getItem('pwa_external_opened') === '1') {
+            sessionStorage.removeItem('pwa_external_opened');
+            // Give iOS a moment to settle before checking page state
+            setTimeout(_pwaRecoverPage, 300);
+        }
+    }
 });
 
 /* --- Global Link/Contact Interceptor for PWA --- */
@@ -28,41 +72,58 @@ document.addEventListener('click', (e) => {
     if (!anchor) return;
 
     const href = anchor.getAttribute('href');
-    if (!href) return;
+    if (!href || href === '#') return;
 
-    // Check if it is a contact protocol or external link
-    const isMailto = href.startsWith('mailto:');
-    const isTel = href.startsWith('tel:');
-    const isSms = href.startsWith('sms:');
-    const isWhatsapp = href.startsWith('whatsapp:') || href.includes('wa.me') || href.includes('api.whatsapp.com');
-    const isExternalHttp = (href.startsWith('http://') || href.startsWith('https://')) && !href.includes(window.location.hostname);
-    const isMapsLink = href.includes('maps.app.goo.gl') || href.includes('maps.google.com') || href.includes('google.com/maps') || href.includes('goo.gl/maps');
+    // Detect iOS (iPhone, iPad, iPod — including iPad on iOS 13+ which reports as MacIntel)
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+                  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+    // Detect if running as installed PWA (standalone / fullscreen)
+    const isPWA = window.matchMedia('(display-mode: standalone)').matches ||
+                  window.matchMedia('(display-mode: fullscreen)').matches ||
+                  window.navigator.standalone === true;
+
+    // Classify the link type
+    const isMailto   = href.startsWith('mailto:');
+    const isTel      = href.startsWith('tel:');
+    const isSms      = href.startsWith('sms:');
+    const isWhatsapp = href.startsWith('whatsapp:') ||
+                       href.includes('wa.me') ||
+                       href.includes('api.whatsapp.com');
+    const isMaps     = href.includes('maps.app.goo.gl') ||
+                       href.includes('maps.google.com') ||
+                       href.includes('google.com/maps') ||
+                       href.includes('goo.gl/maps');
+    const isExternal = (href.startsWith('http://') || href.startsWith('https://')) &&
+                       !href.includes(window.location.hostname);
+
+    // Any link that should leave the catalog
+    const shouldOpenExternally = isMailto || isTel || isSms || isWhatsapp || isMaps || isExternal;
+
+    if (!shouldOpenExternally) return; // Internal catalog link — do nothing
+
+    e.preventDefault();
 
     if (isMailto || isTel || isSms) {
-        // Protocol links: open natively (tel/mailto/sms handled by OS)
-        e.preventDefault();
+        // OS protocol links — always handled natively via location assignment
         window.location.href = href;
-    } else if (isWhatsapp || isExternalHttp || isMapsLink) {
-        // Specific fix for iCatalog and Facebook links to force opening in native browser
-        const isBrowserLink = href.includes('ms-marwasleem.github.io') || href.includes('facebook.com');
+        return;
+    }
 
-        if (isBrowserLink) {
-            anchor.target = '_blank';
-            anchor.rel = 'noopener noreferrer';
-            return; // Let the browser handle the click natively
-        }
-
-        // iOS PWA handles _blank poorly (blank screen). We must use location.href for iOS.
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-        
-        if (isIOS) {
-            e.preventDefault();
-            window.location.href = href;
-        } else {
-            // Android and Mac: Use native new tab behavior
-            anchor.target = '_blank';
-            anchor.rel = 'noopener noreferrer';
-        }
+    // For all other external links (http/https, maps, WhatsApp, Facebook, iCatalog…):
+    // On iOS PWA: window.open(_blank) triggers "Open in Safari" / the native app handler.
+    // On Android PWA / desktop: window.open(_blank) opens a new browser tab.
+    // This is the correct cross-platform approach for PWAs.
+    if (isIOS && isPWA) {
+        // On iOS standalone PWA, navigating to an external origin (different domain)
+        // automatically opens Safari or the native app (universal links: Maps, WhatsApp, Facebook…)
+        // while keeping the PWA intact in the background.
+        // window.open() must NOT be used — it creates SFSafariViewController (in-app browser)
+        // which shows as a blank page before the external app/Safari loads.
+        window.location.href = href;
+    } else {
+        // Android, desktop, or iOS in browser (not PWA) — open new tab normally
+        window.open(href, '_blank', 'noopener,noreferrer');
     }
 });
 
