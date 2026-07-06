@@ -260,6 +260,95 @@
             box-shadow: 0 4px 20px color-mix(in srgb, var(--accent-color) 15%, transparent);
         }
 
+        .custom-select-wrapper {
+            position: relative;
+            width: 100%;
+            text-align: right;
+        }
+        .custom-select-trigger {
+            width: 100%;
+            padding: clamp(12px, 2vmin, 18px) clamp(15px, 2.5vmin, 25px);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: clamp(1rem, 2.5vmin, 1.4rem);
+            color: var(--primary-color);
+            background-color: #fff;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            transition: all 0.3s ease;
+        }
+        .custom-select-trigger:hover, .custom-select-wrapper.open .custom-select-trigger {
+            border-color: var(--accent-color);
+            box-shadow: 0 4px 20px color-mix(in srgb, var(--accent-color) 15%, transparent);
+        }
+        #customSelectTriggerText {
+            flex-grow: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-left: 15px;
+        }
+        .custom-select-arrow {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%230B1D33' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-size: contain;
+            background-repeat: no-repeat;
+            transition: transform 0.3s ease;
+        }
+        .custom-select-wrapper.open .custom-select-arrow {
+            transform: rotate(180deg);
+        }
+        .custom-select-options {
+            position: absolute;
+            top: calc(100% + 5px);
+            left: 0;
+            right: 0;
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+            flex-direction: column;
+        }
+        .custom-select-wrapper.open .custom-select-options {
+            display: flex;
+        }
+        .custom-option {
+            padding: 12px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f5f5f5;
+            font-size: clamp(0.9rem, 2.2vmin, 1.2rem);
+            transition: background 0.2s;
+        }
+        .custom-option:last-child {
+            border-bottom: none;
+        }
+        .custom-option:hover {
+            background: #f8f9fa;
+        }
+        .custom-option-text {
+            color: var(--primary-color);
+        }
+        .custom-option-status {
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+        .status-available-text { color: #4caf50; }
+        .status-sold-text { color: #f44336; }
+        .status-reserved-text { color: #ff9800; }
+
         .unit-meta-info {
             display: flex;
             justify-content: space-around;
@@ -361,7 +450,16 @@
             <h1 class="page-title">خطط الدفع</h1>
             <p class="page-subtitle">اختر خطة الدفع المناسبة لك واحسب أقساطك بسهولة</p>
             <div class="global-selector-container">
-                <select id="globalUnitSelect" class="unit-select" onchange="updateAllCalculations(this.value)">
+                <div class="custom-select-wrapper" id="customSelectWrapper">
+                    <div class="custom-select-trigger" onclick="document.getElementById('customSelectWrapper').classList.toggle('open')">
+                        <span id="customSelectTriggerText"><span>اختر الوحدة</span></span>
+                        <div class="custom-select-arrow"></div>
+                    </div>
+                    <div class="custom-select-options" id="customSelectOptionsList">
+                        <!-- Options injected here -->
+                    </div>
+                </div>
+                <select id="globalUnitSelect" style="display: none;" onchange="updateAllCalculations(this.value)">
                     <option value="">اختر الوحدة</option>
                 </select>
                 <div id="unitMetaInfo" class="unit-meta-info" style="display: none;">
@@ -413,20 +511,72 @@
 
         function populateGlobalSelector() {
             const select = document.getElementById('globalUnitSelect');
-            if (!select) return;
+            const customList = document.getElementById('customSelectOptionsList');
+            if (!select || !customList) return;
             const currentVal = select.value;
             select.innerHTML = '<option value="">اختر الوحدة</option>';
+            
+            customList.innerHTML = `
+                <div class="custom-option" onclick="selectUnit('', 'اختر الوحدة', '', '')">
+                    <span class="custom-option-text">اختر الوحدة</span>
+                </div>
+            `;
             
             Object.values(catalogData.units)
                 .sort(ThaMallDB.sortUnits)
                 .forEach(u => {
                     const opt = document.createElement('option');
                     opt.value = u.code;
-                    opt.textContent = `${u.code} (${u.area} m2)`;
+                    const statusText = u.status || 'متاح';
+                    opt.textContent = `${u.code} (${u.area} m2) - ${statusText}`;
                     select.appendChild(opt);
+
+                    const statusClass = statusText === 'متاح' ? 'status-available-text' : (statusText === 'مباع' ? 'status-sold-text' : 'status-reserved-text');
+                    const textDisplay = `${u.code} (${u.area} m2)`;
+                    
+                    const customOpt = document.createElement('div');
+                    customOpt.className = 'custom-option';
+                    customOpt.innerHTML = `
+                        <span class="custom-option-text">${textDisplay}</span>
+                        <span class="custom-option-status ${statusClass}">${statusText}</span>
+                    `;
+                    customOpt.onclick = () => selectUnit(u.code, textDisplay, statusText, statusClass);
+                    customList.appendChild(customOpt);
                 });
             
-            if (currentVal) select.value = currentVal;
+            if (currentVal) {
+                select.value = currentVal;
+                const selectedUnit = catalogData.units[currentVal];
+                if (selectedUnit) {
+                    const sTxt = selectedUnit.status || 'متاح';
+                    const sCls = sTxt === 'متاح' ? 'status-available-text' : (sTxt === 'مباع' ? 'status-sold-text' : 'status-reserved-text');
+                    selectUnit(currentVal, `${selectedUnit.code} (${selectedUnit.area} m2)`, sTxt, sCls, false);
+                }
+            }
+            
+            document.addEventListener('click', (e) => {
+                const wrapper = document.getElementById('customSelectWrapper');
+                if (wrapper && !wrapper.contains(e.target)) {
+                    wrapper.classList.remove('open');
+                }
+            });
+        }
+
+        function selectUnit(code, textDisplay, statusText, statusClass, triggerCalc = true) {
+            const select = document.getElementById('globalUnitSelect');
+            select.value = code;
+            
+            const triggerText = document.getElementById('customSelectTriggerText');
+            if (!code) {
+                triggerText.innerHTML = `<span>${textDisplay}</span>`;
+            } else {
+                triggerText.innerHTML = `<span class="custom-option-text">${textDisplay}</span><span class="custom-option-status ${statusClass}">${statusText}</span>`;
+            }
+            
+            document.getElementById('customSelectWrapper').classList.remove('open');
+            if (triggerCalc) {
+                updateAllCalculations(code);
+            }
         }
 
         // ── STATUS INDICATOR ─────────────────────────────────────────────────────
@@ -569,7 +719,15 @@
                         : [];
                     categoriesEl.textContent = cats.join('، ') || 'عام';
                 }
-                if (metaContainer) metaContainer.style.display = 'flex';
+                if (metaContainer) {
+                    const statusText = unit.status || 'متاح';
+                    let borderColor = 'var(--border-color)';
+                    if (statusText === 'متاح') borderColor = '#4caf50';
+                    else if (statusText === 'مباع') borderColor = '#f44336';
+                    else if (statusText === 'محجوز') borderColor = '#ff9800';
+                    metaContainer.style.borderColor = borderColor;
+                    metaContainer.style.display = 'flex';
+                }
             } else {
                 if (metaContainer) metaContainer.style.display = 'none';
             }
