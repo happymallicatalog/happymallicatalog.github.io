@@ -21,17 +21,6 @@
             "periodicAmount": 0,
             "periodicType": "percent",
             "periodicInterval": 12
-        },
-        {
-            "id": "p1783334388368",
-            "name": "ب",
-            "years": 2,
-            "months": 3,
-            "down": 30,
-            "downType": "percent",
-            "periodicAmount": 30,
-            "periodicType": "percent",
-            "periodicInterval": 6
         }
     ],
     "categories": [
@@ -313,6 +302,6 @@
             "p3": 120000
         }
     },
-    "_savedAt": "2026-07-06T10:40:58.805Z",
-    "_version": 30
+    "_savedAt": "2026-07-06T10:43:47.065Z",
+    "_version": 31
 }
