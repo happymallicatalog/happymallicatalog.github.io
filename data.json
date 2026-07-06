@@ -21,6 +21,17 @@
             "periodicAmount": 0,
             "periodicType": "percent",
             "periodicInterval": 12
+        },
+        {
+            "id": "p1783335733393",
+            "name": "d",
+            "years": 2,
+            "months": 3,
+            "down": 30,
+            "downType": "percent",
+            "periodicAmount": 200000,
+            "periodicType": "fixed",
+            "periodicInterval": 6
         }
     ],
     "categories": [
@@ -303,6 +314,6 @@
             "p3": 120000
         }
     },
-    "_savedAt": "2026-07-06T11:00:13.868Z",
-    "_version": 38
+    "_savedAt": "2026-07-06T11:02:13.399Z",
+    "_version": 39
 }
