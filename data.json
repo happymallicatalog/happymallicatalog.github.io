@@ -18,7 +18,7 @@
             "months": 1,
             "down": 25,
             "downType": "percent",
-            "periodicAmount": 0,
+            "periodicAmount": 6,
             "periodicType": "percent",
             "periodicInterval": 12
         }
@@ -101,7 +101,7 @@
         "G-13": {
             "code": "G-13",
             "area": 53.03,
-            "position": "",
+            "position": "ارضي / جانبي",
             "categories": [
                 "محل"
             ],
@@ -302,6 +302,6 @@
             "p3": 120000
         }
     },
-    "_savedAt": "2026-07-06T10:27:04.603Z",
-    "_version": 27
+    "_savedAt": "2026-07-06T10:27:42.698Z",
+    "_version": 2
 }
