@@ -18,7 +18,7 @@
             "months": 3,
             "down": 25,
             "downType": "percent",
-            "periodicAmount": 0,
+            "periodicAmount": 20,
             "periodicType": "percent",
             "periodicInterval": 12
         }
@@ -302,6 +302,6 @@
             "p3": 120000
         }
     },
-    "_savedAt": "2026-07-06T12:50:53.326Z",
-    "_version": 53
+    "_savedAt": "2026-07-06T12:51:27.409Z",
+    "_version": 54
 }
