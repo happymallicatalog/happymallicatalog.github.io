@@ -597,7 +597,7 @@
 
 
 
-    <button id="floatingSaveBtn" class="btn btn-add" onclick="saveDataOnline()" style="display: none; position: fixed; bottom: 30px; left: 30px; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.3); font-size: 16px; padding: 15px 30px; border-radius: 30px; background-color: var(--success); color: white; border: 2px solid white; cursor: pointer; transition: 0.3s; font-family: var(--font-arabic);">حفظ البيانات (توجد تعديلات)</button>
+    <button id="floatingSaveBtn" class="btn btn-add" onclick="saveDataOnline()" style="display: none; position: fixed; bottom: 100px; left: 20px; z-index: 999999; box-shadow: 0 4px 15px rgba(0,0,0,0.4); font-size: 16px; padding: 15px 30px; border-radius: 30px; background-color: var(--success); color: white; border: 2px solid white; cursor: pointer; transition: 0.3s; font-family: var(--font-arabic);">حفظ البيانات (توجد تعديلات)</button>
 
     <script>
         let hasUnsavedChanges = false;
@@ -895,12 +895,12 @@
             catalogData.plans.forEach(plan => {
                 const row = list.insertRow();
                 row.innerHTML = `
-                    <td><input type="text" value="${plan.name}" onchange="updatePlan('${plan.id}', 'name', this.value, this)"></td>
-                    <td><input class="plan-input-small" type="text" inputmode="decimal" value="${formatNumberWithCommas(plan.years)}" oninput="formatInputWithCommas(this)" onchange="updatePlan('${plan.id}', 'years', this.value, this)"></td>
-                    <td><input class="plan-input-small" type="text" inputmode="decimal" value="${formatNumberWithCommas(plan.months || 1)}" oninput="formatInputWithCommas(this)" onchange="updatePlan('${plan.id}', 'months', this.value, this)"></td>
+                    <td><input type="text" value="${plan.name}" onblur="updatePlan('${plan.id}', 'name', this.value, this)"></td>
+                    <td><input class="plan-input-small" type="text" inputmode="decimal" value="${formatNumberWithCommas(plan.years)}" oninput="formatInputWithCommas(this)" onblur="updatePlan('${plan.id}', 'years', this.value, this)"></td>
+                    <td><input class="plan-input-small" type="text" inputmode="decimal" value="${formatNumberWithCommas(plan.months || 1)}" oninput="formatInputWithCommas(this)" onblur="updatePlan('${plan.id}', 'months', this.value, this)"></td>
                     <td>
                         <div style="display: flex; gap: 4px;">
-                            <input class="plan-input-small" style="flex: 1; min-width: 0;" type="text" inputmode="decimal" value="${formatNumberWithCommas(plan.down)}" oninput="formatInputWithCommas(this)" onchange="updatePlan('${plan.id}', 'down', this.value, this)">
+                            <input class="plan-input-small" style="flex: 1; min-width: 0;" type="text" inputmode="decimal" value="${formatNumberWithCommas(plan.down)}" oninput="formatInputWithCommas(this)" onblur="updatePlan('${plan.id}', 'down', this.value, this)">
                             <select onchange="updatePlan('${plan.id}', 'downType', this.value, this)" style="width: 50px; padding: 4px 2px; font-family: var(--font-arabic);">
                                 <option value="percent" ${plan.downType === 'percent' || !plan.downType ? 'selected' : ''}>%</option>
                                 <option value="fixed" ${plan.downType === 'fixed' ? 'selected' : ''}>ج.م</option>
@@ -909,14 +909,14 @@
                     </td>
                     <td>
                         <div style="display: flex; gap: 4px;">
-                            <input class="plan-input-small" style="flex: 1; min-width: 0;" type="text" inputmode="decimal" value="${formatNumberWithCommas(plan.periodicAmount || 0)}" oninput="formatInputWithCommas(this)" onchange="updatePlan('${plan.id}', 'periodicAmount', this.value, this)">
+                            <input class="plan-input-small" style="flex: 1; min-width: 0;" type="text" inputmode="decimal" value="${formatNumberWithCommas(plan.periodicAmount || 0)}" oninput="formatInputWithCommas(this)" onblur="updatePlan('${plan.id}', 'periodicAmount', this.value, this)">
                             <select onchange="updatePlan('${plan.id}', 'periodicType', this.value, this)" style="width: 50px; padding: 4px 2px; font-family: var(--font-arabic);">
                                 <option value="percent" ${plan.periodicType === 'percent' || !plan.periodicType ? 'selected' : ''}>%</option>
                                 <option value="fixed" ${plan.periodicType === 'fixed' ? 'selected' : ''}>ج.م</option>
                             </select>
                         </div>
                     </td>
-                    <td><input class="plan-input-small" type="text" inputmode="decimal" value="${formatNumberWithCommas(plan.periodicInterval || 12)}" oninput="formatInputWithCommas(this)" onchange="updatePlan('${plan.id}', 'periodicInterval', this.value, this)"></td>
+                    <td><input class="plan-input-small" type="text" inputmode="decimal" value="${formatNumberWithCommas(plan.periodicInterval || 12)}" oninput="formatInputWithCommas(this)" onblur="updatePlan('${plan.id}', 'periodicInterval', this.value, this)"></td>
                     <td><button class="btn btn-delete" onclick="deletePlan('${plan.id}')">حذف</button></td>
                 `;
             });
@@ -952,7 +952,7 @@
                 catalogData.plans.forEach(p => {
                     const price = (catalogData.prices[pos] && catalogData.prices[pos][p.id]) ? catalogData.prices[pos][p.id] : 0;
                     const formattedPrice = formatNumberWithCommas(price);
-                    tableHTML += `<td><input type="text" inputmode="decimal" value="${formattedPrice}" oninput="formatInputWithCommas(this)" onchange="updatePrice('${pos}', '${p.id}', this.value, this)"></td>`;
+                    tableHTML += `<td><input type="text" inputmode="decimal" value="${formattedPrice}" oninput="formatInputWithCommas(this)" onblur="updatePrice('${pos}', '${p.id}', this.value, this)"></td>`;
                 });
                 tableHTML += '</tr>';
             });
@@ -994,7 +994,7 @@
                 html += `
                     <tr>
                         <td style="font-weight: bold; color: var(--primary-color); font-size: 14px;">${unit.code}</td>
-                        <td><input type="text" inputmode="decimal" value="${formatNumberWithCommas(unit.area)}" oninput="formatInputWithCommas(this)" onchange="updateUnit('${unit.code}', 'area', this.value, this)"></td>
+                        <td><input type="text" inputmode="decimal" value="${formatNumberWithCommas(unit.area)}" oninput="formatInputWithCommas(this)" onblur="updateUnit('${unit.code}', 'area', this.value, this)"></td>
                         <td>
                             <select onchange="updateUnit('${unit.code}', 'position', this.value)" style="width: 100%; padding: 4px; border-radius: 4px; border: 1px solid #ddd; font-family: var(--font-arabic);">
                                 <option value="" ${!unit.position ? 'selected' : ''}>- غير محدد -</option>
@@ -1033,7 +1033,7 @@
                 item.style.gap = '6px';
                 item.innerHTML = `
                     <input type="text" value="${cat}" 
-                           onchange="updateCategoryName('${cat}', this.value, this)" 
+                           onblur="updateCategoryName('${cat}', this.value, this)" 
                            style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-family: var(--font-arabic); font-size: 14px; font-weight: 500; color: #333; width: 130px; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.05); outline: none;">
                     <button onclick="deleteCategory('${cat}')" 
                             style="background: transparent; border: none; color: #dc3545; font-weight: bold; font-size: 20px; cursor: pointer; padding: 0 8px; margin: 0; line-height: 1; display: flex; align-items: center; justify-content: center; height: 38px; outline: none; transition: all 0.2s ease;"
@@ -1302,33 +1302,40 @@
         }
 
         async function saveAllData() {
-            if (!navigator.onLine) {
-                showStatus("Offline - can't edit", 'offline');
-                return;
-            }
-
             const result = await ThaMallDB.save(catalogData);
 
-            if (result.ok) {
+            if (!navigator.onLine) {
+                showStatus("تم الحفظ محلياً (أوفلاين)", 'offline');
+            } else if (result.ok) {
                 showStatus('اونلاين - وضع التحديث مفعل', 'online');
-                localStorage.setItem(CACHE_KEY + '_ping', Date.now().toString());
             } else {
                 if (result.error && (result.error.includes('HTTP') || result.error.includes('Unauthorized') || result.error.includes('فشل'))) {
                     showStatus('خطأ الخادم: ' + result.error, 'offline');
                 } else {
                     showStatus('تم الحفظ محلياً (وضع المعاينة)', 'online');
                 }
-                localStorage.setItem(CACHE_KEY + '_ping', Date.now().toString());
             }
+            localStorage.setItem(CACHE_KEY + '_ping', Date.now().toString());
             markUnsavedChanges(true);
         }
 
         async function saveDataOnline() {
+            if (document.activeElement && typeof document.activeElement.blur === 'function') {
+                document.activeElement.blur();
+            }
+            await new Promise(r => setTimeout(r, 100));
+
             const btn = document.getElementById('floatingSaveBtn');
+            const dashboard = document.getElementById('adminDashboard');
             const originalText = btn.innerText;
             btn.innerText = "جاري الحفظ أونلاين... (يرجى الانتظار)";
             btn.style.pointerEvents = "none";
             btn.style.opacity = "0.7";
+            
+            if (dashboard) {
+                dashboard.style.pointerEvents = "none";
+                dashboard.style.opacity = "0.7";
+            }
 
             try {
                 // 1. Decrypt token
@@ -1398,6 +1405,10 @@
                 btn.innerText = "حفظ البيانات (توجد تعديلات)";
                 btn.style.pointerEvents = "auto";
                 btn.style.opacity = "1";
+                if (dashboard) {
+                    dashboard.style.pointerEvents = "auto";
+                    dashboard.style.opacity = "1";
+                }
             }
         }
 
