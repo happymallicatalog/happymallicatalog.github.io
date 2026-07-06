@@ -4,25 +4,37 @@
             "id": "p1",
             "name": "نظام قسط ٣ سنوات",
             "years": 3,
+            "months": 1,
             "down": 20,
-            "yearly": 0,
-            "months": 3,
-            "periodicInterval": 0
+            "downType": "percent",
+            "periodicAmount": 0,
+            "periodicType": "percent",
+            "periodicInterval": 12
         },
         {
             "id": "p2",
             "name": "نظام قسط ٤ سنوات",
             "years": 4,
+            "months": 1,
             "down": 25,
-            "yearly": 6,
-            "months": 3,
-            "periodicInterval": 0
+            "downType": "percent",
+            "periodicAmount": 0,
+            "periodicType": "percent",
+            "periodicInterval": 12
         }
     ],
     "categories": [
         "محل",
         "مكتب"
     ],
+    "settings": {
+        "showUnitStatus": true,
+        "adminProfile": {
+            "username": "admin",
+            "passwordHash": "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
+            "email": "iCatalog.dev@gmail.com"
+        }
+    },
     "positions": [
         "ارضي / خارجي",
         "ارضي / داخلي",
@@ -31,49 +43,6 @@
         "ثاني علوي / خارجي",
         "ثاني علوي / داخلي"
     ],
-    "prices": {
-        "ارضي / خارجي": {
-            "p1": 115000,
-            "p2": 120000,
-            "p3": 125000
-        },
-        "ارضي / داخلي": {
-            "p1": 110000,
-            "p2": 105000,
-            "p3": 125000
-        },
-        "اول علوي / خارجي": {
-            "p1": 65000,
-            "p2": 70000,
-            "p3": 125000
-        },
-        "اول علوي / داخلي": {
-            "p1": 55000,
-            "p2": 60000,
-            "p3": 125000
-        },
-        "ثاني علوي / خارجي": {
-            "p1": 50000,
-            "p2": 55000,
-            "p3": 120000
-        },
-        "ثاني علوي / داخلي": {
-            "p1": 45000,
-            "p2": 50000,
-            "p3": 120000
-        }
-    },
-    "settings": {
-        "showUnitStatus": true,
-        "showTable": false,
-        "showCategories": false,
-        "showStatus": true,
-        "adminProfile": {
-            "username": "admin",
-            "passwordHash": "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
-            "email": "iCatalog.dev@gmail.com"
-        }
-    },
     "units": {
         "G-6": {
             "code": "G-6",
@@ -123,6 +92,33 @@
         "G-17": {
             "code": "G-17",
             "area": 75.91,
+            "position": "ارضي / داخلي",
+            "categories": [
+                "محل"
+            ],
+            "status": "متاح"
+        },
+        "G-13": {
+            "code": "G-13",
+            "area": 53.03,
+            "position": "ارضي / داخلي",
+            "categories": [
+                "محل"
+            ],
+            "status": "متاح"
+        },
+        "G-11A": {
+            "code": "G-11A",
+            "area": 38.81,
+            "position": "ارضي / داخلي",
+            "categories": [
+                "محل"
+            ],
+            "status": "متاح"
+        },
+        "G-11B": {
+            "code": "G-11B",
+            "area": 35.95,
             "position": "ارضي / داخلي",
             "categories": [
                 "محل"
@@ -272,35 +268,40 @@
                 "مكتب"
             ],
             "status": "متاح"
-        },
-        "G-13": {
-            "code": "G-13",
-            "area": 53.03,
-            "position": "ارضي / داخلي",
-            "categories": [
-                "محل"
-            ],
-            "status": "متاح"
-        },
-        "G-11A": {
-            "code": "G-11A",
-            "area": 38.81,
-            "position": "ارضي / داخلي",
-            "categories": [
-                "محل"
-            ],
-            "status": "متاح"
-        },
-        "G-11B": {
-            "code": "G-11B",
-            "area": 35.95,
-            "position": "ارضي / داخلي",
-            "categories": [
-                "محل"
-            ],
-            "status": "متاح"
         }
     },
-    "_savedAt": "2026-07-06T10:17:52.538Z",
-    "_version": 15
+    "prices": {
+        "ارضي / خارجي": {
+            "p1": 115000,
+            "p2": 120000,
+            "p3": 125000
+        },
+        "ارضي / داخلي": {
+            "p1": 100000,
+            "p2": 105000,
+            "p3": 125000
+        },
+        "اول علوي / خارجي": {
+            "p1": 65000,
+            "p2": 70000,
+            "p3": 125000
+        },
+        "اول علوي / داخلي": {
+            "p1": 55000,
+            "p2": 60000,
+            "p3": 125000
+        },
+        "ثاني علوي / خارجي": {
+            "p1": 50000,
+            "p2": 55000,
+            "p3": 120000
+        },
+        "ثاني علوي / داخلي": {
+            "p1": 45000,
+            "p2": 50000,
+            "p3": 120000
+        }
+    },
+    "_savedAt": "2026-07-06T10:18:43.635Z",
+    "_version": 21
 }
