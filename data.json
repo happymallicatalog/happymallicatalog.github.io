@@ -21,6 +21,17 @@
             "periodicAmount": 0,
             "periodicType": "percent",
             "periodicInterval": 12
+        },
+        {
+            "id": "p1783417238631",
+            "name": "hgff",
+            "years": 5,
+            "months": 1,
+            "down": 0,
+            "downType": "percent",
+            "periodicAmount": 0,
+            "periodicType": "percent",
+            "periodicInterval": 12
         }
     ],
     "categories": [
@@ -274,7 +285,8 @@
         "ارضي / خارجي": {
             "p1": 115000,
             "p2": 120000,
-            "p3": 125000
+            "p3": 125000,
+            "p1783417238631": 122234
         },
         "ارضي / داخلي": {
             "p1": 100000,
@@ -302,6 +314,6 @@
             "p3": 120000
         }
     },
-    "_savedAt": "2026-07-07T09:40:08.332Z",
-    "_version": 68
+    "_savedAt": "2026-07-07T09:41:30.032Z",
+    "_version": 70
 }
