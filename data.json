@@ -25,7 +25,8 @@
     ],
     "categories": [
         "محل",
-        "مكتب"
+        "مكتب",
+        "rest"
     ],
     "settings": {
         "showUnitStatus": true,
@@ -49,7 +50,9 @@
             "area": 99.02,
             "position": "ارضي / خارجي",
             "categories": [
-                "محل"
+                "محل",
+                "مكتب",
+                "rest"
             ],
             "status": "مباع"
         },
@@ -303,6 +306,6 @@
             "p3": 120000
         }
     },
-    "_savedAt": "2026-07-07T09:42:32.460Z",
-    "_version": 72
+    "_savedAt": "2026-07-07T09:44:14.770Z",
+    "_version": 76
 }
