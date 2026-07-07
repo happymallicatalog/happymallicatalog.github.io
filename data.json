@@ -32,7 +32,7 @@
         "adminProfile": {
             "username": "admin",
             "passwordHash": "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
-            "email": "iCatalog.dev@gmail.com"
+            "email": "admrok555@gmail.com"
         }
     },
     "positions": [
@@ -302,6 +302,6 @@
             "p3": 120000
         }
     },
-    "_savedAt": "2026-07-06T13:17:43.179Z",
-    "_version": 65
+    "_savedAt": "2026-07-07T09:23:29.252Z",
+    "_version": 66
 }
