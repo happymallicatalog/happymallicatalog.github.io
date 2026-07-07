@@ -21,17 +21,6 @@
             "periodicAmount": 0,
             "periodicType": "percent",
             "periodicInterval": 12
-        },
-        {
-            "id": "p1783417066884",
-            "name": "hgfddsd",
-            "years": 5,
-            "months": 1,
-            "down": 40,
-            "downType": "percent",
-            "periodicAmount": 40000,
-            "periodicType": "fixed",
-            "periodicInterval": 6
         }
     ],
     "categories": [
@@ -313,6 +302,6 @@
             "p3": 120000
         }
     },
-    "_savedAt": "2026-07-07T09:37:46.898Z",
-    "_version": 67
+    "_savedAt": "2026-07-07T09:40:08.332Z",
+    "_version": 68
 }
